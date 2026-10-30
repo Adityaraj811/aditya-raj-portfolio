@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 680" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="600" y2="680" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#121217"/>
+      <stop offset="50%" stop-color="#09090B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <radialGradient id="accentGlow" cx="75%" cy="22%" r="55%">
+      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.22"/>
+      <stop offset="55%" stop-color="#8B5CF6" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#09090B" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="strokeGrad" x1="0" y1="0" x2="600" y2="680" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#27272A" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Canvas -->
+  <rect width="600" height="680" fill="url(#bgGrad)"/>
+  <rect width="600" height="680" fill="url(#accentGlow)"/>
+
+  <!-- Subtle Architectural Grid -->
+  <g stroke="#27272A" stroke-width="1" opacity="0.45">
+    <line x1="0" y1="110" x2="600" y2="110"/>
+    <line x1="0" y1="220" x2="600" y2="220"/>
+    <line x1="0" y1="330" x2="600" y2="330"/>
+    <line x1="0" y1="440" x2="600" y2="440"/>
+    <line x1="0" y1="550" x2="600" y2="550"/>
+    <line x1="120" y1="0" x2="120" y2="680"/>
+    <line x1="240" y1="0" x2="240" y2="680"/>
+    <line x1="360" y1="0" x2="360" y2="680"/>
+    <line x1="480" y1="0" x2="480" y2="680"/>
+  </g>
+
+  <!-- Geometric Portrait Frame -->
+  <rect x="85" y="75" width="430" height="440" rx="24" fill="#09090B" fill-opacity="0.72" stroke="url(#strokeGrad)" stroke-width="1.5"/>
+
+  <!-- Minimalist Developer Silhouette & Monogram -->
+  <circle cx="300" cy="245" r="78" fill="#18181B" stroke="#27272A" stroke-width="2"/>
+  <path d="M182 445C182 386 232 346 300 346C368 346 418 386 418 445" stroke="#27272A" stroke-width="2" fill="#121216"/>
+
+  <!-- Crisp Monogram Inside Avatar Circle -->
+  <text x="300" y="264" text-anchor="middle" fill="#FAFAFA" font-family="Outfit, sans-serif" font-weight="700" font-size="54" letter-spacing="-1">AR</text>
+
+  <!-- Corner Framing Crosshairs -->
+  <path d="M110 110 H130 M110 110 V130" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M490 110 H470 M490 110 V130" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M110 480 H130 M110 480 V460" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M490 480 H470 M490 480 V460" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Bottom Caption Panel -->
+  <text x="300" y="568" text-anchor="middle" fill="#E4E4E7" font-family="Plus Jakarta Sans, sans-serif" font-weight="600" font-size="16" letter-spacing="0.4">ADITYA RAJ</text>
+  <text x="300" y="594" text-anchor="middle" fill="#71717A" font-family="JetBrains Mono, monospace" font-weight="400" font-size="12" letter-spacing="0.5">Replace via /public/images/profile.png</text>
+</svg>
