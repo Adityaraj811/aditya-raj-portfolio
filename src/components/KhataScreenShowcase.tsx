@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   Mail,
   Lock,
@@ -76,6 +77,56 @@ export const KHATA_SCREENS: KhataScreenMeta[] = [
   },
 ];
 
+// Framer Motion Staggered Container & Item Variants mimicking native Android Material 3 motion
+const screenContainerVariants: Variants = {
+  hidden: (direction: number) => ({
+    opacity: 0,
+    x: direction >= 0 ? 22 : -22,
+    scale: 0.97,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 340,
+      damping: 28,
+      mass: 0.75,
+      when: 'beforeChildren',
+      staggerChildren: 0.065,
+      delayChildren: 0.02,
+    },
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    x: direction >= 0 ? -18 : 18,
+    scale: 0.97,
+    transition: {
+      duration: 0.16,
+      ease: 'easeInOut',
+    },
+  }),
+};
+
+const screenItemVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 12,
+    scale: 0.96,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 380,
+      damping: 26,
+    },
+  },
+};
+
 interface ExpensePreset {
   title: string;
   category: string;
@@ -123,6 +174,7 @@ interface KhataInteractiveAppState {
 
 interface KhataPhoneScreenProps {
   screen: KhataScreenKey;
+  direction: number;
   appState: KhataInteractiveAppState;
   setAppState: React.Dispatch<React.SetStateAction<KhataInteractiveAppState>>;
   onNavigate: (screen: KhataScreenKey, e?: React.MouseEvent, toast?: string) => void;
@@ -131,6 +183,7 @@ interface KhataPhoneScreenProps {
 
 export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
   screen,
+  direction,
   appState,
   setAppState,
   onNavigate,
@@ -150,591 +203,663 @@ export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
 
   return (
     <div className="relative w-full h-full flex flex-col justify-between overflow-hidden select-none font-sans bg-[#F8FAFC] text-[#0F172A]">
-      {/* Main Screen Content with 3D Entrance Keyframe */}
-      <div
-        key={screen}
-        className="flex-1 flex flex-col justify-between px-3.5 py-2.5 overflow-hidden animate-[khataScreenEnter_0.34s_cubic-bezier(0.22,1,0.36,1)]"
-      >
-        {screen === 'login' && (
-          <>
-            {/* Clean Mobile Status Bar */}
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#64748B]">
-              <span>9:41</span>
-              <span>5G · 100%</span>
-            </div>
+      {/* Clean Mobile Status Bar */}
+      <div className="px-3.5 pt-2 pb-1 flex items-center justify-between text-[10px] font-mono text-[#64748B] shrink-0">
+        <span>9:41</span>
+        <span>5G · 100%</span>
+      </div>
 
-            {/* Brand Logo */}
-            <div className="flex flex-col items-center text-center mt-0.5">
-              <div className="w-10 h-10 rounded-2xl bg-[#0F5132] flex items-center justify-center text-white shadow-md transition-transform duration-300 hover:scale-110">
-                <Wallet className="w-5 h-5" />
-              </div>
-              <span className="mt-1 font-display text-sm font-extrabold tracking-wider text-[#0F5132]">
-                KHATA
-              </span>
-            </div>
-
-            {/* Welcome Copy */}
-            <div>
-              <h4 className="text-xs font-bold text-[#0F172A]">Welcome Back</h4>
-              <p className="text-[10px] text-[#64748B]">Login to continue to Flat 204</p>
-            </div>
-
-            {/* Interactive Inputs */}
-            <div className="space-y-1.5">
-              <div className="rounded-lg border border-[#CBD5E1] bg-white px-2.5 py-1.5 flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#0F5132] shrink-0" />
-                <div className="min-w-0 flex-1 text-left">
-                  <p className="text-[8px] text-[#64748B] leading-none">Email or Phone</p>
-                  <p className="text-[10px] font-semibold text-[#0F172A] truncate mt-0.5">
-                    aditya.raj@khata.app
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={(e) =>
-                  stopAndRun(e, () =>
-                    setAppState((prev) => ({ ...prev, showPassword: !prev.showPassword }))
-                  )
-                }
-                className="w-full rounded-lg border border-[#CBD5E1] hover:border-[#0F5132] bg-white px-2.5 py-1.5 flex items-center justify-between gap-2 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Lock className="w-3.5 h-3.5 text-[#0F5132] shrink-0" />
-                  <div className="text-left">
-                    <p className="text-[8px] text-[#64748B] leading-none">Password</p>
-                    <p className="text-[10px] font-bold text-[#0F172A] tracking-wider mt-0.5">
-                      {appState.showPassword ? 'khata@2026' : '••••••••••'}
-                    </p>
-                  </div>
-                </div>
-                {appState.showPassword ? (
-                  <EyeOff className="w-3.5 h-3.5 text-[#0F5132] shrink-0" />
-                ) : (
-                  <Eye className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
-                )}
-              </button>
-            </div>
-
-            {/* Login Button with Live Transition */}
-            <div className="space-y-1.5">
-              <button
-                type="button"
-                onClick={(e) =>
-                  stopAndRun(e, () => {
-                    setAppState((prev) => ({ ...prev, isLoggingIn: true }));
-                    setTimeout(() => {
-                      setAppState((prev) => ({ ...prev, isLoggingIn: false }));
-                      onNavigate('home', undefined, 'Signed in as Aditya Raj');
-                    }, 320);
-                  })
-                }
-                className="w-full py-2 rounded-lg bg-[#0F5132] hover:bg-[#136F43] active:scale-[0.98] text-white text-[11px] font-semibold shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <span>{appState.isLoggingIn ? 'Signing in...' : 'Login to KHATA →'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={(e) =>
-                  stopAndRun(e, () =>
-                    onNavigate('home', undefined, 'Guest preview opened: Flat 204')
-                  )
-                }
-                className="w-full py-1 rounded-lg border border-[#0F5132]/40 text-[#0F5132] text-[10px] font-semibold text-center hover:bg-[#E8F5E9] transition-colors cursor-pointer"
-              >
-                Create New Account
-              </button>
-            </div>
-          </>
-        )}
-
-        {screen === 'home' && (
-          <>
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#64748B]">
-              <span>9:41</span>
-              <span>5G · 100%</span>
-            </div>
-
-            {/* Greeting & Notification */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-[#0F172A]">Good Evening, Aditya</p>
-                <p className="text-[9px] text-[#64748B]">Split • Track • Settle</p>
-              </div>
-              <button
-                type="button"
-                onClick={(e) =>
-                  stopAndRun(e, () => triggerToast('2 pending settlements in ' + activeGroup.name))
-                }
-                className="w-6 h-6 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0F5132] hover:bg-[#E8F5E9] cursor-pointer relative"
-              >
-                <Bell className="w-3 h-3" />
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500" />
-              </button>
-            </div>
-
-            {/* Interactive Group Switcher Card */}
-            <button
-              type="button"
-              onClick={(e) =>
-                stopAndRun(e, () => {
-                  const nextIdx = (appState.groupIndex + 1) % GROUPS.length;
-                  setAppState((prev) => ({ ...prev, groupIndex: nextIdx }));
-                  triggerToast(`Switched group to ${GROUPS[nextIdx].name}`);
-                })
-              }
-              className="w-full px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#F0FDF4] border border-[#E2E8F0] hover:border-[#0F5132]/40 flex items-center justify-between transition-all cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-[#E8F5E9] text-[#0F5132] flex items-center justify-center">
-                  <Users className="w-3.5 h-3.5" />
-                </div>
-                <div className="text-left">
-                  <p className="text-[8px] text-[#64748B] leading-none">Current Group</p>
-                  <p className="text-[10px] font-bold text-[#0F172A] mt-0.5">
-                    {activeGroup.name}{' '}
-                    <span className="font-normal text-[#64748B]">· {activeGroup.members}</span>
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-[#0F5132]" />
-            </button>
-
-            {/* Forest Green Hero Card */}
-            <div className="p-2.5 rounded-xl bg-[#0F5132] text-white space-y-1.5 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] text-[#E8F5E9]">Total Group Expense</span>
-                <span className="text-[8px] font-mono text-[#E8F5E9] px-1.5 py-0.5 rounded bg-[#136F43]">
-                  Oct 2026
-                </span>
-              </div>
-              <p className="text-base font-extrabold tracking-tight leading-none tabular-nums">
-                ₹{activeGroup.total.toLocaleString('en-IN')}
-              </p>
-
-              <button
-                type="button"
-                onClick={(e) => onNavigate('settlement', e, 'Opened Settlement Balances')}
-                className="w-full px-2 py-1 rounded-lg bg-white text-[#0F172A] flex items-center justify-between hover:bg-[#F0FDF4] transition-colors cursor-pointer"
-              >
-                <span className="text-[9px] font-medium text-[#64748B]">You will receive</span>
-                <span className="text-[11px] font-bold text-[#16A34A] tabular-nums">
-                  + ₹{netReceivable.toLocaleString('en-IN')} →
-                </span>
-              </button>
-
-              <div className="grid grid-cols-2 gap-1.5 pt-0.5">
-                <button
-                  type="button"
-                  onClick={(e) => onNavigate('add-expense', e)}
-                  className="py-1.5 px-2 rounded-lg bg-[#136F43] hover:bg-[#198754] active:scale-95 text-white text-[9px] font-semibold flex items-center justify-center gap-1 transition-all cursor-pointer"
+      {/* Main Screen Content with Framer Motion AnimatePresence & Staggered Entrance */}
+      <div className="flex-1 relative overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={screen}
+            custom={direction}
+            variants={screenContainerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="w-full h-full flex flex-col justify-between px-3.5 pb-2 overflow-hidden"
+          >
+            {screen === 'login' && (
+              <>
+                {/* Brand Logo */}
+                <motion.div
+                  variants={screenItemVariants}
+                  className="flex flex-col items-center text-center mt-0.5"
                 >
-                  <Plus className="w-3 h-3" />
-                  <span>Add Expense</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => onNavigate('report', e)}
-                  className="py-1.5 px-2 rounded-lg border border-[#E8F5E9]/60 hover:bg-white/10 active:scale-95 text-[#E8F5E9] text-[9px] font-medium flex items-center justify-center gap-1 transition-all cursor-pointer"
-                >
-                  <FileSpreadsheet className="w-3 h-3" />
-                  <span>PDF Report</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Recent Expense Item */}
-            <button
-              type="button"
-              onClick={(e) => onNavigate('add-expense', e, 'Inspecting split breakdown')}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#F0FDF4] border border-[#E2E8F0] flex items-center justify-between text-[10px] transition-colors cursor-pointer"
-            >
-              <div className="text-left">
-                <p className="font-semibold text-[#0F172A]">Flat Monthly Rent</p>
-                <p className="text-[8px] text-[#64748B]">Paid by Aditya · Split 4</p>
-              </div>
-              <span className="font-bold text-[#0F5132] tabular-nums">₹24,000</span>
-            </button>
-          </>
-        )}
-
-        {screen === 'add-expense' && (
-          <>
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#64748B]">
-              <span>9:41</span>
-              <span>5G · 100%</span>
-            </div>
-
-            {/* Header with Working Back Button */}
-            <div className="flex items-center justify-between border-b border-[#EEF2F6] pb-1">
-              <button
-                type="button"
-                onClick={(e) => onNavigate('home', e)}
-                className="p-0.5 rounded hover:bg-slate-200 text-[#0F172A] cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-              <span className="text-xs font-bold text-[#0F172A]">Add Expense</span>
-              <span className="text-[9px] text-[#0F5132] font-semibold">{activeGroup.name}</span>
-            </div>
-
-            {/* Interactive Expense Preset Cycler */}
-            <button
-              type="button"
-              onClick={(e) =>
-                stopAndRun(e, () => {
-                  const nextPreset = (appState.presetIndex + 1) % EXPENSE_PRESETS.length;
-                  setAppState((prev) => ({ ...prev, presetIndex: nextPreset }));
-                  triggerToast(`Loaded ${EXPENSE_PRESETS[nextPreset].title}`);
-                })
-              }
-              className="w-full p-2 rounded-xl bg-[#F0FDF4] hover:bg-[#DCFCE7] border border-[#0F5132]/25 text-center transition-colors cursor-pointer"
-            >
-              <p className="text-[8px] uppercase font-mono text-[#0F5132]">Expense Amount</p>
-              <p className="text-base font-extrabold text-[#0F5132] tabular-nums">
-                ₹{activePreset.amount.toLocaleString('en-IN')}
-              </p>
-              <p className="text-[9px] text-[#64748B] truncate">{activePreset.title}</p>
-            </button>
-
-            {/* Category & Interactive Equal/Custom Split Mode Toggle */}
-            <div className="grid grid-cols-2 gap-1.5 text-[9px]">
-              <div className="p-1.5 rounded-lg bg-white border border-[#E2E8F0]">
-                <p className="text-[8px] text-[#64748B]">Category</p>
-                <p className="font-semibold text-[#0F172A]">{activePreset.category}</p>
-              </div>
-              <button
-                type="button"
-                onClick={(e) =>
-                  stopAndRun(e, () => {
-                    const nextMode = appState.splitMode === 'equal' ? 'custom' : 'equal';
-                    setAppState((prev) => ({ ...prev, splitMode: nextMode }));
-                    triggerToast(
-                      nextMode === 'equal'
-                        ? 'Switched to Equal 4-way split'
-                        : 'Switched to Custom member split'
-                    );
-                  })
-                }
-                className="p-1.5 rounded-lg bg-[#E8F5E9] hover:bg-[#DCFCE7] border border-[#0F5132]/30 text-left transition-colors cursor-pointer"
-              >
-                <p className="text-[8px] text-[#0F5132]">Split Mode</p>
-                <p className="font-bold text-[#0F5132]">
-                  {appState.splitMode === 'equal' ? 'Equal (4x)' : 'Custom Split'}
-                </p>
-              </button>
-            </div>
-
-            {/* Live Member Split Rows */}
-            <div className="space-y-1 text-[9px]">
-              {['Aditya (You)', 'Rahul Sharma', 'Aman Verma', 'Rohit Singh'].map((member, idx) => {
-                const share =
-                  appState.splitMode === 'equal'
-                    ? Math.round(activePreset.amount / 4)
-                    : activePreset.customShares[idx];
-                return (
-                  <div
-                    key={member}
-                    className="px-2 py-1 rounded bg-white border border-[#E2E8F0] flex items-center justify-between"
+                  <motion.div
+                    whileHover={{ scale: 1.08, rotate: -4 }}
+                    whileTap={{ scale: 0.94 }}
+                    className="w-10 h-10 rounded-2xl bg-[#0F5132] flex items-center justify-center text-white shadow-md"
                   >
-                    <span className="text-[#0F172A] font-medium truncate">{member}</span>
-                    <span className="font-mono font-bold text-[#0F5132] tabular-nums">
-                      ₹{share}
-                    </span>
+                    <Wallet className="w-5 h-5" />
+                  </motion.div>
+                  <span className="mt-1 font-display text-sm font-extrabold tracking-wider text-[#0F5132]">
+                    KHATA
+                  </span>
+                </motion.div>
+
+                {/* Welcome Copy */}
+                <motion.div variants={screenItemVariants}>
+                  <h4 className="text-xs font-bold text-[#0F172A]">Welcome Back</h4>
+                  <p className="text-[10px] text-[#64748B]">Login to continue to Flat 204</p>
+                </motion.div>
+
+                {/* Interactive Inputs */}
+                <motion.div variants={screenItemVariants} className="space-y-1.5">
+                  <div className="rounded-lg border border-[#CBD5E1] bg-white px-2.5 py-1.5 flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-[#0F5132] shrink-0" />
+                    <div className="min-w-0 flex-1 text-left">
+                      <p className="text-[8px] text-[#64748B] leading-none">Email or Phone</p>
+                      <p className="text-[10px] font-semibold text-[#0F172A] truncate mt-0.5">
+                        aditya.raj@khata.app
+                      </p>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
 
-            <button
-              type="button"
-              onClick={(e) =>
-                onNavigate(
-                  'settlement',
-                  e,
-                  `Saved ₹${activePreset.amount} (${appState.splitMode.toUpperCase()} split)`
-                )
-              }
-              className="w-full py-1.5 rounded-lg bg-[#0F5132] hover:bg-[#136F43] active:scale-95 text-white text-[10px] font-semibold transition-all cursor-pointer"
-            >
-              Save &amp; Split Expense →
-            </button>
-          </>
-        )}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={(e) =>
+                      stopAndRun(e, () =>
+                        setAppState((prev) => ({ ...prev, showPassword: !prev.showPassword }))
+                      )
+                    }
+                    className="w-full rounded-lg border border-[#CBD5E1] hover:border-[#0F5132] bg-white px-2.5 py-1.5 flex items-center justify-between gap-2 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Lock className="w-3.5 h-3.5 text-[#0F5132] shrink-0" />
+                      <div className="text-left">
+                        <p className="text-[8px] text-[#64748B] leading-none">Password</p>
+                        <p className="text-[10px] font-bold text-[#0F172A] tracking-wider mt-0.5">
+                          {appState.showPassword ? 'khata@2026' : '••••••••••'}
+                        </p>
+                      </div>
+                    </div>
+                    {appState.showPassword ? (
+                      <EyeOff className="w-3.5 h-3.5 text-[#0F5132] shrink-0" />
+                    ) : (
+                      <Eye className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
+                    )}
+                  </motion.button>
+                </motion.div>
 
-        {screen === 'settlement' && (
-          <>
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#64748B]">
-              <span>9:41</span>
-              <span>5G · 100%</span>
-            </div>
+                {/* Login Button with Live Transition */}
+                <motion.div variants={screenItemVariants} className="space-y-1.5">
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    type="button"
+                    onClick={(e) =>
+                      stopAndRun(e, () => {
+                        setAppState((prev) => ({ ...prev, isLoggingIn: true }));
+                        setTimeout(() => {
+                          setAppState((prev) => ({ ...prev, isLoggingIn: false }));
+                          onNavigate('home', undefined, 'Signed in as Aditya Raj');
+                        }, 280);
+                      })
+                    }
+                    className="w-full py-2 rounded-lg bg-[#0F5132] hover:bg-[#136F43] text-white text-[11px] font-semibold shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <span>{appState.isLoggingIn ? 'Signing in...' : 'Login to KHATA →'}</span>
+                  </motion.button>
 
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-1">
-              <button
-                type="button"
-                onClick={(e) => onNavigate('home', e)}
-                className="p-0.5 rounded hover:bg-slate-200 text-[#0F172A] cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-              <span className="text-xs font-bold text-[#0F172A]">Settlement</span>
-              {appState.settledMembers.rahul || appState.settledMembers.aman ? (
-                <button
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    type="button"
+                    onClick={(e) =>
+                      stopAndRun(e, () =>
+                        onNavigate('home', undefined, 'Guest preview opened: Flat 204')
+                      )
+                    }
+                    className="w-full py-1 rounded-lg border border-[#0F5132]/40 text-[#0F5132] text-[10px] font-semibold text-center hover:bg-[#E8F5E9] transition-colors cursor-pointer"
+                  >
+                    Create New Account
+                  </motion.button>
+                </motion.div>
+              </>
+            )}
+
+            {screen === 'home' && (
+              <>
+                {/* Greeting & Notification */}
+                <motion.div
+                  variants={screenItemVariants}
+                  className="flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-xs font-bold text-[#0F172A]">Good Evening, Aditya</p>
+                    <p className="text-[9px] text-[#64748B]">Split • Track • Settle</p>
+                  </div>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    type="button"
+                    onClick={(e) =>
+                      stopAndRun(e, () =>
+                        triggerToast('2 pending settlements in ' + activeGroup.name)
+                      )
+                    }
+                    className="w-6 h-6 rounded-full bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0F5132] hover:bg-[#E8F5E9] cursor-pointer relative"
+                  >
+                    <Bell className="w-3 h-3" />
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500" />
+                  </motion.button>
+                </motion.div>
+
+                {/* Interactive Group Switcher Card */}
+                <motion.button
+                  variants={screenItemVariants}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={(e) =>
                     stopAndRun(e, () => {
-                      setAppState((prev) => ({
-                        ...prev,
-                        settledMembers: { rahul: false, aman: false },
-                      }));
-                      triggerToast('Reset member balances');
+                      const nextIdx = (appState.groupIndex + 1) % GROUPS.length;
+                      setAppState((prev) => ({ ...prev, groupIndex: nextIdx }));
+                      triggerToast(`Switched group to ${GROUPS[nextIdx].name}`);
                     })
                   }
-                  className="text-[9px] text-[#0F5132] font-semibold flex items-center gap-0.5 cursor-pointer"
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#F0FDF4] border border-[#E2E8F0] hover:border-[#0F5132]/40 flex items-center justify-between transition-colors cursor-pointer"
                 >
-                  <RotateCcw className="w-2.5 h-2.5" />
-                  Reset
-                </button>
-              ) : (
-                <span className="text-[9px] text-[#16A34A] font-semibold">Synced</span>
-              )}
-            </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-[#E8F5E9] text-[#0F5132] flex items-center justify-center">
+                      <Users className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[8px] text-[#64748B] leading-none">Current Group</p>
+                      <p className="text-[10px] font-bold text-[#0F172A] mt-0.5">
+                        {activeGroup.name}{' '}
+                        <span className="font-normal text-[#64748B]">· {activeGroup.members}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#0F5132]" />
+                </motion.button>
 
-            {/* Hero Receivable Card */}
-            <div className="p-2.5 rounded-xl bg-[#0F5132] text-white transition-all">
-              <p className="text-[9px] text-[#E8F5E9]">Net Receivable Balance</p>
-              <p className="text-base font-extrabold tabular-nums mt-0.5">
-                {netReceivable > 0
-                  ? `+ ₹${netReceivable.toLocaleString('en-IN')}`
-                  : '₹0 (All Settled!)'}
-              </p>
-              <p className="text-[9px] text-[#E8F5E9]/90 mt-0.5">
-                {netReceivable > 0
-                  ? 'Tap "Settle" below to record payment'
-                  : 'All Flat 204 members are settled up'}
-              </p>
-            </div>
-
-            {/* Interactive Member Settlement Cards */}
-            <div className="space-y-1.5 text-[9px]">
-              {/* Rahul Card */}
-              <div className="p-2 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-[#0F172A]">Rahul Sharma</p>
-                  <p className="text-[8px] text-[#64748B]">Rent &amp; Groceries share</p>
-                </div>
-                {appState.settledMembers.rahul ? (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16A34A]">
-                    <CheckCircle2 className="w-3 h-3" />
-                    Settled
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={(e) =>
-                      stopAndRun(e, () => {
-                        setAppState((prev) => ({
-                          ...prev,
-                          settledMembers: { ...prev.settledMembers, rahul: true },
-                        }));
-                        triggerToast('Rahul ₹1,450 marked as Settled ✓');
-                      })
-                    }
-                    className="px-2 py-1 rounded bg-[#E8F5E9] hover:bg-[#0F5132] text-[#0F5132] hover:text-white font-bold transition-colors cursor-pointer"
-                  >
-                    Settle ₹1,450
-                  </button>
-                )}
-              </div>
-
-              {/* Aman Card */}
-              <div className="p-2 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-[#0F172A]">Aman Verma</p>
-                  <p className="text-[8px] text-[#64748B]">Electricity &amp; Gas share</p>
-                </div>
-                {appState.settledMembers.aman ? (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16A34A]">
-                    <CheckCircle2 className="w-3 h-3" />
-                    Settled
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={(e) =>
-                      stopAndRun(e, () => {
-                        setAppState((prev) => ({
-                          ...prev,
-                          settledMembers: { ...prev.settledMembers, aman: true },
-                        }));
-                        triggerToast('Aman ₹1,000 marked as Settled ✓');
-                      })
-                    }
-                    className="px-2 py-1 rounded bg-[#E8F5E9] hover:bg-[#0F5132] text-[#0F5132] hover:text-white font-bold transition-colors cursor-pointer"
-                  >
-                    Settle ₹1,000
-                  </button>
-                )}
-              </div>
-
-              {/* Rohit Settled */}
-              <div className="px-2 py-1 rounded-lg bg-[#F0FDF4] border border-[#16A34A]/30 flex items-center justify-between">
-                <span className="font-medium text-[#0F5132]">Rohit Singh</span>
-                <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16A34A]">
-                  <CheckCircle2 className="w-3 h-3" />
-                  Settled
-                </span>
-              </div>
-            </div>
-          </>
-        )}
-
-        {screen === 'report' && (
-          <>
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#64748B]">
-              <span>9:41</span>
-              <span>5G · 100%</span>
-            </div>
-
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-1">
-              <button
-                type="button"
-                onClick={(e) => onNavigate('home', e)}
-                className="p-0.5 rounded hover:bg-slate-200 text-[#0F172A] cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-              <span className="text-xs font-bold text-[#0F172A]">Monthly Report</span>
-              <PieChart className="w-3.5 h-3.5 text-[#0F5132]" />
-            </div>
-
-            {/* Interactive Month Switcher */}
-            <button
-              type="button"
-              onClick={(e) =>
-                stopAndRun(e, () => {
-                  const nextM = appState.reportMonth === 'oct' ? 'sep' : 'oct';
-                  setAppState((prev) => ({ ...prev, reportMonth: nextM }));
-                  triggerToast(
-                    nextM === 'oct'
-                      ? 'Viewing October 2026 Report'
-                      : 'Viewing September 2026 Report'
-                  );
-                })
-              }
-              className="w-full px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#F0FDF4] border border-[#E2E8F0] flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <div className="text-left">
-                <p className="text-[8px] text-[#64748B]">Selected Month</p>
-                <p className="text-[11px] font-bold text-[#0F172A]">
-                  {appState.reportMonth === 'oct' ? 'October 2026' : 'September 2026'} ·{' '}
-                  {activeGroup.name}
-                </p>
-              </div>
-              <span className="text-xs font-extrabold text-[#0F5132] tabular-nums">
-                {appState.reportMonth === 'oct' ? '₹35,840' : '₹31,200'}
-              </span>
-            </button>
-
-            {/* Animated Category Bars */}
-            <div className="space-y-1.5 text-[9px]">
-              {(appState.reportMonth === 'oct'
-                ? [
-                    {
-                      label: 'House Rent',
-                      amount: '₹24,000',
-                      pct: '67%',
-                      w: '67%',
-                      color: '#0F5132',
-                    },
-                    {
-                      label: 'Groceries & Kitchen',
-                      amount: '₹6,840',
-                      pct: '19%',
-                      w: '26%',
-                      color: '#198754',
-                    },
-                    {
-                      label: 'Electricity & Wi-Fi',
-                      amount: '₹5,000',
-                      pct: '14%',
-                      w: '18%',
-                      color: '#2563EB',
-                    },
-                  ]
-                : [
-                    {
-                      label: 'House Rent',
-                      amount: '₹24,000',
-                      pct: '77%',
-                      w: '77%',
-                      color: '#0F5132',
-                    },
-                    {
-                      label: 'Groceries & Kitchen',
-                      amount: '₹4,500',
-                      pct: '14%',
-                      w: '19%',
-                      color: '#198754',
-                    },
-                    {
-                      label: 'Electricity & Wi-Fi',
-                      amount: '₹2,700',
-                      pct: '9%',
-                      w: '12%',
-                      color: '#2563EB',
-                    },
-                  ]
-              ).map((cat) => (
-                <div
-                  key={cat.label}
-                  className="p-1.5 rounded-lg bg-white border border-[#E2E8F0] space-y-1"
+                {/* Forest Green Hero Card */}
+                <motion.div
+                  variants={screenItemVariants}
+                  className="p-2.5 rounded-xl bg-[#0F5132] text-white space-y-1.5 shadow-sm"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-[#0F172A]">{cat.label}</span>
-                    <span className="font-mono font-bold text-[#0F172A] tabular-nums">
-                      {cat.amount} ({cat.pct})
+                    <span className="text-[9px] text-[#E8F5E9]">Total Group Expense</span>
+                    <span className="text-[8px] font-mono text-[#E8F5E9] px-1.5 py-0.5 rounded bg-[#136F43]">
+                      Oct 2026
                     </span>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{ width: cat.w, backgroundColor: cat.color }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+                  <p className="text-base font-extrabold tracking-tight leading-none tabular-nums">
+                    ₹{activeGroup.total.toLocaleString('en-IN')}
+                  </p>
 
-            <button
-              type="button"
-              onClick={(e) =>
-                stopAndRun(e, () =>
-                  triggerToast('Exported KHATA_Monthly_Report.pdf to Downloads!')
-                )
-              }
-              className="w-full py-1.5 rounded-lg bg-[#0F5132] hover:bg-[#136F43] active:scale-95 text-white text-[10px] font-semibold text-center transition-all cursor-pointer"
-            >
-              Export Monthly Report (PDF)
-            </button>
-          </>
-        )}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={(e) => onNavigate('settlement', e, 'Opened Settlement Balances')}
+                    className="w-full px-2 py-1 rounded-lg bg-white text-[#0F172A] flex items-center justify-between hover:bg-[#F0FDF4] transition-colors cursor-pointer"
+                  >
+                    <span className="text-[9px] font-medium text-[#64748B]">You will receive</span>
+                    <span className="text-[11px] font-bold text-[#16A34A] tabular-nums">
+                      + ₹{netReceivable.toLocaleString('en-IN')} →
+                    </span>
+                  </motion.button>
+
+                  <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      type="button"
+                      onClick={(e) => onNavigate('add-expense', e)}
+                      className="py-1.5 px-2 rounded-lg bg-[#136F43] hover:bg-[#198754] text-white text-[9px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Add Expense</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      type="button"
+                      onClick={(e) => onNavigate('report', e)}
+                      className="py-1.5 px-2 rounded-lg border border-[#E8F5E9]/60 hover:bg-white/10 text-[#E8F5E9] text-[9px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <FileSpreadsheet className="w-3 h-3" />
+                      <span>PDF Report</span>
+                    </motion.button>
+                  </div>
+                </motion.div>
+
+                {/* Recent Expense Item */}
+                <motion.button
+                  variants={screenItemVariants}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={(e) => onNavigate('add-expense', e, 'Inspecting split breakdown')}
+                  className="w-full px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#F0FDF4] border border-[#E2E8F0] flex items-center justify-between text-[10px] transition-colors cursor-pointer"
+                >
+                  <div className="text-left">
+                    <p className="font-semibold text-[#0F172A]">Flat Monthly Rent</p>
+                    <p className="text-[8px] text-[#64748B]">Paid by Aditya · Split 4</p>
+                  </div>
+                  <span className="font-bold text-[#0F5132] tabular-nums">₹24,000</span>
+                </motion.button>
+              </>
+            )}
+
+            {screen === 'add-expense' && (
+              <>
+                {/* Header with Working Back Button */}
+                <motion.div
+                  variants={screenItemVariants}
+                  className="flex items-center justify-between border-b border-[#EEF2F6] pb-1"
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => onNavigate('home', e)}
+                    className="p-0.5 rounded hover:bg-slate-200 text-[#0F172A] cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="text-xs font-bold text-[#0F172A]">Add Expense</span>
+                  <span className="text-[9px] text-[#0F5132] font-semibold">
+                    {activeGroup.name}
+                  </span>
+                </motion.div>
+
+                {/* Interactive Expense Preset Cycler */}
+                <motion.button
+                  variants={screenItemVariants}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={(e) =>
+                    stopAndRun(e, () => {
+                      const nextPreset = (appState.presetIndex + 1) % EXPENSE_PRESETS.length;
+                      setAppState((prev) => ({ ...prev, presetIndex: nextPreset }));
+                      triggerToast(`Loaded ${EXPENSE_PRESETS[nextPreset].title}`);
+                    })
+                  }
+                  className="w-full p-2 rounded-xl bg-[#F0FDF4] hover:bg-[#DCFCE7] border border-[#0F5132]/25 text-center transition-colors cursor-pointer"
+                >
+                  <p className="text-[8px] uppercase font-mono text-[#0F5132]">Expense Amount</p>
+                  <p className="text-base font-extrabold text-[#0F5132] tabular-nums">
+                    ₹{activePreset.amount.toLocaleString('en-IN')}
+                  </p>
+                  <p className="text-[9px] text-[#64748B] truncate">{activePreset.title}</p>
+                </motion.button>
+
+                {/* Category & Interactive Equal/Custom Split Mode Toggle */}
+                <motion.div variants={screenItemVariants} className="grid grid-cols-2 gap-1.5 text-[9px]">
+                  <div className="p-1.5 rounded-lg bg-white border border-[#E2E8F0]">
+                    <p className="text-[8px] text-[#64748B]">Category</p>
+                    <p className="font-semibold text-[#0F172A]">{activePreset.category}</p>
+                  </div>
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    type="button"
+                    onClick={(e) =>
+                      stopAndRun(e, () => {
+                        const nextMode = appState.splitMode === 'equal' ? 'custom' : 'equal';
+                        setAppState((prev) => ({ ...prev, splitMode: nextMode }));
+                        triggerToast(
+                          nextMode === 'equal'
+                            ? 'Switched to Equal 4-way split'
+                            : 'Switched to Custom member split'
+                        );
+                      })
+                    }
+                    className="p-1.5 rounded-lg bg-[#E8F5E9] hover:bg-[#DCFCE7] border border-[#0F5132]/30 text-left transition-colors cursor-pointer"
+                  >
+                    <p className="text-[8px] text-[#0F5132]">Split Mode</p>
+                    <p className="font-bold text-[#0F5132]">
+                      {appState.splitMode === 'equal' ? 'Equal (4x)' : 'Custom Split'}
+                    </p>
+                  </motion.button>
+                </motion.div>
+
+                {/* Staggered Member Split Rows */}
+                <motion.div variants={screenItemVariants} className="space-y-1 text-[9px]">
+                  {['Aditya (You)', 'Rahul Sharma', 'Aman Verma', 'Rohit Singh'].map(
+                    (member, idx) => {
+                      const share =
+                        appState.splitMode === 'equal'
+                          ? Math.round(activePreset.amount / 4)
+                          : activePreset.customShares[idx];
+                      return (
+                        <motion.div
+                          key={member}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.12 + idx * 0.045 }}
+                          className="px-2 py-1 rounded bg-white border border-[#E2E8F0] flex items-center justify-between"
+                        >
+                          <span className="text-[#0F172A] font-medium truncate">{member}</span>
+                          <span className="font-mono font-bold text-[#0F5132] tabular-nums">
+                            ₹{share}
+                          </span>
+                        </motion.div>
+                      );
+                    }
+                  )}
+                </motion.div>
+
+                <motion.button
+                  variants={screenItemVariants}
+                  whileTap={{ scale: 0.97 }}
+                  type="button"
+                  onClick={(e) =>
+                    onNavigate(
+                      'settlement',
+                      e,
+                      `Saved ₹${activePreset.amount} (${appState.splitMode.toUpperCase()} split)`
+                    )
+                  }
+                  className="w-full py-1.5 rounded-lg bg-[#0F5132] hover:bg-[#136F43] text-white text-[10px] font-semibold transition-colors cursor-pointer"
+                >
+                  Save &amp; Split Expense →
+                </motion.button>
+              </>
+            )}
+
+            {screen === 'settlement' && (
+              <>
+                <motion.div
+                  variants={screenItemVariants}
+                  className="flex items-center justify-between border-b border-[#E2E8F0] pb-1"
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => onNavigate('home', e)}
+                    className="p-0.5 rounded hover:bg-slate-200 text-[#0F172A] cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="text-xs font-bold text-[#0F172A]">Settlement</span>
+                  {appState.settledMembers.rahul || appState.settledMembers.aman ? (
+                    <button
+                      type="button"
+                      onClick={(e) =>
+                        stopAndRun(e, () => {
+                          setAppState((prev) => ({
+                            ...prev,
+                            settledMembers: { rahul: false, aman: false },
+                          }));
+                          triggerToast('Reset member balances');
+                        })
+                      }
+                      className="text-[9px] text-[#0F5132] font-semibold flex items-center gap-0.5 cursor-pointer"
+                    >
+                      <RotateCcw className="w-2.5 h-2.5" />
+                      Reset
+                    </button>
+                  ) : (
+                    <span className="text-[9px] text-[#16A34A] font-semibold">Synced</span>
+                  )}
+                </motion.div>
+
+                {/* Hero Receivable Card */}
+                <motion.div
+                  variants={screenItemVariants}
+                  className="p-2.5 rounded-xl bg-[#0F5132] text-white"
+                >
+                  <p className="text-[9px] text-[#E8F5E9]">Net Receivable Balance</p>
+                  <p className="text-base font-extrabold tabular-nums mt-0.5">
+                    {netReceivable > 0
+                      ? `+ ₹${netReceivable.toLocaleString('en-IN')}`
+                      : '₹0 (All Settled!)'}
+                  </p>
+                  <p className="text-[9px] text-[#E8F5E9]/90 mt-0.5">
+                    {netReceivable > 0
+                      ? 'Tap "Settle" below to record payment'
+                      : 'All Flat 204 members are settled up'}
+                  </p>
+                </motion.div>
+
+                {/* Interactive Member Settlement Cards */}
+                <motion.div variants={screenItemVariants} className="space-y-1.5 text-[9px]">
+                  {/* Rahul Card */}
+                  <motion.div
+                    layout
+                    className="p-2 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="font-bold text-[#0F172A]">Rahul Sharma</p>
+                      <p className="text-[8px] text-[#64748B]">Rent &amp; Groceries share</p>
+                    </div>
+                    {appState.settledMembers.rahul ? (
+                      <motion.span
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16A34A]"
+                      >
+                        <CheckCircle2 className="w-3 h-3" />
+                        Settled
+                      </motion.span>
+                    ) : (
+                      <motion.button
+                        whileTap={{ scale: 0.94 }}
+                        type="button"
+                        onClick={(e) =>
+                          stopAndRun(e, () => {
+                            setAppState((prev) => ({
+                              ...prev,
+                              settledMembers: { ...prev.settledMembers, rahul: true },
+                            }));
+                            triggerToast('Rahul ₹1,450 marked as Settled ✓');
+                          })
+                        }
+                        className="px-2 py-1 rounded bg-[#E8F5E9] hover:bg-[#0F5132] text-[#0F5132] hover:text-white font-bold transition-colors cursor-pointer"
+                      >
+                        Settle ₹1,450
+                      </motion.button>
+                    )}
+                  </motion.div>
+
+                  {/* Aman Card */}
+                  <motion.div
+                    layout
+                    className="p-2 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="font-bold text-[#0F172A]">Aman Verma</p>
+                      <p className="text-[8px] text-[#64748B]">Electricity &amp; Gas share</p>
+                    </div>
+                    {appState.settledMembers.aman ? (
+                      <motion.span
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16A34A]"
+                      >
+                        <CheckCircle2 className="w-3 h-3" />
+                        Settled
+                      </motion.span>
+                    ) : (
+                      <motion.button
+                        whileTap={{ scale: 0.94 }}
+                        type="button"
+                        onClick={(e) =>
+                          stopAndRun(e, () => {
+                            setAppState((prev) => ({
+                              ...prev,
+                              settledMembers: { ...prev.settledMembers, aman: true },
+                            }));
+                            triggerToast('Aman ₹1,000 marked as Settled ✓');
+                          })
+                        }
+                        className="px-2 py-1 rounded bg-[#E8F5E9] hover:bg-[#0F5132] text-[#0F5132] hover:text-white font-bold transition-colors cursor-pointer"
+                      >
+                        Settle ₹1,000
+                      </motion.button>
+                    )}
+                  </motion.div>
+
+                  {/* Rohit Settled */}
+                  <div className="px-2 py-1 rounded-lg bg-[#F0FDF4] border border-[#16A34A]/30 flex items-center justify-between">
+                    <span className="font-medium text-[#0F5132]">Rohit Singh</span>
+                    <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-[#16A34A]">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Settled
+                    </span>
+                  </div>
+                </motion.div>
+              </>
+            )}
+
+            {screen === 'report' && (
+              <>
+                <motion.div
+                  variants={screenItemVariants}
+                  className="flex items-center justify-between border-b border-[#E2E8F0] pb-1"
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => onNavigate('home', e)}
+                    className="p-0.5 rounded hover:bg-slate-200 text-[#0F172A] cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="text-xs font-bold text-[#0F172A]">Monthly Report</span>
+                  <PieChart className="w-3.5 h-3.5 text-[#0F5132]" />
+                </motion.div>
+
+                {/* Interactive Month Switcher */}
+                <motion.button
+                  variants={screenItemVariants}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={(e) =>
+                    stopAndRun(e, () => {
+                      const nextM = appState.reportMonth === 'oct' ? 'sep' : 'oct';
+                      setAppState((prev) => ({ ...prev, reportMonth: nextM }));
+                      triggerToast(
+                        nextM === 'oct'
+                          ? 'Viewing October 2026 Report'
+                          : 'Viewing September 2026 Report'
+                      );
+                    })
+                  }
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#F0FDF4] border border-[#E2E8F0] flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <div className="text-left">
+                    <p className="text-[8px] text-[#64748B]">Selected Month</p>
+                    <p className="text-[11px] font-bold text-[#0F172A]">
+                      {appState.reportMonth === 'oct' ? 'October 2026' : 'September 2026'} ·{' '}
+                      {activeGroup.name}
+                    </p>
+                  </div>
+                  <span className="text-xs font-extrabold text-[#0F5132] tabular-nums">
+                    {appState.reportMonth === 'oct' ? '₹35,840' : '₹31,200'}
+                  </span>
+                </motion.button>
+
+                {/* Animated Category Bars */}
+                <motion.div variants={screenItemVariants} className="space-y-1.5 text-[9px]">
+                  {(appState.reportMonth === 'oct'
+                    ? [
+                        {
+                          label: 'House Rent',
+                          amount: '₹24,000',
+                          pct: '67%',
+                          w: '67%',
+                          color: '#0F5132',
+                        },
+                        {
+                          label: 'Groceries & Kitchen',
+                          amount: '₹6,840',
+                          pct: '19%',
+                          w: '26%',
+                          color: '#198754',
+                        },
+                        {
+                          label: 'Electricity & Wi-Fi',
+                          amount: '₹5,000',
+                          pct: '14%',
+                          w: '18%',
+                          color: '#2563EB',
+                        },
+                      ]
+                    : [
+                        {
+                          label: 'House Rent',
+                          amount: '₹24,000',
+                          pct: '77%',
+                          w: '77%',
+                          color: '#0F5132',
+                        },
+                        {
+                          label: 'Groceries & Kitchen',
+                          amount: '₹4,500',
+                          pct: '14%',
+                          w: '19%',
+                          color: '#198754',
+                        },
+                        {
+                          label: 'Electricity & Wi-Fi',
+                          amount: '₹2,700',
+                          pct: '9%',
+                          w: '12%',
+                          color: '#2563EB',
+                        },
+                      ]
+                  ).map((cat, idx) => (
+                    <motion.div
+                      key={cat.label}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + idx * 0.055 }}
+                      className="p-1.5 rounded-lg bg-white border border-[#E2E8F0] space-y-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-[#0F172A]">{cat.label}</span>
+                        <span className="font-mono font-bold text-[#0F172A] tabular-nums">
+                          {cat.amount} ({cat.pct})
+                        </span>
+                      </div>
+                      <div className="w-full h-1.5 rounded-full bg-[#E2E8F0] overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: cat.w }}
+                          transition={{ type: 'spring', stiffness: 220, damping: 24, delay: 0.15 }}
+                          className="h-full rounded-full"
+                          style={{ backgroundColor: cat.color }}
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                <motion.button
+                  variants={screenItemVariants}
+                  whileTap={{ scale: 0.97 }}
+                  type="button"
+                  onClick={(e) =>
+                    stopAndRun(e, () =>
+                      triggerToast('Exported KHATA_Monthly_Report.pdf to Downloads!')
+                    )
+                  }
+                  className="w-full py-1.5 rounded-lg bg-[#0F5132] hover:bg-[#136F43] text-white text-[10px] font-semibold text-center transition-colors cursor-pointer"
+                >
+                  Export Monthly Report (PDF)
+                </motion.button>
+              </>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Live In-App Android Toast Notification Overlay */}
-      {appState.toastMessage && (
-        <div className="absolute bottom-9 inset-x-3 z-30 pointer-events-none flex justify-center animate-[fadeIn_0.2s_ease-out]">
-          <div className="px-2.5 py-1 rounded-full bg-[#0F172A]/95 text-white text-[9px] font-mono shadow-lg border border-emerald-500/40 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="truncate">{appState.toastMessage}</span>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {appState.toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.95 }}
+            className="absolute bottom-9 inset-x-3 z-30 pointer-events-none flex justify-center"
+          >
+            <div className="px-2.5 py-1 rounded-full bg-[#0F172A]/95 text-white text-[9px] font-mono shadow-lg border border-emerald-500/40 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+              <span className="truncate">{appState.toastMessage}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Interactive Android Bottom Navigation Bar inside Phone */}
-      <div className="px-2 py-1 bg-white border-t border-[#E2E8F0] grid grid-cols-5 gap-0.5 text-[8px] font-semibold">
+      <div className="px-2 py-1 bg-white border-t border-[#E2E8F0] grid grid-cols-5 gap-0.5 text-[8px] font-semibold shrink-0">
         {[
           { key: 'login' as KhataScreenKey, label: 'Auth', icon: Lock },
           { key: 'home' as KhataScreenKey, label: 'Home', icon: Home },
@@ -773,6 +898,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   variant = 'card',
 }) => {
   const [activeScreen, setActiveScreen] = useState<KhataScreenKey>('home');
+  const [direction, setDirection] = useState<number>(1);
   const [autoPlay, setAutoPlay] = useState<boolean>(false);
   const [phoneTilt, setPhoneTilt] = useState<{ rx: number; ry: number; gx: number; gy: number }>({
     rx: 4,
@@ -807,6 +933,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   useEffect(() => {
     if (!autoPlay) return;
     const id = window.setInterval(() => {
+      setDirection(1);
       setActiveScreen((prev) => {
         const idx = KHATA_SCREENS.findIndex((s) => s.key === prev);
         return KHATA_SCREENS[(idx + 1) % KHATA_SCREENS.length].key;
@@ -824,6 +951,8 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
     toast?: string
   ) => {
     if (e) e.stopPropagation();
+    const targetIdx = KHATA_SCREENS.findIndex((s) => s.key === key);
+    setDirection(targetIdx >= currentIdx ? 1 : -1);
     setActiveScreen(key);
     if (toast) {
       triggerToast(toast);
@@ -832,12 +961,14 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setDirection(-1);
     const prevIdx = (currentIdx - 1 + KHATA_SCREENS.length) % KHATA_SCREENS.length;
     setActiveScreen(KHATA_SCREENS[prevIdx].key);
   };
 
   const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setDirection(1);
     const nextIdx = (currentIdx + 1) % KHATA_SCREENS.length;
     setActiveScreen(KHATA_SCREENS[nextIdx].key);
   };
@@ -940,6 +1071,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
               <div className="w-full h-[356px] rounded-[22px] overflow-hidden border border-zinc-800 relative z-10">
                 <KhataPhoneScreen
                   screen={activeScreen}
+                  direction={direction}
                   appState={appState}
                   setAppState={setAppState}
                   onNavigate={handleNavigate}
@@ -1089,6 +1221,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
           <div className="flex-1 w-full rounded-[18px] overflow-hidden border border-zinc-800 relative z-10">
             <KhataPhoneScreen
               screen={activeScreen}
+              direction={direction}
               appState={appState}
               setAppState={setAppState}
               onNavigate={handleNavigate}
