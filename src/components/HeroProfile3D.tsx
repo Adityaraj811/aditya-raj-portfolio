@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Code2, Smartphone, Database, Mail, Github } from 'lucide-react';
 
 interface HeroProfile3DProps {
@@ -23,59 +23,93 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
   githubUsername,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState<{ rotateX: number; rotateY: number; glareX: number; glareY: number; isHovered: boolean }>({
-    rotateX: 0,
-    rotateY: 0,
-    glareX: 50,
-    glareY: 50,
-    isHovered: false,
-  });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    if (
-      typeof window !== 'undefined' &&
-      (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-        window.matchMedia('(hover: none)').matches)
-    ) {
-      return;
+  const applyTiltFromPoint = (clientX: number, clientY: number) => {
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
     }
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+    rafRef.current = window.requestAnimationFrame(() => {
+      const container = containerRef.current;
+      const card = cardRef.current;
+      if (!container || !card) return;
+      const rect = container.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
 
-    const rotateX = ((y - centerY) / centerY) * -9;
-    const rotateY = ((x - centerX) / centerX) * 9;
+      const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+      const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
 
-    setTilt({
-      rotateX,
-      rotateY,
-      glareX: (x / rect.width) * 100,
-      glareY: (y / rect.height) * 100,
-      isHovered: true,
+      const rotateX = ((y - centerY) / centerY) * -9;
+      const rotateY = ((x - centerX) / centerX) * 9;
+
+      card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+
+      if (glareRef.current) {
+        const gx = ((x / rect.width) * 100).toFixed(1);
+        const gy = ((y / rect.height) * 100).toFixed(1);
+        glareRef.current.style.opacity = '1';
+        glareRef.current.style.background = `radial-gradient(380px circle at ${gx}% ${gy}%, rgba(59, 130, 246, 0.14), transparent 65%)`;
+      }
     });
   };
 
-  const handleMouseLeave = () => {
-    setTilt({
-      rotateX: 0,
-      rotateY: 0,
-      glareX: 50,
-      glareY: 50,
-      isHovered: false,
-    });
+  const resetTilt = () => {
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    touchStartRef.current = null;
+    if (cardRef.current) {
+      cardRef.current.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    }
+    if (glareRef.current) {
+      glareRef.current.style.opacity = '0';
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    applyTiltFromPoint(e.clientX, e.clientY);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      touchStartRef.current = { x: t.clientX, y: t.clientY };
+      applyTiltFromPoint(t.clientX, t.clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 1 || !touchStartRef.current) return;
+    const t = e.touches[0];
+    const dy = Math.abs(t.clientY - touchStartRef.current.y);
+    const dx = Math.abs(t.clientX - touchStartRef.current.x);
+
+    // Yield immediately to native vertical page scroll
+    if (dy > 10 && dy > dx) {
+      resetTilt();
+      return;
+    }
+    applyTiltFromPoint(t.clientX, t.clientY);
   };
 
   return (
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={resetTilt}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={resetTilt}
+      onTouchCancel={resetTilt}
       className="relative h-full flex flex-col justify-center select-none"
-      style={{ perspective: '1200px' }}
+      style={{ perspective: '1200px', touchAction: 'pan-y' }}
     >
       {/* Ambient Background Glow Behind 3D Portrait Card */}
       <div
@@ -88,19 +122,18 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
 
       {/* 3D Tilting Showcase Card */}
       <div
+        ref={cardRef}
         className="relative h-full rounded-2xl bg-white/90 dark:bg-[#0D0E14]/90 backdrop-blur-xl border border-zinc-200/90 dark:border-zinc-800/90 p-5 sm:p-6 flex flex-col justify-between shadow-xl transition-transform duration-200 ease-out"
         style={{
-          transform: `rotateX(${tilt.rotateX.toFixed(2)}deg) rotateY(${tilt.rotateY.toFixed(2)}deg)`,
+          transform: 'rotateX(0deg) rotateY(0deg)',
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Dynamic Cursor Glare Overlay */}
+        {/* Dynamic Cursor / Touch Glare Overlay */}
         <div
+          ref={glareRef}
           className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300"
-          style={{
-            opacity: tilt.isHovered ? 1 : 0,
-            background: `radial-gradient(380px circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(59, 130, 246, 0.12), transparent 65%)`,
-          }}
+          style={{ opacity: 0 }}
         />
 
         {/* Center: Continuously Animated 3D Conic Gradient Border + Rotating Light-Ring */}
@@ -108,28 +141,28 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
           className="relative z-10 my-auto py-3 flex flex-col items-center text-center"
           style={{ transform: 'translateZ(32px)' }}
         >
-          {/* Floating 3D Geometric Elements Around Portrait (Never obscuring face) */}
+          {/* Floating 3D Geometric Elements Around Portrait (Visible on Phone, Tablet & Desktop) */}
           <div
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute -top-1 left-1 z-20 animate-float-slow"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute -top-1 left-0 sm:left-1 z-20 animate-float-slow"
             style={{ transform: 'translateZ(46px)' }}
           >
-            <Code2 className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+            <Code2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500 shrink-0" />
             <span>Web &amp; Full-Stack</span>
           </div>
 
           <div
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute top-1/2 -right-2 z-20 animate-float-delayed"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute top-1/2 -right-1 sm:-right-2 z-20 animate-float-delayed"
             style={{ transform: 'translateZ(50px)' }}
           >
-            <Smartphone className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+            <Smartphone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-500 shrink-0" />
             <span>Android · MVVM</span>
           </div>
 
           <div
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute bottom-20 left-0 z-20 animate-float-reverse"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute bottom-20 left-0 z-20 animate-float-reverse"
             style={{ transform: 'translateZ(42px)' }}
           >
-            <Database className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+            <Database className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-500 shrink-0" />
             <span>Java · Spring Boot</span>
           </div>
 
@@ -142,7 +175,7 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
             <div className="profile-3d-orbit-halo" aria-hidden="true" />
 
             {/* Portrait Image Frame — Preserves Natural Aspect Ratio Without Distortion */}
-            <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-[20px] overflow-hidden bg-zinc-100 dark:bg-zinc-900 z-10">
+            <div className="relative w-52 h-52 sm:w-64 sm:h-64 rounded-[20px] overflow-hidden bg-zinc-100 dark:bg-zinc-900 z-10">
               <img
                 src={profileImgSrc}
                 alt={`${name} — ${headline}`}

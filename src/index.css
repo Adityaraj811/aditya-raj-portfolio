@@ -110,6 +110,7 @@
     transparent 100%
   );
   animation: spinSlow 6s linear infinite;
+  will-change: transform;
   z-index: 1;
 }
 
@@ -125,19 +126,23 @@
     transparent 100%
   );
   animation: spinReverseSlow 9s linear infinite;
+  will-change: transform;
   z-index: 1;
 }
 
 .animate-float-slow {
   animation: floatSlow 4.8s ease-in-out infinite;
+  will-change: transform;
 }
 
 .animate-float-delayed {
   animation: floatDelayed 5.4s ease-in-out infinite;
+  will-change: transform;
 }
 
 .animate-float-reverse {
   animation: floatReverse 4.3s ease-in-out infinite;
+  will-change: transform;
 }
 
 @keyframes khataScreenEnter {
@@ -159,16 +164,6 @@
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
-  }
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 

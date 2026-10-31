@@ -506,35 +506,25 @@ export default function App() {
             />
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-              {/* Top Utility Bar inside Hero: Identity Kicker + Theme Switcher */}
-              <div className="flex flex-wrap items-center justify-between gap-4 pb-8 mb-8 border-b border-zinc-200/70 dark:border-zinc-800/70">
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-zinc-600 dark:text-zinc-400">
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">
-                    {personal.professionalHeadline.toUpperCase()}
-                  </span>
-                  <span aria-hidden="true">·</span>
-                  <span>{personal.roleTriad}</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={toggleTheme}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer whitespace-nowrap"
-                    aria-label="Toggle color theme"
-                  >
-                    {theme === 'dark' ? (
-                      <>
-                        <Sun className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Light Theme</span>
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="w-3.5 h-3.5 text-blue-600" />
-                        <span>Dark Theme</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+              {/* Top Utility Bar inside Hero: Theme Switcher */}
+              <div className="flex items-center justify-end pb-4 mb-4">
+                <button
+                  onClick={toggleTheme}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer whitespace-nowrap"
+                  aria-label="Toggle color theme"
+                >
+                  {theme === 'dark' ? (
+                    <>
+                      <Sun className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Light Theme</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Dark Theme</span>
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* 2-Column Split Hero */}
@@ -608,78 +598,103 @@ export default function App() {
                       </button>
                     </div>
 
-                    {/* Verified Social Links Bar */}
-                    <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-4">
-                      <div className="flex flex-wrap items-center gap-4">
+                    {/* 3D Elevated Social Buttons & Highlighted Freelance Services CTA */}
+                    <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-3.5">
+                      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                        {/* LinkedIn 3D Button */}
                         <a
                           href={personal.linkedinUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
                           aria-label="Aditya Raj on LinkedIn"
+                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-blue-500/60 dark:hover:border-blue-400/60 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(59,130,246,0.28),0_8px_20px_-6px_rgba(59,130,246,0.22)] hover:shadow-[0_6px_0_0_rgba(59,130,246,0.4),0_12px_24px_-4px_rgba(59,130,246,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(59,130,246,0.3)] transition-all duration-150 whitespace-nowrap"
                         >
-                          <Linkedin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          <span className="w-6 h-6 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                            <Linkedin className="w-3.5 h-3.5" />
+                          </span>
                           <span>LinkedIn</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </a>
 
-                        <span className="text-zinc-300 dark:text-zinc-700" aria-hidden="true">
-                          /
-                        </span>
-
+                        {/* GitHub 3D Button */}
                         <a
                           href={personal.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap"
                           aria-label="Aditya Raj on GitHub"
+                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-zinc-400 dark:hover:border-zinc-500 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(113,113,122,0.32),0_8px_20px_-6px_rgba(0,0,0,0.28)] hover:shadow-[0_6px_0_0_rgba(161,161,170,0.42),0_12px_24px_-4px_rgba(161,161,170,0.25)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(113,113,122,0.3)] transition-all duration-150 whitespace-nowrap"
                         >
-                          <Github className="w-4 h-4" />
+                          <span className="w-6 h-6 rounded-lg bg-zinc-500/15 border border-zinc-500/30 flex items-center justify-center text-zinc-800 dark:text-zinc-200 group-hover:scale-110 transition-transform">
+                            <Github className="w-3.5 h-3.5" />
+                          </span>
                           <span>GitHub (@{personal.githubUsername})</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </a>
 
-                        <span className="text-zinc-300 dark:text-zinc-700" aria-hidden="true">
-                          /
-                        </span>
-
+                        {/* WhatsApp 3D Button */}
                         <a
                           href={personal.whatsappDirectUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors whitespace-nowrap"
                           aria-label="Contact Aditya Raj on WhatsApp"
+                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-emerald-500/60 dark:hover:border-emerald-400/60 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(16,185,129,0.28),0_8px_20px_-6px_rgba(16,185,129,0.22)] hover:shadow-[0_6px_0_0_rgba(16,185,129,0.42),0_12px_24px_-4px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(16,185,129,0.3)] transition-all duration-150 whitespace-nowrap"
                         >
-                          <MessageSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <span className="w-6 h-6 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                            <MessageSquare className="w-3.5 h-3.5" />
+                          </span>
                           <span>WhatsApp</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </a>
 
-                        <span className="text-zinc-300 dark:text-zinc-700" aria-hidden="true">
-                          /
-                        </span>
-
+                        {/* Instagram 3D Button */}
                         <a
                           href={personal.instagramUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors whitespace-nowrap"
                           aria-label="Aditya Raj on Instagram"
+                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-pink-500/60 dark:hover:border-pink-400/60 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(236,72,153,0.28),0_8px_20px_-6px_rgba(236,72,153,0.22)] hover:shadow-[0_6px_0_0_rgba(236,72,153,0.42),0_12px_24px_-4px_rgba(236,72,153,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(236,72,153,0.3)] transition-all duration-150 whitespace-nowrap"
                         >
-                          <Instagram className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+                          <span className="w-6 h-6 rounded-lg bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform">
+                            <Instagram className="w-3.5 h-3.5" />
+                          </span>
                           <span>Instagram</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-pink-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </a>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={navigateToServices}
-                        className="inline-flex items-center gap-1.5 text-xs font-mono text-blue-600 dark:text-blue-400 hover:underline transition-colors cursor-pointer"
-                      >
-                        <span>Freelance Services</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      {/* Highlighted 3D Freelance Services Button with Available Badge */}
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={navigateToServices}
+                          className="group w-full sm:w-auto inline-flex flex-wrap items-center justify-between sm:justify-start gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600/15 via-indigo-600/15 to-emerald-500/10 dark:from-blue-500/20 dark:via-indigo-500/15 dark:to-emerald-500/15 backdrop-blur-md border border-blue-500/45 dark:border-blue-400/45 border-t-blue-300/50 hover:border-blue-400 text-left shadow-[0_4px_0_0_rgba(37,99,235,0.45),0_12px_28px_-6px_rgba(59,130,246,0.32)] hover:shadow-[0_6px_0_0_rgba(37,99,235,0.58),0_16px_34px_-4px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(37,99,235,0.4)] transition-all duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                              <Briefcase className="w-3.5 h-3.5" />
+                            </span>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
+                                  Freelance Services
+                                </span>
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/35 text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-300">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                  Available
+                                </span>
+                              </div>
+                              <p className="text-[11px] font-mono text-zinc-600 dark:text-zinc-300">
+                                Websites · Landing Pages · Custom Apps
+                              </p>
+                            </div>
+                          </div>
+
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 group-hover:bg-blue-500 text-white text-xs font-semibold transition-colors shrink-0">
+                            <span>Explore</span>
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </ScrollReveal>

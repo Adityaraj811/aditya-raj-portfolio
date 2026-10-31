@@ -175,6 +175,7 @@ interface KhataInteractiveAppState {
 interface KhataPhoneScreenProps {
   screen: KhataScreenKey;
   direction: number;
+  revealCycle: number;
   appState: KhataInteractiveAppState;
   setAppState: React.Dispatch<React.SetStateAction<KhataInteractiveAppState>>;
   onNavigate: (screen: KhataScreenKey, e?: React.MouseEvent, toast?: string) => void;
@@ -184,6 +185,7 @@ interface KhataPhoneScreenProps {
 export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
   screen,
   direction,
+  revealCycle,
   appState,
   setAppState,
   onNavigate,
@@ -202,7 +204,10 @@ export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
   const netReceivable = rahulPending + amanPending;
 
   return (
-    <div className="relative w-full h-full flex flex-col justify-between overflow-hidden select-none font-sans bg-[#F8FAFC] text-[#0F172A]">
+    <div
+      className="relative w-full h-full flex flex-col justify-between overflow-hidden select-none font-sans bg-[#F8FAFC] text-[#0F172A] touch-pan-y"
+      style={{ touchAction: 'pan-y' }}
+    >
       {/* Clean Mobile Status Bar */}
       <div className="px-3.5 pt-2 pb-1 flex items-center justify-between text-[10px] font-mono text-[#64748B] shrink-0">
         <span>9:41</span>
@@ -210,16 +215,17 @@ export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
       </div>
 
       {/* Main Screen Content with Framer Motion AnimatePresence & Staggered Entrance */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden touch-pan-y" style={{ touchAction: 'pan-y' }}>
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
-            key={screen}
+            key={`${screen}-${revealCycle}`}
             custom={direction}
             variants={screenContainerVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="w-full h-full flex flex-col justify-between px-3.5 pb-2 overflow-hidden"
+            className="w-full h-full flex flex-col justify-between px-3.5 pb-2 overflow-hidden touch-pan-y"
+            style={{ touchAction: 'pan-y' }}
           >
             {screen === 'login' && (
               <>
@@ -483,7 +489,10 @@ export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
                 </motion.button>
 
                 {/* Category & Interactive Equal/Custom Split Mode Toggle */}
-                <motion.div variants={screenItemVariants} className="grid grid-cols-2 gap-1.5 text-[9px]">
+                <motion.div
+                  variants={screenItemVariants}
+                  className="grid grid-cols-2 gap-1.5 text-[9px]"
+                >
                   <div className="p-1.5 rounded-lg bg-white border border-[#E2E8F0]">
                     <p className="text-[8px] text-[#64748B]">Category</p>
                     <p className="font-semibold text-[#0F172A]">{activePreset.category}</p>
@@ -894,18 +903,34 @@ interface KhataScreenShowcaseProps {
   variant?: 'card' | 'modal';
 }
 
+interface PointerSwipeState {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  currentX: number;
+  currentY: number;
+  isHorizontalSwipe: boolean;
+  isVerticalScroll: boolean;
+}
+
+const SWIPE_DISTANCE_THRESHOLD_PX = 36;
+const SWIPE_DIRECTION_RATIO = 1.3;
+
 export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   variant = 'card',
 }) => {
   const [activeScreen, setActiveScreen] = useState<KhataScreenKey>('home');
   const [direction, setDirection] = useState<number>(1);
+  const [revealCycle, setRevealCycle] = useState<number>(0);
   const [autoPlay, setAutoPlay] = useState<boolean>(false);
-  const [phoneTilt, setPhoneTilt] = useState<{ rx: number; ry: number; gx: number; gy: number }>({
-    rx: 4,
-    ry: -8,
-    gx: 35,
-    gy: 25,
-  });
+
+  // Direct DOM refs for 60fps 3D tilt & swipe feedback without React re-renders
+  const containerRef = useRef<HTMLDivElement>(null);
+  const phoneFrameRef = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const pointerSwipeRef = useRef<PointerSwipeState | null>(null);
+  const suppressNextClickRef = useRef<boolean>(false);
 
   const [appState, setAppState] = useState<KhataInteractiveAppState>({
     showPassword: false,
@@ -929,6 +954,30 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
       setAppState((prev) => ({ ...prev, toastMessage: null }));
     }, 2200);
   };
+
+  // Trigger staggered entrance animation when the KHATA card scrolls into view on mobile/tablet
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+
+    let wasIntersecting = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !wasIntersecting) {
+            wasIntersecting = true;
+            setRevealCycle((c) => c + 1);
+          } else if (!entry.isIntersecting) {
+            wasIntersecting = false;
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!autoPlay) return;
@@ -959,36 +1008,164 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
     }
   };
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePrev = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setDirection(-1);
     const prevIdx = (currentIdx - 1 + KHATA_SCREENS.length) % KHATA_SCREENS.length;
     setActiveScreen(KHATA_SCREENS[prevIdx].key);
   };
 
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleNext = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setDirection(1);
     const nextIdx = (currentIdx + 1) % KHATA_SCREENS.length;
     setActiveScreen(KHATA_SCREENS[nextIdx].key);
   };
 
-  const handlePhoneMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width;
-    const py = (e.clientY - rect.top) / rect.height;
-    const ry = (px - 0.5) * 22;
-    const rx = (0.5 - py) * 16;
-    setPhoneTilt({ rx, ry, gx: px * 100, gy: py * 100 });
+  const applyPhoneTiltDOM = (
+    rect: DOMRect,
+    clientX: number,
+    clientY: number,
+    dragOffsetX = 0
+  ) => {
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
+    }
+    rafRef.current = window.requestAnimationFrame(() => {
+      if (!phoneFrameRef.current || !rect.width || !rect.height) return;
+      const px = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const py = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+      const ry = (px - 0.5) * 20;
+      const rx = (0.5 - py) * 14;
+      const clampedShiftX = Math.max(-18, Math.min(18, dragOffsetX * 0.18));
+      phoneFrameRef.current.style.transform = `translate3d(${clampedShiftX.toFixed(
+        1
+      )}px, 0, 0) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+      if (glareRef.current) {
+        glareRef.current.style.background = `radial-gradient(circle at ${(px * 100).toFixed(
+          1
+        )}% ${(py * 100).toFixed(1)}%, rgba(255,255,255,0.22), transparent 55%)`;
+      }
+    });
   };
 
-  const handlePhoneMouseLeave = () => {
-    setPhoneTilt({ rx: 4, ry: -8, gx: 35, gy: 25 });
+  const resetPhoneTiltDOM = () => {
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    if (phoneFrameRef.current) {
+      phoneFrameRef.current.style.transform = 'translate3d(0, 0, 0) rotateX(4deg) rotateY(-8deg)';
+    }
+    if (glareRef.current) {
+      glareRef.current.style.background =
+        'radial-gradient(circle at 35% 25%, rgba(255,255,255,0.22), transparent 55%)';
+    }
+  };
+
+  // Library-agnostic W3C Pointer Events touch-to-swipe & 3D tilt gesture handlers
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    suppressNextClickRef.current = false;
+    pointerSwipeRef.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      currentX: e.clientX,
+      currentY: e.clientY,
+      isHorizontalSwipe: false,
+      isVerticalScroll: false,
+    };
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    // Hovering with a mouse without pressing buttons -> apply 3D tilt only
+    if (e.pointerType === 'mouse' && e.buttons === 0) {
+      applyPhoneTiltDOM(rect, e.clientX, e.clientY, 0);
+      return;
+    }
+
+    const state = pointerSwipeRef.current;
+    if (!state || state.pointerId !== e.pointerId) return;
+
+    state.currentX = e.clientX;
+    state.currentY = e.clientY;
+    const dx = state.currentX - state.startX;
+    const dy = state.currentY - state.startY;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // If vertical movement dominates, lock as vertical scroll so browser pan-y handles it natively
+    if (!state.isHorizontalSwipe && absDy > 8 && absDy >= absDx) {
+      state.isVerticalScroll = true;
+      resetPhoneTiltDOM();
+      return;
+    }
+
+    // If horizontal movement dominates, lock as horizontal swipe & provide live 3D drag feedback
+    if (!state.isVerticalScroll && absDx > 10 && absDx > absDy * SWIPE_DIRECTION_RATIO) {
+      state.isHorizontalSwipe = true;
+      applyPhoneTiltDOM(rect, e.clientX, e.clientY, dx);
+    }
+  };
+
+  const finalizePointerSwipe = (e: React.PointerEvent<HTMLDivElement>, cancelled = false) => {
+    const state = pointerSwipeRef.current;
+    if (state && state.pointerId === e.pointerId && !cancelled && !state.isVerticalScroll) {
+      const dx = (e.clientX || state.currentX) - state.startX;
+      const dy = (e.clientY || state.currentY) - state.startY;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (
+        (state.isHorizontalSwipe || absDx >= SWIPE_DISTANCE_THRESHOLD_PX) &&
+        absDx >= SWIPE_DISTANCE_THRESHOLD_PX &&
+        absDx > absDy * SWIPE_DIRECTION_RATIO
+      ) {
+        suppressNextClickRef.current = true;
+        if (dx < 0) {
+          handleNext();
+        } else {
+          handlePrev();
+        }
+      }
+    }
+
+    pointerSwipeRef.current = null;
+    resetPhoneTiltDOM();
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    finalizePointerSwipe(e, false);
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    finalizePointerSwipe(e, true);
+  };
+
+  const handlePointerLeave = () => {
+    if (!pointerSwipeRef.current) {
+      resetPhoneTiltDOM();
+    }
+  };
+
+  // Prevent accidental modal open when a user swipes horizontally on the KHATA card on mobile
+  const handleClickCapture = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (suppressNextClickRef.current) {
+      e.stopPropagation();
+      e.preventDefault();
+      suppressNextClickRef.current = false;
+    }
   };
 
   if (variant === 'modal') {
     return (
-      <div className="bg-zinc-950 text-zinc-100 p-5 sm:p-7 space-y-6 select-none">
+      <div
+        ref={containerRef}
+        className="bg-zinc-950 text-zinc-100 p-5 sm:p-7 space-y-6 select-none touch-pan-y"
+        style={{ touchAction: 'pan-y' }}
+      >
         {/* Top Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
           <div className="flex items-center gap-3">
@@ -1048,30 +1225,39 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           {/* 3D Perspective Phone Frame */}
           <div
-            className="lg:col-span-5 flex flex-col items-center py-2"
-            style={{ perspective: '1100px' }}
-            onMouseMove={handlePhoneMouseMove}
-            onMouseLeave={handlePhoneMouseLeave}
+            className="lg:col-span-5 flex flex-col items-center py-2 touch-pan-y"
+            style={{ perspective: '1100px', touchAction: 'pan-y' }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
+            onPointerLeave={handlePointerLeave}
+            onClickCapture={handleClickCapture}
           >
             <div
-              className="w-[275px] h-[390px] rounded-[30px] p-2.5 bg-zinc-900 border-2 border-zinc-700 shadow-[0_25px_60px_-15px_rgba(15,81,50,0.55)] relative transition-transform duration-200 ease-out"
+              ref={phoneFrameRef}
+              className="w-[275px] h-[390px] rounded-[30px] p-2.5 bg-zinc-900 border-2 border-zinc-700 shadow-[0_25px_60px_-15px_rgba(15,81,50,0.55)] relative transition-transform duration-200 ease-out touch-pan-y"
               style={{
-                transform: `rotateX(${phoneTilt.rx}deg) rotateY(${phoneTilt.ry}deg)`,
+                transform: 'translate3d(0, 0, 0) rotateX(4deg) rotateY(-8deg)',
                 transformStyle: 'preserve-3d',
+                touchAction: 'pan-y',
               }}
             >
               {/* Specular Glare Overlay */}
               <div
+                ref={glareRef}
                 className="pointer-events-none absolute inset-0 rounded-[28px] z-20 opacity-35"
                 style={{
-                  background: `radial-gradient(circle at ${phoneTilt.gx}% ${phoneTilt.gy}%, rgba(255,255,255,0.22), transparent 55%)`,
+                  background:
+                    'radial-gradient(circle at 35% 25%, rgba(255,255,255,0.22), transparent 55%)',
                 }}
               />
               <div className="w-16 h-1 rounded-full bg-zinc-700 mx-auto mb-1.5" />
-              <div className="w-full h-[356px] rounded-[22px] overflow-hidden border border-zinc-800 relative z-10">
+              <div className="w-full h-[356px] rounded-[22px] overflow-hidden border border-zinc-800 relative z-10 touch-pan-y">
                 <KhataPhoneScreen
                   screen={activeScreen}
                   direction={direction}
+                  revealCycle={revealCycle}
                   appState={appState}
                   setAppState={setAppState}
                   onNavigate={handleNavigate}
@@ -1125,9 +1311,15 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   // Default: Card Variant on Homepage Featured Projects
   return (
     <div
-      className="relative w-full h-full min-h-[410px] bg-zinc-950 text-zinc-100 p-4 sm:p-5 flex flex-col justify-between overflow-hidden select-none"
-      onMouseMove={handlePhoneMouseMove}
-      onMouseLeave={handlePhoneMouseLeave}
+      ref={containerRef}
+      className="relative w-full h-full min-h-[410px] bg-zinc-950 text-zinc-100 p-4 sm:p-5 flex flex-col justify-between overflow-hidden select-none touch-pan-y"
+      style={{ touchAction: 'pan-y' }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onPointerLeave={handlePointerLeave}
+      onClickCapture={handleClickCapture}
     >
       {/* Ambient Forest Green & Blue 3D Glow */}
       <div
@@ -1200,28 +1392,33 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
 
       {/* Centered 3D Tilted Android Phone Frame with Live App Interaction */}
       <div
-        className="relative z-10 my-2.5 flex justify-center items-center"
-        style={{ perspective: '1000px' }}
+        className="relative z-10 my-2.5 flex justify-center items-center touch-pan-y"
+        style={{ perspective: '1000px', touchAction: 'pan-y' }}
       >
         <div
-          className="w-full max-w-[268px] h-[345px] rounded-[26px] p-2 bg-zinc-900 border-2 border-zinc-700/90 shadow-[0_20px_50px_-12px_rgba(15,81,50,0.5)] flex flex-col relative transition-transform duration-200 ease-out"
+          ref={phoneFrameRef}
+          className="w-full max-w-[268px] h-[345px] rounded-[26px] p-2 bg-zinc-900 border-2 border-zinc-700/90 shadow-[0_20px_50px_-12px_rgba(15,81,50,0.5)] flex flex-col relative transition-transform duration-200 ease-out touch-pan-y"
           style={{
-            transform: `rotateX(${phoneTilt.rx}deg) rotateY(${phoneTilt.ry}deg)`,
+            transform: 'translate3d(0, 0, 0) rotateX(4deg) rotateY(-8deg)',
             transformStyle: 'preserve-3d',
+            touchAction: 'pan-y',
           }}
         >
           {/* Dynamic Specular Light Reflection */}
           <div
+            ref={glareRef}
             className="pointer-events-none absolute inset-0 rounded-[24px] z-20 opacity-30"
             style={{
-              background: `radial-gradient(circle at ${phoneTilt.gx}% ${phoneTilt.gy}%, rgba(255,255,255,0.22), transparent 55%)`,
+              background:
+                'radial-gradient(circle at 35% 25%, rgba(255,255,255,0.22), transparent 55%)',
             }}
           />
           <div className="w-14 h-1 rounded-full bg-zinc-700 mx-auto mb-1.5 shrink-0" />
-          <div className="flex-1 w-full rounded-[18px] overflow-hidden border border-zinc-800 relative z-10">
+          <div className="flex-1 w-full rounded-[18px] overflow-hidden border border-zinc-800 relative z-10 touch-pan-y">
             <KhataPhoneScreen
               screen={activeScreen}
               direction={direction}
+              revealCycle={revealCycle}
               appState={appState}
               setAppState={setAppState}
               onNavigate={handleNavigate}
@@ -1233,7 +1430,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
 
       {/* Bottom Interactive Hint Bar */}
       <div className="relative z-10 flex items-center justify-between text-[11px] font-mono text-zinc-400 pt-2 border-t border-zinc-800/80">
-        <span className="truncate">{currentMeta.title}</span>
+        <span className="truncate">{currentMeta.title} · Swipe or Tap</span>
         <span className="text-emerald-400 shrink-0 ml-2">Full 5-Screen Gallery →</span>
       </div>
     </div>
