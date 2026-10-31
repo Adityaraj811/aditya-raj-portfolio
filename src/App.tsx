@@ -36,6 +36,8 @@ import { Tilt3DCard } from './components/Tilt3DCard';
 import { HeroProfile3D } from './components/HeroProfile3D';
 import { FreelanceServicesPage } from './components/FreelanceServicesPage';
 import { handleDownloadResumePdf } from './utils/resumePdf';
+import { motion, AnimatePresence } from 'framer-motion';
+import { velouraSoundEngine } from './utils/velouraSoundEngine';
 
 function detectServicesRoute(): boolean {
   if (typeof window === 'undefined') return false;
@@ -184,9 +186,23 @@ export default function App() {
   // Project Domain Filter State
   const [selectedProjectDomain, setSelectedProjectDomain] = useState<string>('all');
 
-  // Modals State
+  // Modals & Card Pop-In Expansion State
   const [activeProjectModal, setActiveProjectModal] = useState<ProjectItem | null>(null);
+  const [expandingProjectId, setExpandingProjectId] = useState<string | null>(null);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+
+  const handleOpenProjectCaseStudy = useCallback((project: ProjectItem) => {
+    if (project.id === 'veloura-specialty-coffee') {
+      velouraSoundEngine.playChimeSound();
+    }
+    setExpandingProjectId(project.id);
+    window.setTimeout(() => {
+      setActiveProjectModal(project);
+    }, 150);
+    window.setTimeout(() => {
+      setExpandingProjectId(null);
+    }, 520);
+  }, []);
 
   // Inquiry Topic Selection State
   const [selectedInquiryTopic, setSelectedInquiryTopic] = useState<string>(
@@ -1029,7 +1045,7 @@ export default function App() {
                     aria-label="Filter projects by domain"
                     className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800"
                   >
-                    {['all', 'Android & Backend', 'Web Application'].map((domain) => (
+                    {['all', 'Website Design & Development', 'Android & Backend', 'Web Application'].map((domain) => (
                       <button
                         key={domain}
                         role="tab"
@@ -1041,7 +1057,7 @@ export default function App() {
                             : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                         }`}
                       >
-                        {domain === 'all' ? 'All Projects (3)' : domain}
+                        {domain === 'all' ? `All Projects (${projects.length})` : domain}
                       </button>
                     ))}
                   </div>
@@ -1050,156 +1066,249 @@ export default function App() {
 
               {/* Project Showcase Cards */}
               <div className="space-y-8">
-                {filteredProjects.map((project, idx) => (
-                  <ScrollReveal key={project.id} delayMs={idx * 90} direction="up">
-                    <Tilt3DCard
-                      maxTiltDeg={3}
-                      className="rounded-2xl bg-white dark:bg-zinc-900/65 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40 overflow-hidden"
-                    >
-                      <article className="grid grid-cols-1 lg:grid-cols-12">
-                        {/* Large Interactive Visual Preview Column */}
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          aria-label={`Inspect architecture and case study for ${project.title}`}
-                          onClick={() => setActiveProjectModal(project)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              setActiveProjectModal(project);
-                            }
-                          }}
-                          className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-zinc-800 cursor-pointer group relative overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-500"
+                {filteredProjects.map((project, idx) => {
+                  const isVelouraCard = project.id === 'veloura-specialty-coffee';
+                  const isExpanding = expandingProjectId === project.id;
+
+                  return (
+                    <ScrollReveal key={project.id} delayMs={idx * 90} direction="up">
+                      <motion.div
+                        animate={
+                          isExpanding
+                            ? {
+                                scale: [1, 0.985, 1.028, 1],
+                                y: [0, 2, -6, 0],
+                              }
+                            : { scale: 1, y: 0 }
+                        }
+                        transition={{
+                          duration: 0.36,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="relative"
+                      >
+                        {/* Expanding Radial Bronze Bloom on Click */}
+                        <AnimatePresence>
+                          {isExpanding && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.92 }}
+                              animate={{ opacity: 1, scale: 1.03 }}
+                              exit={{ opacity: 0, scale: 1.06 }}
+                              transition={{ duration: 0.38, ease: 'easeOut' }}
+                              className="absolute -inset-2 rounded-3xl pointer-events-none z-20"
+                              style={{
+                                background: isVelouraCard
+                                  ? 'radial-gradient(circle at 50% 50%, rgba(180, 123, 68, 0.32), rgba(212, 163, 115, 0.12) 55%, transparent 75%)'
+                                  : 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.25), transparent 70%)',
+                              }}
+                            />
+                          )}
+                        </AnimatePresence>
+
+                        <Tilt3DCard
+                          maxTiltDeg={3}
+                          className={`rounded-2xl bg-white dark:bg-zinc-900/65 border overflow-hidden transition-shadow duration-300 ${
+                            isVelouraCard
+                              ? 'border-zinc-200/90 dark:border-zinc-800/90 hover:border-[#B47B44]/60 dark:hover:border-[#B47B44]/60 hover:shadow-[0_20px_50px_-15px_rgba(180,123,68,0.22)]'
+                              : 'border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40'
+                          }`}
                         >
-                          <ProjectVisual visualType={project.visualType} />
-                        </div>
-
-                        {/* Content & Architecture Column */}
-                        <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-6">
-                          <div className="space-y-4">
-                            {/* Unboxed Metadata Line */}
-                            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                              <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
-                                <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                                  {project.index}
-                                </span>
-                                <span aria-hidden="true">·</span>
-                                <span>{project.domain}</span>
-                              </div>
-
-                              <span className="text-blue-600 dark:text-blue-400 font-medium">
-                                {project.status}
-                              </span>
+                          <article className="grid grid-cols-1 lg:grid-cols-12">
+                            {/* Large Interactive Visual Preview Column */}
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              aria-label={`Inspect architecture and case study for ${project.title}`}
+                              onClick={() => handleOpenProjectCaseStudy(project)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleOpenProjectCaseStudy(project);
+                                }
+                              }}
+                              className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-zinc-800 cursor-pointer group relative overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-500"
+                            >
+                              <ProjectVisual
+                                visualType={project.visualType}
+                                onExpandCaseStudy={() => handleOpenProjectCaseStudy(project)}
+                              />
                             </div>
 
-                            <div>
-                              <h3 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                                {project.title}
-                              </h3>
-                              <p className="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-1">
-                                {project.subtitle}
-                              </p>
-                            </div>
+                            {/* Content & Architecture Column (Click to Pop-In Case Study) */}
+                            <div
+                              onClick={() => handleOpenProjectCaseStudy(project)}
+                              className="lg:col-span-7 p-5 sm:p-8 flex flex-col justify-between space-y-6 cursor-pointer group/cardcontent"
+                            >
+                              <div className="space-y-4">
+                                {/* Unboxed Metadata Line */}
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                                  <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+                                    <span
+                                      className={`font-semibold ${
+                                        isVelouraCard
+                                          ? 'text-[#B47B44] dark:text-[#D4A373]'
+                                          : 'text-blue-600 dark:text-blue-400'
+                                      }`}
+                                    >
+                                      {project.index}
+                                    </span>
+                                    <span aria-hidden="true">·</span>
+                                    <span>{project.domain}</span>
+                                  </div>
 
-                            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                              {project.overview}
-                            </p>
-
-                            {/* Key Features & Architecture Highlights */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                              <div className="space-y-1.5">
-                                <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                                  KEY FEATURES
-                                </p>
-                                <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
-                                  {project.implementedFeatures.map((feat, i) => (
-                                    <li key={i} className="flex items-start gap-2">
-                                      <span className="font-mono text-blue-600 dark:text-blue-400">
-                                        •
-                                      </span>
-                                      <span>{feat}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              <div className="space-y-1.5">
-                                <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                                  ARCHITECTURAL HIGHLIGHTS
-                                </p>
-                                <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
-                                  {project.architectureHighlights.map((arch, i) => (
-                                    <li key={i} className="flex items-start gap-2">
-                                      <span className="font-mono text-blue-600 dark:text-blue-400">
-                                        •
-                                      </span>
-                                      <span>
-                                        <strong className="text-zinc-800 dark:text-zinc-200">
-                                          {arch.layer}:
-                                        </strong>{' '}
-                                        {arch.detail}
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Tech Stack & Action Buttons */}
-                          <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
-                            <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                              <span className="text-zinc-800 dark:text-zinc-200 font-medium">
-                                Stack:{' '}
-                              </span>
-                              {project.technologies.join(' · ')}
-                            </p>
-
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                              <div className="flex flex-wrap items-center gap-2.5">
-                                <button
-                                  type="button"
-                                  onClick={() => setActiveProjectModal(project)}
-                                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                                >
-                                  <Layers className="w-3.5 h-3.5" />
-                                  <span>Project Case Study</span>
-                                </button>
-
-                                <a
-                                  href={project.githubUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap shrink-0"
-                                >
-                                  <Github className="w-3.5 h-3.5" />
-                                  <span>{project.githubButtonLabel}</span>
-                                  <ArrowUpRight className="w-3 h-3" />
-                                </a>
-
-                                {project.liveDemoUrl && (
-                                  <a
-                                    href={project.liveDemoUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap shrink-0"
+                                  <span
+                                    className={`font-medium ${
+                                      isVelouraCard
+                                        ? 'text-[#B47B44] dark:text-[#D4A373]'
+                                        : 'text-blue-600 dark:text-blue-400'
+                                    }`}
                                   >
-                                    <ExternalLink className="w-3.5 h-3.5" />
-                                    <span>Live Demo</span>
-                                  </a>
-                                )}
+                                    {project.status}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <h3
+                                    className={`font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 transition-colors ${
+                                      isVelouraCard
+                                        ? 'group-hover/cardcontent:text-[#B47B44] dark:group-hover/cardcontent:text-[#D4A373]'
+                                        : 'group-hover/cardcontent:text-blue-600 dark:group-hover/cardcontent:text-blue-400'
+                                    }`}
+                                  >
+                                    {project.title}
+                                  </h3>
+                                  <p className="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-1">
+                                    {project.subtitle}
+                                  </p>
+                                </div>
+
+                                <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                                  {project.overview}
+                                </p>
+
+                                {/* Key Features & Architecture Highlights */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                                  <div className="space-y-1.5">
+                                    <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                                      KEY FEATURES
+                                    </p>
+                                    <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
+                                      {project.implementedFeatures.map((feat, i) => (
+                                        <li key={i} className="flex items-start gap-2">
+                                          <span
+                                            className={`font-mono ${
+                                              isVelouraCard
+                                                ? 'text-[#B47B44] dark:text-[#D4A373]'
+                                                : 'text-blue-600 dark:text-blue-400'
+                                            }`}
+                                          >
+                                            •
+                                          </span>
+                                          <span>{feat}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+
+                                  <div className="space-y-1.5">
+                                    <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                                      ARCHITECTURAL HIGHLIGHTS
+                                    </p>
+                                    <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
+                                      {project.architectureHighlights.map((arch, i) => (
+                                        <li key={i} className="flex items-start gap-2">
+                                          <span
+                                            className={`font-mono ${
+                                              isVelouraCard
+                                                ? 'text-[#B47B44] dark:text-[#D4A373]'
+                                                : 'text-blue-600 dark:text-blue-400'
+                                            }`}
+                                          >
+                                            •
+                                          </span>
+                                          <span>
+                                            <strong className="text-zinc-800 dark:text-zinc-200">
+                                              {arch.layer}:
+                                            </strong>{' '}
+                                            {arch.detail}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </div>
                               </div>
 
-                              <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-                                {project.githubPlaceholderNote}
-                              </span>
+                              {/* Tech Stack & Action Buttons */}
+                              <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
+                                <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                                  <span className="text-zinc-800 dark:text-zinc-200 font-medium">
+                                    Stack:{' '}
+                                  </span>
+                                  {project.technologies.join(' · ')}
+                                </p>
+
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                  <div className="flex flex-wrap items-center gap-2.5">
+                                    {project.liveDemoUrl && (
+                                      <a
+                                        href={project.liveDemoUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap shrink-0 shadow-xs"
+                                      >
+                                        <ExternalLink className="w-3.5 h-3.5" />
+                                        <span>Live Demo</span>
+                                        <ArrowUpRight className="w-3 h-3" />
+                                      </a>
+                                    )}
+
+                                    <a
+                                      href={project.githubUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap shrink-0"
+                                    >
+                                      <Github className="w-3.5 h-3.5" />
+                                      <span>{project.githubButtonLabel}</span>
+                                      <ArrowUpRight className="w-3 h-3" />
+                                    </a>
+
+                                    <motion.button
+                                      type="button"
+                                      whileHover={{ scale: 1.03, y: -1 }}
+                                      whileTap={{ scale: 0.96 }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenProjectCaseStudy(project);
+                                      }}
+                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                                        isVelouraCard
+                                          ? 'border border-[#B47B44]/50 bg-[#B47B44]/15 text-[#B47B44] dark:text-[#D4A373] hover:bg-[#B47B44]/25 shadow-xs'
+                                          : project.liveDemoUrl
+                                          ? 'border border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20'
+                                          : 'bg-blue-600 hover:bg-blue-500 text-white'
+                                      }`}
+                                    >
+                                      <Layers className="w-3.5 h-3.5" />
+                                      <span>Project Case Study</span>
+                                    </motion.button>
+                                  </div>
+
+                                  <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
+                                    {project.githubPlaceholderNote}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </article>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-                ))}
+                          </article>
+                        </Tilt3DCard>
+                      </motion.div>
+                    </ScrollReveal>
+                  );
+                })}
               </div>
 
               {/* Verified Public GitHub Repositories Strip */}

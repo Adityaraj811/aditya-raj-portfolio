@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Building2,
   Rocket,
   UserCheck,
   Sparkles,
@@ -8,40 +7,78 @@ import {
   Layers,
   RefreshCw,
   Smartphone,
+  Coffee,
+  ExternalLink,
 } from 'lucide-react';
-import type { FreelanceServiceItem } from '../data/portfolioConfig';
+import { resolvePublicAsset, type FreelanceServiceItem } from '../data/portfolioConfig';
 
 interface ServiceMockupVisualProps {
   mockupType: FreelanceServiceItem['mockupType'];
 }
 
 export const ServiceMockupVisual: React.FC<ServiceMockupVisualProps> = ({ mockupType }) => {
+  const [previewImgSrc, setPreviewImgSrc] = useState<string>(() =>
+    resolvePublicAsset('images/veloura-website-preview.png')
+  );
+
   switch (mockupType) {
     case 'business':
       return (
-        <div className="relative h-36 rounded-xl bg-zinc-950 border border-zinc-800/90 p-3.5 flex flex-col justify-between overflow-hidden select-none">
-          <div
-            className="absolute -top-10 -right-10 w-36 h-36 rounded-full pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 70%)',
-            }}
-          />
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2">
-            <div className="flex items-center gap-2">
-              <Building2 className="w-3.5 h-3.5 text-blue-400" />
-              <span className="font-mono text-[10px] text-zinc-300">BUSINESS WEB PRESENCE</span>
+        <div
+          data-testid="business-veloura-preview"
+          className="group/veloura relative h-48 sm:h-52 rounded-xl bg-[#110E0C] border border-[#B47B44]/40 flex flex-col justify-between overflow-hidden select-none shadow-md"
+        >
+          {/* Browser Frame Top Chrome */}
+          <div className="relative z-10 px-3 py-2 bg-[#191411]/95 border-b border-[#B47B44]/30 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="w-2 h-2 rounded-full bg-[#C97A63]/85 shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-[#D4A373]/85 shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-[#7A9A82]/85 shrink-0" />
+              <span className="ml-1.5 font-mono text-[10px] text-[#D4A373] truncate">
+                valoura-one.vercel.app
+              </span>
             </div>
-            <span className="font-mono text-[10px] text-blue-400">SEO + Mobile</span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#B47B44]/20 border border-[#B47B44]/45 font-mono text-[9px] text-[#F5EFE6] shrink-0">
+              <Coffee className="w-2.5 h-2.5 text-[#D4A373]" />
+              <span>Personal Showcase</span>
+            </span>
           </div>
-          <div className="grid grid-cols-3 gap-2 my-auto pt-1">
-            <div className="col-span-2 p-2 rounded-lg bg-zinc-900/90 border border-zinc-800/80">
-              <div className="h-2 w-20 rounded bg-blue-500/40 mb-1.5" />
-              <div className="h-1.5 w-28 rounded bg-zinc-700 mb-1" />
-              <div className="h-1.5 w-16 rounded bg-zinc-800" />
-            </div>
-            <div className="p-2 rounded-lg bg-blue-600/15 border border-blue-500/30 flex flex-col justify-center items-center text-center">
-              <span className="font-mono text-[10px] text-blue-300 font-semibold">Services</span>
-              <span className="font-mono text-[9px] text-zinc-400 mt-0.5">&amp; Contact</span>
+
+          {/* Authentic Veloura Website Screenshot with Subtle Hover Zoom */}
+          <div className="relative flex-1 overflow-hidden bg-[#191411]">
+            <img
+              src={previewImgSrc}
+              onError={() => setPreviewImgSrc(resolvePublicAsset('images/veloura-hero.jpg'))}
+              alt="Featured Demo — Veloura Café Website"
+              className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover/veloura:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#110E0C] via-[#110E0C]/45 to-transparent" />
+
+            {/* Bottom Caption Overlay */}
+            <div className="absolute bottom-2.5 left-3 right-3 flex items-end justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-mono text-[9px] uppercase tracking-wider text-[#D4A373] font-semibold">
+                  Featured Demo — Veloura Café Website
+                </p>
+                <p className="font-display text-xs sm:text-sm font-semibold text-[#F5EFE6] truncate">
+                  Veloura — Specialty Coffee &amp; Creative Sanctuary
+                </p>
+                <p className="font-mono text-[9px] text-[#C8B9A6] truncate">
+                  React · TypeScript · Vite · Motion
+                </p>
+              </div>
+
+              <a
+                href="https://valoura-one.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                aria-label="Open Veloura Café Website Live Demo"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#B47B44] hover:bg-[#C68B53] text-[#110E0C] font-mono text-[10px] font-semibold shadow-sm transition-colors shrink-0"
+              >
+                <span>Live Preview</span>
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
             </div>
           </div>
         </div>

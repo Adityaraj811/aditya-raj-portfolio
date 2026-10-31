@@ -56,7 +56,7 @@ export interface ProjectItem {
   subtitle: string;
   status: 'Completed Application' | 'Featured Platform' | 'Public Repository';
   statusNote: string;
-  domain: 'Android & Backend' | 'Web Application';
+  domain: 'Website Design & Development' | 'Android & Backend' | 'Web Application';
   overview: string;
   objectives: string[];
   contribution: string[];
@@ -70,7 +70,7 @@ export interface ProjectItem {
   githubButtonLabel: string;
   githubPlaceholderNote: string;
   liveDemoUrl?: string;
-  visualType: 'khata-android' | 'library-mitra-web' | 'apple-vision-web';
+  visualType: 'veloura-cafe-web' | 'khata-android' | 'library-mitra-web' | 'apple-vision-web';
 }
 
 export interface PublicGithubRepo {
@@ -89,6 +89,9 @@ export interface FreelanceServiceItem {
   deliverables: string[];
   idealFor: string;
   inquiryTopic: string;
+  featuredDemoUrl?: string;
+  featuredDemoTitle?: string;
+  featuredDemoBadge?: string;
   mockupType:
     | 'business'
     | 'landing'
@@ -193,6 +196,13 @@ export const portfolioConfig = {
   // 2. VERIFIED PUBLIC GITHUB REPOSITORIES (https://github.com/Adityaraj811)
   // --------------------------------------------------------------------------
   verifiedGithubRepos: [
+    {
+      name: 'caffetaria',
+      url: 'https://github.com/Adityaraj811/caffetaria',
+      description:
+        'Veloura – Specialty Coffee & Creative Sanctuary: A premium, responsive café website with elegant visual design, specialty coffee photography, interactive UI elements and smooth animations.',
+      category: 'React · TypeScript · Vite · Motion',
+    },
     {
       name: 'khata-expence-manager',
       url: 'https://github.com/Adityaraj811/khata-expence-manager',
@@ -482,8 +492,55 @@ export const portfolioConfig = {
   // --------------------------------------------------------------------------
   projects: [
     {
-      id: 'khata-expense-app',
+      id: 'veloura-specialty-coffee',
       index: '01.',
+      title: 'Veloura – Specialty Coffee & Creative Sanctuary',
+      subtitle: 'Website Design & Development · Interactive Café Showcase',
+      status: 'Completed Application',
+      statusNote:
+        'Interactive frontend café website built with React, TypeScript, Vite, and Motion — live on Vercel with public source code on GitHub.',
+      domain: 'Website Design & Development',
+      overview:
+        'A premium, responsive café website with elegant visual design, specialty coffee photography, interactive UI elements and smooth animations.',
+      objectives: [
+        'Craft an atmospheric, editorial-grade digital presence for a specialty coffee and creative sanctuary brand.',
+        'Deliver fluid, scroll-responsive animations and interactive menu browsing using React, TypeScript, Vite, and Motion.',
+        'Ensure responsive layout precision, fast asset loading, and seamless visual hierarchy across mobile, tablet, and desktop devices.',
+      ],
+      contribution: [
+        'Designed and developed the frontend interface using React, TypeScript, and Vite with modular, reusable UI components.',
+        'Implemented smooth entrance transitions, interactive menu filtering, and atmospheric visual storytelling using Motion.',
+        'Curated specialty coffee photography, warm editorial typography, and responsive multi-device layouts as a frontend showcase.',
+      ],
+      implementedFeatures: [
+        'Immersive hero showcase and brand storytelling with specialty coffee photography.',
+        'Interactive artisanal menu and pour-over showcase with smooth Motion animations.',
+        'Fully responsive frontend design tailored for mobile phones, tablets, and desktop screens.',
+      ],
+      technologies: ['React', 'TypeScript', 'Vite', 'Motion'],
+      architectureHighlights: [
+        {
+          layer: 'Component Architecture',
+          detail: 'Modular React + TypeScript components structured for clean maintainability and responsive layout scaling.',
+        },
+        {
+          layer: 'Motion & Interaction Layer',
+          detail: 'Smooth entrance transitions, hover micro-interactions, and fluid browsing animations powered by Motion.',
+        },
+        {
+          layer: 'Frontend Build & Delivery',
+          detail: 'Fast Vite production bundle deployed on Vercel as an interactive frontend showcase.',
+        },
+      ],
+      githubUrl: 'https://github.com/Adityaraj811/caffetaria',
+      githubButtonLabel: 'View Source Code',
+      githubPlaceholderNote: 'github.com/Adityaraj811/caffetaria',
+      liveDemoUrl: 'https://valoura-one.vercel.app/',
+      visualType: 'veloura-cafe-web',
+    },
+    {
+      id: 'khata-expense-app',
+      index: '02.',
       title: 'KHATA — Expense Management Application',
       subtitle: 'Android Application & Spring Boot Backend for Shared Household Expenses',
       status: 'Completed Application',
@@ -542,7 +599,7 @@ export const portfolioConfig = {
     },
     {
       id: 'apple-vision-ui-web',
-      index: '02.',
+      index: '03.',
       title: 'Apple Vision UI — Web Application',
       subtitle: 'Interactive Spatial Web Experience with GSAP, ScrollTrigger & HTML5 Canvas',
       status: 'Public Repository',
@@ -595,7 +652,7 @@ export const portfolioConfig = {
     },
     {
       id: 'library-mitra',
-      index: '03.',
+      index: '04.',
       title: 'Library Mitra — Online Library Management Platform',
       subtitle: 'Digital Web Platform for Streamlined Library Cataloging & Member Access',
       status: 'Featured Platform',
@@ -671,8 +728,11 @@ export const portfolioConfig = {
           'Services showcase, location details & fast contact actions',
           'Mobile-friendly responsive design & SEO-ready structure',
         ],
-        idealFor: 'Shops, local businesses, agencies & growing companies',
+        idealFor: 'Shops, cafés, local businesses, agencies & growing companies',
         inquiryTopic: 'Business Website Development',
+        featuredDemoUrl: 'https://valoura-one.vercel.app/',
+        featuredDemoTitle: 'Featured Demo — Veloura Café Website',
+        featuredDemoBadge: 'Personal Showcase',
         mockupType: 'business',
       },
       {

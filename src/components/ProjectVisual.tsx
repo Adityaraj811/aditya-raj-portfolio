@@ -8,16 +8,28 @@ import {
 } from 'lucide-react';
 import type { ProjectItem } from '../data/portfolioConfig';
 import { KhataScreenShowcase } from './KhataScreenShowcase';
+import { VelouraInteractiveShowcase } from './VelouraInteractiveShowcase';
 
 interface ProjectVisualProps {
   visualType: ProjectItem['visualType'];
   variant?: 'card' | 'modal';
+  onExpandCaseStudy?: () => void;
 }
 
 export const ProjectVisual: React.FC<ProjectVisualProps> = ({
   visualType,
   variant = 'card',
+  onExpandCaseStudy,
 }) => {
+  if (visualType === 'veloura-cafe-web') {
+    return (
+      <VelouraInteractiveShowcase
+        variant={variant}
+        onExpandCaseStudy={onExpandCaseStudy}
+      />
+    );
+  }
+
   if (visualType === 'khata-android') {
     return <KhataScreenShowcase variant={variant} />;
   }

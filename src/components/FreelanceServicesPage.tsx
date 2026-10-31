@@ -210,7 +210,19 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
                 </div>
 
                 {/* Card Actions */}
-                <div className="pt-5 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center gap-2.5">
+                <div className="pt-5 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-wrap items-center gap-2.5">
+                  {service.featuredDemoUrl && (
+                    <a
+                      href={service.featuredDemoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#B47B44] hover:bg-[#C68B53] text-[#110E0C] text-xs font-semibold transition-colors whitespace-nowrap shadow-xs"
+                    >
+                      <span>View Live Demo</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => onDiscussProject(service.inquiryTopic)}
