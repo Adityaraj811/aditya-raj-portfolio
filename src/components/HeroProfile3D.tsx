@@ -138,60 +138,65 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
 
         {/* Center: Continuously Animated 3D Conic Gradient Border + Rotating Light-Ring */}
         <div
-          className="relative z-10 my-auto py-3 flex flex-col items-center text-center"
+          className="relative z-10 my-auto py-1.5 flex flex-col items-center text-center"
           style={{ transform: 'translateZ(32px)' }}
         >
-          {/* Floating 3D Geometric Elements Around Portrait (Visible on Phone, Tablet & Desktop) */}
-          <div
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute -top-1 left-0 sm:left-1 z-20 animate-float-slow"
-            style={{ transform: 'translateZ(46px)' }}
-          >
-            <Code2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500 shrink-0" />
-            <span>Web &amp; Full-Stack</span>
-          </div>
+          {/* Portrait Wrapper — Unobstructed Face & 3D Rotating Light-Ring */}
+          <div className="relative inline-flex items-center justify-center">
+            {/* Outer Rotating Light-Ring Container */}
+            <div className="relative p-1.5 rounded-3xl profile-3d-ring-wrapper shadow-2xl">
+              {/* Continuous Conic Spinning Gradient Ring */}
+              <div className="profile-3d-spinning-ring" aria-hidden="true" />
 
-          <div
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute top-1/2 -right-1 sm:-right-2 z-20 animate-float-delayed"
-            style={{ transform: 'translateZ(50px)' }}
-          >
-            <Smartphone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-500 shrink-0" />
-            <span>Android · MVVM</span>
-          </div>
+              {/* Secondary Counter-Rotating Outer Orbit Halo */}
+              <div className="profile-3d-orbit-halo" aria-hidden="true" />
 
-          <div
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-[11px] font-mono text-zinc-700 dark:text-zinc-200 absolute bottom-20 left-0 z-20 animate-float-reverse"
-            style={{ transform: 'translateZ(42px)' }}
-          >
-            <Database className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-500 shrink-0" />
-            <span>Java · Spring Boot</span>
-          </div>
+              {/* Portrait Image Frame — Preserves Natural Aspect Ratio Without Distortion */}
+              <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-[20px] overflow-hidden bg-zinc-100 dark:bg-zinc-900 z-10">
+                <img
+                  src={profileImgSrc}
+                  alt={`${name} — ${headline}`}
+                  referrerPolicy="no-referrer"
+                  onError={onImageError}
+                  className="w-full h-full object-cover object-center transition-transform duration-500"
+                />
+                {/* Subtle bottom scrim for depth */}
+                {!usingFallbackAvatar && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/5 pointer-events-none" />
+                )}
+              </div>
+            </div>
 
-          {/* Outer Rotating Light-Ring Container */}
-          <div className="relative p-1.5 rounded-3xl profile-3d-ring-wrapper shadow-2xl">
-            {/* Continuous Conic Spinning Gradient Ring */}
-            <div className="profile-3d-spinning-ring" aria-hidden="true" />
+            {/* 3D Floating Badge 1 (Top-Left Corner) — Java · Spring Boot */}
+            <div
+              className="absolute -top-3 -left-4 sm:-top-3.5 sm:-left-8 z-20 flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-xs font-mono text-zinc-700 dark:text-zinc-200 whitespace-nowrap animate-float-reverse"
+              style={{ transform: 'translateZ(72px)' }}
+            >
+              <Database className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-500 shrink-0" />
+              <span>Java · Spring Boot</span>
+            </div>
 
-            {/* Secondary Counter-Rotating Outer Orbit Halo */}
-            <div className="profile-3d-orbit-halo" aria-hidden="true" />
+            {/* 3D Floating Badge 2 (Left Side) — Android · MVVM */}
+            <div
+              className="absolute -bottom-3 -left-6 sm:-bottom-3.5 sm:-left-10 z-20 flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-xs font-mono text-zinc-700 dark:text-zinc-200 whitespace-nowrap animate-float-delayed"
+              style={{ transform: 'translateZ(58px)' }}
+            >
+              <Smartphone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-500 shrink-0" />
+              <span>Android · MVVM</span>
+            </div>
 
-            {/* Portrait Image Frame — Preserves Natural Aspect Ratio Without Distortion */}
-            <div className="relative w-52 h-52 sm:w-64 sm:h-64 rounded-[20px] overflow-hidden bg-zinc-100 dark:bg-zinc-900 z-10">
-              <img
-                src={profileImgSrc}
-                alt={`${name} — ${headline}`}
-                referrerPolicy="no-referrer"
-                onError={onImageError}
-                className="w-full h-full object-cover object-center transition-transform duration-500"
-              />
-              {/* Subtle bottom scrim for depth */}
-              {!usingFallbackAvatar && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/5 pointer-events-none" />
-              )}
+            {/* 3D Floating Badge 3 (Right Side) — Web & Full-Stack */}
+            <div
+              className="absolute -bottom-3 -right-6 sm:-bottom-3.5 sm:-right-10 z-20 flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-xs font-mono text-zinc-700 dark:text-zinc-200 whitespace-nowrap animate-float-slow"
+              style={{ transform: 'translateZ(65px)' }}
+            >
+              <Code2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500 shrink-0" />
+              <span>Web &amp; Full-Stack</span>
             </div>
           </div>
 
           {/* Name & Core Identity Below Portrait */}
-          <div className="mt-5 space-y-1">
+          <div className="mt-8 sm:mt-9 space-y-1">
             <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               {name}
             </h2>

@@ -240,7 +240,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             </div>
 
             {/* Modal Body */}
-            <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+            <div className="p-4 sm:p-6 space-y-5">
               {/* Visual Showcase Frame with Pop-In Elevation */}
               <motion.div
                 variants={sectionPopVariants}
@@ -253,122 +253,53 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 <ProjectVisual visualType={project.visualType} variant="modal" />
               </motion.div>
 
-              {/* Project Summary Callout */}
+              {/* Compact Overview & Category Bar */}
               <motion.div
                 variants={sectionPopVariants}
-                className={`p-3.5 sm:p-4 rounded-xl border flex items-start gap-3 sm:gap-3.5 ${
+                className={`p-4 rounded-xl border space-y-2 ${
                   isVeloura
                     ? 'bg-[#B47B44]/5 dark:bg-[#191411]/70 border-[#B47B44]/30'
-                    : 'bg-zinc-50 dark:bg-zinc-950/80 border-zinc-200 dark:border-zinc-800/90'
+                    : 'bg-zinc-50 dark:bg-zinc-950/70 border-zinc-200 dark:border-zinc-800/90'
                 }`}
               >
-                <CheckCircle2
-                  className={`w-5 h-5 shrink-0 mt-0.5 ${
-                    isVeloura ? 'text-[#B47B44] dark:text-[#D4A373]' : 'text-emerald-500'
-                  }`}
-                />
-                <div className="space-y-1 text-xs sm:text-sm">
-                  <div className="font-medium text-zinc-900 dark:text-zinc-100">
-                    Project Category: <span className="font-mono">{project.domain}</span> ·{' '}
-                    <span
-                      className={`font-mono ${
-                        isVeloura
-                          ? 'text-[#B47B44] dark:text-[#D4A373]'
-                          : 'text-blue-600 dark:text-blue-400'
-                      }`}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
-                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    {project.statusNote}
-                  </p>
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                    {project.domain}
+                  </span>
+                  <span
+                    className={`font-medium ${
+                      isVeloura
+                        ? 'text-[#B47B44] dark:text-[#D4A373]'
+                        : 'text-blue-600 dark:text-blue-400'
+                    }`}
+                  >
+                    {project.status}
+                  </span>
                 </div>
+                <p className="text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">
+                  {project.overview}
+                </p>
               </motion.div>
 
-              {/* Overview & Objectives */}
+              {/* Clean 2-Column Breakdown: Key Features & Architecture */}
               <motion.div
                 variants={sectionPopVariants}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-5"
               >
-                <div className="space-y-3">
-                  <h4 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                    Project Overview
-                  </h4>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                    {project.overview}
-                  </p>
-                  <div className="pt-2">
-                    <h5 className="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-2">
-                      ENGINEERING IMPLEMENTATION
-                    </h5>
-                    <ul className="space-y-2">
-                      {project.contribution.map((item, idx) => (
-                        <li
-                          key={idx}
-                          className="text-sm text-zinc-600 dark:text-zinc-300 flex items-start gap-2.5"
-                        >
-                          <span
-                            className={`font-mono text-xs mt-1 ${
-                              isVeloura
-                                ? 'text-[#B47B44] dark:text-[#D4A373]'
-                                : 'text-blue-600 dark:text-blue-400'
-                            }`}
-                          >
-                            •
-                          </span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <h4 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                    Key Objectives
-                  </h4>
-                  <ul className="space-y-2.5">
-                    {project.objectives.map((obj, idx) => (
-                      <li
-                        key={idx}
-                        className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed"
-                      >
-                        <span
-                          className={`font-mono text-xs mr-2 ${
-                            isVeloura
-                              ? 'text-[#B47B44] dark:text-[#D4A373]'
-                              : 'text-blue-600 dark:text-blue-400'
-                          }`}
-                        >
-                          0{idx + 1}.
-                        </span>
-                        {obj}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Features & Architectural Layers Breakdown */}
-              <motion.div
-                variants={sectionPopVariants}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-zinc-200 dark:border-zinc-800"
-              >
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    <h4 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                      Core Features &amp; Capabilities
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <h4 className="font-display text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                      Key Features
                     </h4>
                   </div>
                   <ul className="space-y-2">
                     {project.implementedFeatures.map((feat, idx) => (
                       <li
                         key={idx}
-                        className="text-sm text-zinc-600 dark:text-zinc-300 flex items-start gap-2.5"
+                        className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2"
                       >
-                        <span className="font-mono text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                        <span className="font-mono text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0">
                           ✓
                         </span>
                         <span>{feat}</span>
@@ -377,25 +308,25 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                   </ul>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center gap-2">
                     <Layers
-                      className={`w-4 h-4 ${
+                      className={`w-4 h-4 shrink-0 ${
                         isVeloura ? 'text-[#B47B44] dark:text-[#D4A373]' : 'text-blue-500'
                       }`}
                     />
-                    <h4 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                      Architectural Layers
+                    <h4 className="font-display text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                      Architecture Highlights
                     </h4>
                   </div>
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     {project.architectureHighlights.map((arch, idx) => (
                       <div
                         key={idx}
-                        className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80"
+                        className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80"
                       >
                         <p
-                          className={`text-xs font-mono font-medium ${
+                          className={`text-xs font-mono font-semibold ${
                             isVeloura
                               ? 'text-[#B47B44] dark:text-[#D4A373]'
                               : 'text-blue-600 dark:text-blue-400'
@@ -403,7 +334,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                         >
                           {arch.layer}
                         </p>
-                        <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-1">
+                        <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-0.5 leading-snug">
                           {arch.detail}
                         </p>
                       </div>
@@ -412,64 +343,60 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 </div>
               </motion.div>
 
-              {/* Technology Stack */}
+              {/* Technology Stack & Modal Footer Actions */}
               <motion.div
                 variants={sectionPopVariants}
-                className="pt-4 border-t border-zinc-200 dark:border-zinc-800"
+                className="pt-3.5 border-t border-zinc-200 dark:border-zinc-800 space-y-4"
               >
-                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-2">
-                  TECHNOLOGY STACK
-                </p>
-                <p className="text-sm font-mono text-zinc-800 dark:text-zinc-200 leading-relaxed">
+                <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  <span className="text-zinc-900 dark:text-zinc-100 font-semibold">
+                    Tech Stack:{' '}
+                  </span>
                   {project.technologies.join(' · ')}
                 </p>
-              </motion.div>
 
-              {/* Modal Footer Actions (Responsive on Mobile, Tablet & Laptop) */}
-              <motion.div
-                variants={sectionPopVariants}
-                className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
-              >
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
-                  >
-                    <Github className="w-4 h-4" />
-                    <span>{project.githubButtonLabel || 'View Source Code'}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
-                  {project.liveDemoUrl && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5">
                     <a
-                      href={project.liveDemoUrl}
+                      href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-xs font-medium transition-colors whitespace-nowrap ${
-                        isVeloura
-                          ? 'border-[#B47B44]/50 bg-[#B47B44]/15 text-[#B47B44] dark:text-[#D4A373] hover:bg-[#B47B44]/25'
-                          : 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                      }`}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
                     >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>Live Demo</span>
+                      <Github className="w-4 h-4" />
+                      <span>{project.githubButtonLabel || 'View Source Code'}</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </a>
-                  )}
-                </div>
+                    {project.liveDemoUrl && (
+                      <a
+                        href={project.liveDemoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-xs font-medium transition-colors whitespace-nowrap ${
+                          isVeloura
+                            ? 'border-[#B47B44]/50 bg-[#B47B44]/15 text-[#B47B44] dark:text-[#D4A373] hover:bg-[#B47B44]/25'
+                            : 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                        }`}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>Live Demo</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleCloseWithSound();
-                    onDiscussSimilar(project.title);
-                  }}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  <span>Let&apos;s Connect About This Project</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleCloseWithSound();
+                      onDiscussSimilar(project.title);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap cursor-pointer"
+                  >
+                    <span>Let&apos;s Connect About This Project</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </motion.div>
             </div>
           </motion.div>

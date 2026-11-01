@@ -915,6 +915,8 @@ interface PointerSwipeState {
 
 const SWIPE_DISTANCE_THRESHOLD_PX = 36;
 const SWIPE_DIRECTION_RATIO = 1.3;
+const AUTO_TOUR_STEP_MS = 2600;
+const AUTO_TOUR_IDLE_RESUME_MS = 4500;
 
 export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   variant = 'card',
@@ -922,7 +924,8 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   const [activeScreen, setActiveScreen] = useState<KhataScreenKey>('home');
   const [direction, setDirection] = useState<number>(1);
   const [revealCycle, setRevealCycle] = useState<number>(0);
-  const [autoPlay, setAutoPlay] = useState<boolean>(false);
+  const [autoPlay, setAutoPlay] = useState<boolean>(true);
+  const [isTouchPaused, setIsTouchPaused] = useState<boolean>(false);
 
   // Direct DOM refs for 60fps 3D tilt & swipe feedback without React re-renders
   const containerRef = useRef<HTMLDivElement>(null);
@@ -931,6 +934,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   const rafRef = useRef<number | null>(null);
   const pointerSwipeRef = useRef<PointerSwipeState | null>(null);
   const suppressNextClickRef = useRef<boolean>(false);
+  const idleResumeTimerRef = useRef<number | null>(null);
 
   const [appState, setAppState] = useState<KhataInteractiveAppState>({
     showPassword: false,
@@ -944,6 +948,62 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
   });
 
   const toastTimerRef = useRef<number | null>(null);
+
+  const pauseAutoTourAndScheduleResume = () => {
+    setIsTouchPaused(true);
+    if (idleResumeTimerRef.current !== null) {
+      window.clearTimeout(idleResumeTimerRef.current);
+    }
+    idleResumeTimerRef.current = window.setTimeout(() => {
+      setIsTouchPaused(false);
+      setAutoPlay(true);
+      idleResumeTimerRef.current = null;
+    }, AUTO_TOUR_IDLE_RESUME_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (idleResumeTimerRef.current !== null) {
+        window.clearTimeout(idleResumeTimerRef.current);
+      }
+      if (toastTimerRef.current !== null) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleInteractionCapture = (
+    e: React.SyntheticEvent<HTMLDivElement>
+  ) => {
+    const target = e.target as HTMLElement | null;
+    if (target?.closest('[data-auto-tour-toggle="true"]')) {
+      return;
+    }
+    pauseAutoTourAndScheduleResume();
+  };
+
+  const handleToggleAutoTour = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    const isCurrentlyRunning = autoPlay && !isTouchPaused;
+    if (isCurrentlyRunning) {
+      setAutoPlay(false);
+      pauseAutoTourAndScheduleResume();
+    } else {
+      if (idleResumeTimerRef.current !== null) {
+        window.clearTimeout(idleResumeTimerRef.current);
+        idleResumeTimerRef.current = null;
+      }
+      setIsTouchPaused(false);
+      setAutoPlay(true);
+    }
+  };
+
+  const handleSetAppState: React.Dispatch<React.SetStateAction<KhataInteractiveAppState>> = (
+    updater
+  ) => {
+    pauseAutoTourAndScheduleResume();
+    setAppState(updater);
+  };
 
   const triggerToast = (msg: string) => {
     if (toastTimerRef.current) {
@@ -979,17 +1039,19 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
     return () => observer.disconnect();
   }, []);
 
+  const isAutoTourRunning = autoPlay && !isTouchPaused;
+
   useEffect(() => {
-    if (!autoPlay) return;
+    if (!isAutoTourRunning) return;
     const id = window.setInterval(() => {
       setDirection(1);
       setActiveScreen((prev) => {
         const idx = KHATA_SCREENS.findIndex((s) => s.key === prev);
         return KHATA_SCREENS[(idx + 1) % KHATA_SCREENS.length].key;
       });
-    }, 2800);
+    }, AUTO_TOUR_STEP_MS);
     return () => window.clearInterval(id);
-  }, [autoPlay]);
+  }, [isAutoTourRunning]);
 
   const currentIdx = KHATA_SCREENS.findIndex((s) => s.key === activeScreen);
   const currentMeta = KHATA_SCREENS[currentIdx] || KHATA_SCREENS[0];
@@ -1000,6 +1062,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
     toast?: string
   ) => {
     if (e) e.stopPropagation();
+    pauseAutoTourAndScheduleResume();
     const targetIdx = KHATA_SCREENS.findIndex((s) => s.key === key);
     setDirection(targetIdx >= currentIdx ? 1 : -1);
     setActiveScreen(key);
@@ -1010,6 +1073,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
 
   const handlePrev = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    pauseAutoTourAndScheduleResume();
     setDirection(-1);
     const prevIdx = (currentIdx - 1 + KHATA_SCREENS.length) % KHATA_SCREENS.length;
     setActiveScreen(KHATA_SCREENS[prevIdx].key);
@@ -1017,6 +1081,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
 
   const handleNext = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    pauseAutoTourAndScheduleResume();
     setDirection(1);
     const nextIdx = (currentIdx + 1) % KHATA_SCREENS.length;
     setActiveScreen(KHATA_SCREENS[nextIdx].key);
@@ -1165,6 +1230,9 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
         ref={containerRef}
         className="bg-zinc-950 text-zinc-100 p-5 sm:p-7 space-y-6 select-none touch-pan-y"
         style={{ touchAction: 'pan-y' }}
+        onPointerDownCapture={handleInteractionCapture}
+        onTouchStartCapture={handleInteractionCapture}
+        onKeyDownCapture={handleInteractionCapture}
       >
         {/* Top Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
@@ -1205,18 +1273,16 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
             ))}
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setAutoPlay((prev) => !prev);
-              }}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center gap-1 border cursor-pointer ${
-                autoPlay
+              data-auto-tour-toggle="true"
+              onClick={handleToggleAutoTour}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center gap-1 border cursor-pointer transition-colors ${
+                isAutoTourRunning
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                  : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                  : 'bg-zinc-900 text-zinc-300 border-zinc-700 hover:text-white'
               }`}
             >
-              {autoPlay ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-              <span>{autoPlay ? 'Pause' : 'Auto Tour'}</span>
+              {isAutoTourRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+              <span>{isAutoTourRunning ? 'Auto Tour: ON' : 'Paused · Tap to Tour'}</span>
             </button>
           </div>
         </div>
@@ -1259,7 +1325,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
                   direction={direction}
                   revealCycle={revealCycle}
                   appState={appState}
-                  setAppState={setAppState}
+                  setAppState={handleSetAppState}
                   onNavigate={handleNavigate}
                   triggerToast={triggerToast}
                 />
@@ -1314,6 +1380,9 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
       ref={containerRef}
       className="relative w-full h-full min-h-[410px] bg-zinc-950 text-zinc-100 p-4 sm:p-5 flex flex-col justify-between overflow-hidden select-none touch-pan-y"
       style={{ touchAction: 'pan-y' }}
+      onPointerDownCapture={handleInteractionCapture}
+      onTouchStartCapture={handleInteractionCapture}
+      onKeyDownCapture={handleInteractionCapture}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -1344,7 +1413,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
                 </p>
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
                   <Sparkles className="w-2.5 h-2.5" />
-                  Live
+                  {isAutoTourRunning ? 'Auto Tour' : 'Interactive'}
                 </span>
               </div>
               <p className="text-[10px] text-emerald-400">{currentMeta.title}</p>
@@ -1352,6 +1421,20 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
           </div>
 
           <div className="flex items-center gap-1">
+            <button
+              type="button"
+              data-auto-tour-toggle="true"
+              onClick={handleToggleAutoTour}
+              aria-label={isAutoTourRunning ? 'Pause KHATA Auto Tour' : 'Start KHATA Auto Tour'}
+              className={`px-2 py-1 rounded-lg text-[10px] font-mono flex items-center gap-1 border cursor-pointer transition-colors ${
+                isAutoTourRunning
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+              }`}
+            >
+              {isAutoTourRunning ? <Pause className="w-2.5 h-2.5" /> : <Play className="w-2.5 h-2.5" />}
+              <span>{isAutoTourRunning ? 'Touring' : 'Paused'}</span>
+            </button>
             <button
               type="button"
               onClick={handlePrev}
@@ -1420,7 +1503,7 @@ export const KhataScreenShowcase: React.FC<KhataScreenShowcaseProps> = ({
               direction={direction}
               revealCycle={revealCycle}
               appState={appState}
-              setAppState={setAppState}
+              setAppState={handleSetAppState}
               onNavigate={handleNavigate}
               triggerToast={triggerToast}
             />

@@ -605,25 +605,24 @@ export const portfolioConfig = {
         'Interactive Spatial Web Experience · React 19, Three.js, GSAP, ScrollTrigger & HTML5 Canvas',
       status: 'Public Repository',
       statusNote:
-        'Verified Public Repository on github.com/Adityaraj811/Apple-Vision-ui-Web-application — built with React 19, TypeScript, Vite, Three.js, GSAP, ScrollTrigger, Tailwind CSS v4, and HTML5 Canvas API.',
+        'Public Repository on GitHub — built with React 19, TypeScript, Vite, Three.js, GSAP, ScrollTrigger, Tailwind CSS v4, and HTML5 Canvas API.',
       domain: 'Web Application',
       overview:
         'An immersive, responsive spatial web experience inspired by Apple Vision Pro, featuring interactive 3D scenes, scroll-driven animations, customizable visual themes, interactive technology visualizers and Canvas-based experiences.',
       objectives: [
-        'Architect an immersive spatial computing web application in React 19 and TypeScript combining interactive Three.js 3D hardware scenes with scroll-driven GSAP and ScrollTrigger animations.',
-        'Engineer multi-layered HTML5 Canvas experiences including 198-frame 360° hardware scrubbing, an interactive 5-layer optical stack visualizer, and real-time Eye Tracking, LiDAR Sensor Array, and M2 + R1 dual-chip visualizers.',
-        'Deliver customizable visionOS visual themes (Solaris Orange, Cupertino Cobalt, Mount Hood Emerald, Haleakala Titanium, Deep Space Indigo), adaptive dark/light glass surfaces, and a responsive layout across devices.',
+        'Combine interactive Three.js 3D hardware scenes with smooth GSAP and ScrollTrigger animations.',
+        'Render 360° hardware frame scrubbing, optical stack layers, and real-time sensor visualizers via HTML5 Canvas.',
+        'Support customizable visionOS themes, adaptive dark/light mode, and responsive multi-device layouts.',
       ],
       contribution: [
-        'Developed the modular React 19, TypeScript, and Vite application styled with Tailwind CSS v4, featuring an interactive Three.js 3D Vision Pro scene with OrbitControls, procedural Micro-OLED textures, exploded view controls, and 6 hardware camera presets.',
-        'Implemented custom HTML5 2D Canvas engines for 360° hardware frame scrubbing, a 5-layer Optical Stack explorer, and interactive Technology Visualizers for IR eye tracking, LiDAR/SLAM sensor arrays, and M2 + R1 silicon data flow.',
-        'Orchestrated scroll-driven spatial animations with GSAP and ScrollTrigger alongside a customizable visionOS Control Center, 5 environment themes, a 3D eye-tracking gaze cursor, and Web Audio haptic synthesis.',
+        'Built the React 19, TypeScript, and Tailwind CSS v4 interface with an interactive Three.js 3D headset studio.',
+        'Engineered HTML5 2D Canvas modules for 360° scrubbing, 5-layer optical stack inspection, and M2 + R1 / Eye Tracking visualizers.',
+        'Implemented GSAP ScrollTrigger timelines, 5 spatial environment themes, and a 3D gaze cursor.',
       ],
       implementedFeatures: [
-        'Interactive Three.js 3D spatial scene with OrbitControls, exploded hardware slider, and 6 camera callout presets (Enclosure, Light Seal, Head Band, Power, Sound, EyeSight).',
-        'Scroll-driven animations powered by GSAP and ScrollTrigger paired with 198-frame 360° HTML5 Canvas hardware scrubbing.',
-        'Interactive Technology Visualizers (IR Eye Tracking X-Ray, LiDAR/Hand/SLAM Sensor Array filters, Dual-Chip M2 + R1 visualizer) and 5-layer Optical Stack explorer.',
-        'Customizable visionOS visual themes (Solaris, Cupertino, Mount Hood, Haleakala, Nebula), Control Center immersion tuning, and 3D gaze cursor.',
+        'Interactive Three.js 3D scene with OrbitControls, exploded view, and 6 hardware callouts.',
+        'Scroll-driven GSAP + ScrollTrigger animations and 360° HTML5 Canvas frame scrubbing.',
+        'Customizable visionOS themes alongside Eye Tracking, LiDAR Sensor, and M2 + R1 Canvas visualizers.',
       ],
       technologies: [
         'React 19',
@@ -637,19 +636,16 @@ export const portfolioConfig = {
       ],
       architectureHighlights: [
         {
-          layer: 'Three.js 3D Spatial Studio',
-          detail:
-            'Interactive 3D headset scene with OrbitControls, RoomEnvironment lighting, procedural Micro-OLED textures, exploded view interpolation, and 6 hardware camera presets.',
+          layer: '3D Spatial Studio',
+          detail: 'Three.js WebGL scene with OrbitControls, Micro-OLED shaders, and camera presets.',
         },
         {
-          layer: 'GSAP ScrollTrigger & HTML5 Canvas Engines',
-          detail:
-            'Scroll-synchronized timelines, 198-frame 360° hardware canvas scrubber, 5-layer optical stack canvas, and real-time Eye Tracking, LiDAR, and M2 + R1 visualizers.',
+          layer: 'Scroll & Canvas Engine',
+          detail: 'GSAP ScrollTrigger timelines paired with 360° and technology visualizer canvases.',
         },
         {
-          layer: 'VisionOS Theme & UI Architecture',
-          detail:
-            'React 19 + TypeScript + Tailwind CSS v4 component system with 5 customizable spatial themes, adaptive dark/light mode, 3D gaze cursor, and Web Audio haptics.',
+          layer: 'Theme & UI System',
+          detail: 'React 19 + Tailwind CSS v4 with 5 visionOS themes and adaptive dark/light mode.',
         },
       ],
       githubUrl: 'https://github.com/Adityaraj811/Apple-Vision-ui-Web-application',
