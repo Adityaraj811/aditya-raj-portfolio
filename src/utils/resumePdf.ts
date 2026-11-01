@@ -57,7 +57,14 @@ export function getVerifiedResumeBlobUrl(): string {
  */
 export async function fetchVerifiedResumeBlob(configuredPath: string): Promise<Blob> {
   const candidates = Array.from(
-    new Set([configuredPath, './resume.pdf', '/resume.pdf', '/aditya-raj-portfolio/resume.pdf'])
+    new Set([
+      configuredPath,
+      '/assets/aistudio/Aditya_Raj_CV__2__345c35da.pdf',
+      './assets/aistudio/Aditya_Raj_CV__2__345c35da.pdf',
+      './resume.pdf',
+      '/resume.pdf',
+      '/aditya-raj-portfolio/resume.pdf',
+    ])
   );
 
   for (const url of candidates) {

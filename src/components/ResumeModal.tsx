@@ -211,195 +211,242 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-wide text-[#0f2942]">
                   ADITYA RAJ
                 </h1>
-                <p className="text-xs sm:text-sm font-semibold tracking-wider text-zinc-600 mt-1">
-                  APP &amp; WEB DEVELOPER | JAVA BACKEND DEVELOPER
+                <p className="text-xs sm:text-sm font-bold tracking-wider text-zinc-800 mt-1">
+                  JAVA BACKEND DEVELOPER | WEB &amp; ANDROID DEVELOPER
                 </p>
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-zinc-600">
-                  <span>{personal.mobileNumber}</span>
-                  <span>|</span>
-                  <a
-                    href={`mailto:${personal.emailAddress}`}
-                    className="text-blue-700 hover:underline"
-                  >
-                    {personal.emailAddress}
-                  </a>
-                  <span>|</span>
+                <div className="mt-2.5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-zinc-700">
                   <a
                     href={personal.linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-700 hover:underline"
+                    className="inline-flex items-center gap-0.5 text-blue-700 font-medium hover:underline"
                   >
-                    LinkedIn
+                    <span>LinkedIn</span>
+                    <ArrowUpRight className="w-3 h-3" />
                   </a>
+                  <span>|</span>
+                  <a
+                    href={`mailto:${personal.emailAddress}`}
+                    className="text-blue-700 font-medium hover:underline"
+                  >
+                    {personal.emailAddress}
+                  </a>
+                  <span>|</span>
+                  <span>{personal.mobileNumber}</span>
                   <span>|</span>
                   <a
                     href={personal.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-700 hover:underline"
+                    className="inline-flex items-center gap-0.5 text-blue-700 font-medium hover:underline"
                   >
-                    GitHub
-                  </a>
-                  <span>|</span>
-                  <a
-                    href={personal.portfolioUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-700 hover:underline"
-                  >
-                    Portfolio
+                    <span>GitHub</span>
+                    <ArrowUpRight className="w-3 h-3" />
                   </a>
                 </div>
               </div>
 
               {/* Professional Summary */}
               <div className="mb-5">
-                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase mb-1.5">
+                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase border-b border-zinc-300 pb-1 mb-2">
                   PROFESSIONAL SUMMARY
                 </h2>
                 <p className="text-xs sm:text-[13px] text-zinc-800 leading-relaxed">
-                  App &amp; Web Developer with a strong foundation in Java, object-oriented programming, Spring Boot, REST APIs and SQL. Experienced in building Android applications and responsive web interfaces. Focused on writing maintainable code and solving problems through hands-on practice.
+                  Developer focused on Java backend engineering, with hands-on project experience building Android applications using Java/XML and backend services using Spring Boot, REST APIs, JPA/Hibernate, and SQL. Also experienced in responsive web interfaces, object-oriented programming, and data structures and algorithms; solved 400+ coding problems across online platforms.
                 </p>
               </div>
 
               {/* Technical Skills */}
               <div className="mb-5">
-                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase mb-1.5">
+                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase border-b border-zinc-300 pb-1 mb-2">
                   TECHNICAL SKILLS
                 </h2>
                 <div className="text-xs sm:text-[13px] text-zinc-800 space-y-1 leading-relaxed">
                   <p>
-                    <strong>Languages:</strong> Java, JavaScript, SQL &nbsp;&nbsp;
+                    <strong>Programming:</strong> Java, JavaScript, SQL
+                  </p>
+                  <p>
                     <strong>Backend:</strong> Spring Boot, Spring Security, REST APIs, JDBC, Hibernate, JPA
                   </p>
                   <p>
-                    <strong>App Development:</strong> Android (Java), XML, MVVM, Room, Retrofit &nbsp;&nbsp;
-                    <strong>Web:</strong> HTML, CSS, React, TypeScript
+                    <strong>Core Concepts:</strong> Core Java, OOP, Data Structures and Algorithms
                   </p>
                   <p>
-                    <strong>Database &amp; Tools:</strong> MySQL, PostgreSQL, Git, GitHub, Postman, VS Code, Linux/Ubuntu
+                    <strong>Android:</strong> Android (Java), XML Layouts, MVVM, ViewModel, LiveData, Room, Retrofit
                   </p>
-                </div>
-              </div>
-
-              {/* Projects */}
-              <div className="mb-5">
-                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase mb-2">
-                  PROJECTS
-                </h2>
-                <div className="space-y-2.5 text-xs sm:text-[13px] text-zinc-800">
-                  <div>
-                    <p className="font-bold text-zinc-900">
-                      KHATA – Shared Expense Management App
-                    </p>
-                    <p className="leading-relaxed">
-                      Android application for shared household expenses, group management, expense splitting and settlement tracking.{' '}
-                      <em className="text-zinc-600">
-                        Tech: Java, Android XML, MVVM, Room, Retrofit, Spring Boot, REST APIs, SQL.
-                      </em>
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-bold text-zinc-900">
-                      Apple Vision UI – Web Application
-                    </p>
-                    <p className="leading-relaxed">
-                      Responsive Apple Vision Pro-inspired interface with scroll-based animations and interactive visual effects.{' '}
-                      <em className="text-zinc-600">
-                        Tech: HTML, CSS, JavaScript, GSAP, ScrollTrigger, Canvas API.
-                      </em>
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-bold text-zinc-900">
-                      KrishiMitra – AI-Based Crop Recommendation System
-                    </p>
-                    <p className="leading-relaxed">
-                      Team project exploring crop recommendations using machine-learning models and a multilingual web interface.{' '}
-                      <em className="text-zinc-600">
-                        Tech: Java, Python, Scikit-learn, React, TypeScript.
-                      </em>
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-bold text-zinc-900">
-                      SortifyMaster – Sorting Algorithm Visualizer
-                    </p>
-                    <p className="leading-relaxed">
-                      Interactive visualizer demonstrating Bubble, Selection, Insertion, Merge, Quick and Heap sort.{' '}
-                      <em className="text-zinc-600">Tech: HTML, CSS, JavaScript.</em>
-                    </p>
-                  </div>
+                  <p>
+                    <strong>Web:</strong> HTML5, CSS3, React, TypeScript, GSAP, ScrollTrigger, Canvas API
+                  </p>
+                  <p>
+                    <strong>Databases &amp; Tools:</strong> MySQL, PostgreSQL, Git, GitHub, Postman, Android Studio, VS Code, Linux/Ubuntu, Maven, Gradle
+                  </p>
                 </div>
               </div>
 
               {/* Experience */}
               <div className="mb-5">
-                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase mb-1.5">
+                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase border-b border-zinc-300 pb-1 mb-2">
                   EXPERIENCE
                 </h2>
                 <div className="text-xs sm:text-[13px] text-zinc-800">
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="font-bold text-zinc-900">
-                      {education.internship.role} | {education.internship.company}
+                  <p className="font-bold text-zinc-900">
+                    {education.internship.role}{' '}
+                    <span className="font-normal text-zinc-600">
+                      | {education.internship.company} | {education.internship.duration}
+                    </span>
+                  </p>
+                  <ul className="list-disc list-inside mt-1 space-y-0.5 leading-relaxed">
+                    <li>{education.internship.description}</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Selected Projects */}
+              <div className="mb-5">
+                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase border-b border-zinc-300 pb-1 mb-2.5">
+                  SELECTED PROJECTS
+                </h2>
+                <div className="space-y-3 text-xs sm:text-[13px] text-zinc-800">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold text-zinc-900">
+                        KHATA – Shared Expense Management App{' '}
+                        <span className="font-semibold text-[#1e4b7a]">| In Development</span>
+                      </p>
+                      <a
+                        href="https://github.com/Adityaraj811/khata-expence-manager"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
+                      >
+                        <span>GitHub</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <p className="text-zinc-600 text-xs mt-0.5">
+                      Java, Android XML, MVVM, Room, Retrofit, Spring Boot, REST APIs, Spring Security, JPA/Hibernate, MySQL
                     </p>
-                    <span className="text-zinc-600 text-xs">{education.internship.duration}</span>
+                    <ul className="list-disc list-inside mt-1 space-y-0.5 leading-relaxed">
+                      <li>
+                        Developing an Android application for household groups to record shared expenses, split costs, track member balances, and manage settlements.
+                      </li>
+                      <li>
+                        Building the Spring Boot backend with REST endpoints and JPA repositories, alongside Android data integration using Room and Retrofit.
+                      </li>
+                    </ul>
                   </div>
-                  <p className="mt-0.5 leading-relaxed">{education.internship.description}</p>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold text-zinc-900">Valoura - Live Website</p>
+                      <a
+                        href="https://valoura-one.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
+                      >
+                        <span>Live Website</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <ul className="list-disc list-inside mt-1 space-y-0.5 leading-relaxed">
+                      <li>
+                        Deployed a web project to production on Vercel and managed its source-code versioning and deployment workflow using Git and GitHub.
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold text-zinc-900">Apple Vision UI – Web Application</p>
+                      <a
+                        href="https://github.com/Adityaraj811/Apple-Vision-ui-Web-application"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
+                      >
+                        <span>GitHub</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <p className="text-zinc-600 text-xs mt-0.5">
+                      HTML5, CSS3, JavaScript, GSAP, ScrollTrigger, Canvas API
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-0.5 leading-relaxed">
+                      <li>
+                        Built a responsive Apple Vision Pro-inspired web interface with scroll-driven animations and interactive Canvas visuals.
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold text-zinc-900">
+                        KrishiMitra – AI-Based Crop Recommendation System{' '}
+                        <span className="font-normal text-zinc-600">| Team Project</span>
+                      </p>
+                      <a
+                        href={personal.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
+                      >
+                        <span>GitHub</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <p className="text-zinc-600 text-xs mt-0.5">
+                      Java, Python, Scikit-learn, React, TypeScript, PWA
+                    </p>
+                    <ul className="list-disc list-inside mt-1 space-y-0.5 leading-relaxed">
+                      <li>
+                        Collaborated in a four-member team to build a crop recommendation platform; evaluated 22 machine-learning algorithms and selected Extra Trees based on accuracy and inference latency.
+                      </li>
+                      <li>
+                        Developed a multilingual PWA interface with offline fallback content and an agriculture economics dashboard.
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
               {/* Education */}
               <div className="mb-5">
-                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase mb-2">
+                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase border-b border-zinc-300 pb-1 mb-2">
                   EDUCATION
                 </h2>
-                <div className="space-y-2 text-xs sm:text-[13px] text-zinc-800">
-                  {education.academicTimeline.map((item) => (
-                    <div
-                      key={item.degreeOrClass}
-                      className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1"
-                    >
-                      <p>
-                        <strong>{item.degreeOrClass}</strong> – {item.institution} ({item.boardOrUniversity})
-                      </p>
-                      <div className="sm:text-right shrink-0 font-mono text-xs">
-                        <span className="font-bold text-zinc-900">{item.score}</span>
-                        <span className="text-zinc-500 ml-2">({item.duration})</span>
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-1 text-xs sm:text-[13px] text-zinc-800 leading-relaxed">
+                  <p>
+                    <strong>B.Tech, Computer Science and Engineering</strong>{' '}
+                    <span className="text-zinc-600">
+                      | Technocrats Institute of Technology, Bhopal (RGPV) | 2022–2026 | CGPA: 7.0
+                    </span>
+                  </p>
+                  <p className="text-zinc-700">
+                    Class XII: S.B.S +2 H/S, Lakhisarai, Bihar (BSEB) | 71% | 2021–2022
+                  </p>
+                  <p className="text-zinc-700">
+                    Class X: Gauri Shankar H/S, Katehar, Lakhisarai, Bihar (BSEB) | 71% | 2019–2020
+                  </p>
                 </div>
               </div>
 
               {/* Certifications & Achievements */}
               <div>
-                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase mb-2">
+                <h2 className="text-xs font-bold tracking-wider text-[#0f2942] uppercase border-b border-zinc-300 pb-1 mb-2">
                   CERTIFICATIONS &amp; ACHIEVEMENTS
                 </h2>
                 <div className="space-y-1.5 text-xs sm:text-[13px] text-zinc-800 leading-relaxed">
-                  <p>
-                    <strong>
-                      Oracle Cloud Infrastructure 2025 Certified Generative AI Professional
-                    </strong>{' '}
-                    – Oracle | Oct 2025 (valid till Oct 2027) |{' '}
-                    <a
-                      href="https://catalog-education.oracle.com/ords/certview/sharebadge?id=82A0B86C62BB5D96E0616E29D374D61BCAE946DBD0848398B7405F9A0C811B33"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-0.5 text-blue-700 font-medium hover:underline"
-                    >
-                      <span>Verify Credential</span>
-                      <ArrowUpRight className="w-3 h-3" />
-                    </a>
-                  </p>
-                  <p>
-                    <strong>Web Development Course</strong> – Rinex (in association with E-Cell, IIT Bhubaneswar), Dec 2025–Jan 2026 |{' '}
-                    <strong>Solved 400+ coding problems</strong> across practice platforms.
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>
+                      Web Development Course – Rinex, in association with E-Cell, IIT Bhubaneswar (Dec 2025 – Jan 2026).
+                    </li>
+                    <li>
+                      Solved 400+ coding problems across CodeChef, HackerRank, GeeksforGeeks, and LeetCode, including 100+ on LeetCode.
+                    </li>
+                  </ul>
+                  <p className="text-zinc-600 pt-1">
+                    Languages: English (Fluent), Hindi (Native) &nbsp;|&nbsp; Strengths: Problem-Solving, Communication, Time Management
                   </p>
                 </div>
               </div>

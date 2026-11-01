@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import {
-  BookOpen,
   Box,
+  Cpu,
   Eye,
+  Globe,
+  Leaf,
   Sparkles,
+  TrendingUp,
 } from 'lucide-react';
 import type { ProjectItem } from '../data/portfolioConfig';
 import { KhataScreenShowcase } from './KhataScreenShowcase';
@@ -92,7 +95,7 @@ const AppleVisionSpatialPreview: React.FC<{
               Apple Vision UI · Spatial Web
             </p>
             <p className="text-[11px] text-zinc-400 truncate">
-              React 19 · Three.js · GSAP · Canvas
+              HTML5 · CSS3 · JS · GSAP · Canvas
             </p>
           </div>
         </div>
@@ -238,10 +241,169 @@ const AppleVisionSpatialPreview: React.FC<{
       {/* Footer Stack & Action */}
       <div className="relative z-10 flex items-center justify-between gap-2 text-[11px] font-mono text-zinc-400 pt-2.5 border-t border-zinc-800/80">
         <span className="truncate">
-          React 19 · TypeScript · Three.js · GSAP · Canvas
+          HTML5 · CSS3 · JS · GSAP · ScrollTrigger · Canvas API
         </span>
         <span className="shrink-0 font-semibold" style={{ color: theme.accent }}>
           {onExpandCaseStudy ? 'Inspect →' : 'Public Repo'}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const KRISHI_SOIL_PRESETS = [
+  {
+    id: 'alluvial',
+    label: 'Alluvial',
+    npk: 'N:90 · P:42 · K:43 · pH 6.5',
+    crop: 'Basmati Rice / Wheat',
+    confidence: '99.2%',
+    roi: '₹68,400 / Acre Est.',
+  },
+  {
+    id: 'black',
+    label: 'Black Soil',
+    npk: 'N:115 · P:58 · K:50 · pH 7.2',
+    crop: 'Cotton / Soybean',
+    confidence: '98.7%',
+    roi: '₹74,200 / Acre Est.',
+  },
+  {
+    id: 'loamy',
+    label: 'Loamy',
+    npk: 'N:65 · P:55 · K:48 · pH 6.8',
+    crop: 'Chickpea / Mustard',
+    confidence: '98.9%',
+    roi: '₹59,800 / Acre Est.',
+  },
+] as const;
+
+const KrishiMitraPreview: React.FC<{
+  variant?: 'card' | 'modal';
+  onExpandCaseStudy?: () => void;
+}> = ({ variant = 'card', onExpandCaseStudy }) => {
+  const [selectedPresetIdx, setSelectedPresetIdx] = useState(0);
+  const preset = KRISHI_SOIL_PRESETS[selectedPresetIdx];
+  const isModal = variant === 'modal';
+
+  return (
+    <div
+      className={`relative w-full h-full ${
+        isModal ? 'min-h-[220px] p-4 sm:p-5' : 'min-h-[260px] p-5'
+      } bg-[#070D0A] text-zinc-100 flex flex-col justify-between overflow-hidden select-none group-hover:bg-[#0A130E] transition-colors duration-300`}
+    >
+      {/* Ambient Emerald Glow */}
+      <div
+        className="absolute -bottom-20 -left-16 w-72 h-72 rounded-full pointer-events-none transition-transform duration-500 group-hover:scale-110"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(16,185,129,0.22) 0%, rgba(59,130,246,0.08) 60%, transparent 100%)',
+        }}
+      />
+
+      {/* Header */}
+      <div className="relative z-10 flex items-center justify-between gap-2 border-b border-emerald-950/90 pb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/35 flex items-center justify-center text-emerald-400 shrink-0">
+            <Leaf className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-mono font-semibold text-zinc-100 tracking-tight truncate">
+              KrishiMitra · AI Crop System
+            </p>
+            <p className="text-[11px] text-zinc-400 truncate">
+              Extra Trees ML (22 Models) · Multilingual PWA
+            </p>
+          </div>
+        </div>
+
+        {/* Interactive Soil Preset Switcher */}
+        <div
+          className="flex items-center gap-1 bg-zinc-900/90 border border-zinc-800 rounded-lg p-0.5 shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {KRISHI_SOIL_PRESETS.map((item, idx) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPresetIdx(idx);
+              }}
+              className={`px-2 py-1 rounded-md text-[10px] font-mono transition-colors cursor-pointer ${
+                idx === selectedPresetIdx
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Live Extra Trees Prediction Banner + 3 Core Modules */}
+      <div className="relative z-10 my-3.5 space-y-3">
+        <div className="p-3 rounded-xl bg-zinc-900/90 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-2">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-mono text-emerald-400 font-semibold">
+              EXTRA TREES CLASSIFIER · {preset.npk}
+            </span>
+            <p className="text-xs sm:text-sm font-bold text-zinc-100">
+              Recommended: <span className="text-emerald-300">{preset.crop}</span>
+            </p>
+          </div>
+          <div className="text-right font-mono">
+            <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-[10px] text-emerald-300 font-semibold">
+              {preset.confidence} Match
+            </span>
+            <p className="text-[10px] text-zinc-400 mt-0.5">{preset.roi}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
+              <Cpu className="w-3 h-3 shrink-0" />
+              <span>22 ML MODELS</span>
+            </div>
+            <p className="text-xs font-semibold text-zinc-100 mt-1">Extra Trees Selected</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+              Top accuracy &amp; low inference latency
+            </p>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-blue-400">
+              <Globe className="w-3 h-3 shrink-0" />
+              <span>OFFLINE PWA</span>
+            </div>
+            <p className="text-xs font-semibold text-zinc-100 mt-1">Multilingual UI</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+              Offline fallback content support
+            </p>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400">
+              <TrendingUp className="w-3 h-3 shrink-0" />
+              <span>AGRI ECONOMICS</span>
+            </div>
+            <p className="text-xs font-semibold text-zinc-100 mt-1">Economics Dashboard</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+              Yield &amp; market return analytics
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="relative z-10 flex items-center justify-between gap-2 text-[11px] font-mono text-zinc-400 pt-2.5 border-t border-zinc-800/80">
+        <span className="truncate">
+          Java · Python · Scikit-learn · React · TypeScript · PWA
+        </span>
+        <span className="shrink-0 text-emerald-400 font-semibold">
+          {onExpandCaseStudy ? 'Inspect →' : 'Team Project'}
         </span>
       </div>
     </div>
@@ -266,66 +428,12 @@ export const ProjectVisual: React.FC<ProjectVisualProps> = ({
     return <KhataScreenShowcase variant={variant} />;
   }
 
-  if (visualType === 'library-mitra-web') {
+  if (visualType === 'krishi-mitra-web') {
     return (
-      <div className="relative w-full h-full min-h-[290px] bg-zinc-950 text-zinc-100 p-6 flex flex-col justify-between overflow-hidden select-none group-hover:bg-[#0B0D16] transition-colors duration-300">
-        <div
-          className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full pointer-events-none transition-transform duration-500 group-hover:scale-110"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(99,102,241,0.24) 0%, rgba(59,130,246,0.08) 60%, transparent 100%)',
-          }}
-        />
-        {/* Browser Header */}
-        <div className="relative z-10 flex items-center justify-between border-b border-zinc-800/90 pb-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-              <BookOpen className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-xs font-mono font-semibold text-zinc-100 tracking-tight">
-                Library Mitra · Web Platform
-              </p>
-              <p className="text-[11px] text-zinc-400">
-                Online Book Catalog &amp; Member Management
-              </p>
-            </div>
-          </div>
-          <span className="text-[11px] font-mono text-indigo-300">Responsive Web App</span>
-        </div>
-
-        {/* Simulated Catalog Interface */}
-        <div className="relative z-10 my-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          <div className="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/90 group-hover:border-indigo-500/30 transition-colors">
-            <p className="text-[11px] font-mono text-indigo-400">01. DIGITAL CATALOG</p>
-            <p className="text-xs font-semibold text-zinc-100 mt-1">Search &amp; Filter Books</p>
-            <p className="text-[11px] text-zinc-400 mt-1">
-              Instant lookup by subject, author, and real-time availability.
-            </p>
-          </div>
-          <div className="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/90 group-hover:border-blue-500/30 transition-colors">
-            <p className="text-[11px] font-mono text-blue-400">02. MEMBER PORTAL</p>
-            <p className="text-xs font-semibold text-zinc-100 mt-1">Borrowing Workflows</p>
-            <p className="text-[11px] text-zinc-400 mt-1">
-              Streamlined issue/return tracking and digital catalog access.
-            </p>
-          </div>
-          <div className="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/90 group-hover:border-emerald-500/30 transition-colors">
-            <p className="text-[11px] font-mono text-emerald-400">03. MULTI-DEVICE</p>
-            <p className="text-xs font-semibold text-zinc-100 mt-1">Responsive UI</p>
-            <p className="text-[11px] text-zinc-400 mt-1">
-              Clean layout across desktop monitors, tablets, and mobile browsers.
-            </p>
-          </div>
-        </div>
-
-        <div className="relative z-10 flex items-center justify-between text-[11px] font-mono text-zinc-400 pt-2.5 border-t border-zinc-800/80">
-          <span>HTML5 · CSS3 · JavaScript · SQL</span>
-          <span className="text-indigo-400 group-hover:translate-x-0.5 transition-transform">
-            Inspect Architecture →
-          </span>
-        </div>
-      </div>
+      <KrishiMitraPreview
+        variant={variant}
+        onExpandCaseStudy={onExpandCaseStudy}
+      />
     );
   }
 
@@ -336,4 +444,5 @@ export const ProjectVisual: React.FC<ProjectVisualProps> = ({
     />
   );
 };
+
 

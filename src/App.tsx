@@ -1393,7 +1393,7 @@ export default function App() {
                     className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
                     style={{ textWrap: 'balance' }}
                   >
-                    Academic Qualification, Oracle Certification &amp; Internship
+                    Academic Qualification, Internship &amp; Certifications
                   </h2>
                 </div>
               </ScrollReveal>
@@ -1468,16 +1468,32 @@ export default function App() {
                   </Tilt3DCard>
                 </ScrollReveal>
 
-                {/* Right Column: OCI Certification, Internship & Achievements */}
+                {/* Right Column: Internship, Certifications & Achievements */}
                 <ScrollReveal direction="up" delayMs={130} className="lg:col-span-5">
                   <Tilt3DCard className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold border-b border-zinc-100 dark:border-zinc-800/80 pb-3.5">
                         <BookOpen className="w-4 h-4" />
-                        <span>CERTIFICATIONS, INTERNSHIP &amp; ACHIEVEMENTS</span>
+                        <span>INTERNSHIP, CERTIFICATIONS &amp; ACHIEVEMENTS</span>
                       </div>
 
-                      {/* Oracle OCI Certification Highlight */}
+                      {/* Internship Experience Highlight */}
+                      <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/90 space-y-1.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                            INTERNSHIP EXPERIENCE · {education.internship.company.toUpperCase()}
+                          </span>
+                          <span>{education.internship.duration}</span>
+                        </div>
+                        <h3 className="font-display text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">
+                          {education.internship.role}
+                        </h3>
+                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                          {education.internship.description}
+                        </p>
+                      </div>
+
+                      {/* Certifications Highlight */}
                       {education.certifications.map((cert) => (
                         <div
                           key={cert.title}
@@ -1517,25 +1533,16 @@ export default function App() {
                         </div>
                       ))}
 
-                      {/* Internship Experience Highlight */}
-                      <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/90 space-y-1.5">
-                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                            INTERNSHIP EXPERIENCE · {education.internship.company.toUpperCase()}
-                          </span>
-                          <span>{education.internship.duration}</span>
-                        </div>
-                        <h3 className="font-display text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">
-                          {education.internship.role}
-                        </h3>
-                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                          {education.internship.description}
-                        </p>
-                      </div>
-
-                      {/* Coding Achievement */}
-                      <div className="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20 text-xs text-zinc-700 dark:text-zinc-300 font-mono">
-                        ✓ {education.achievements[0]}
+                      {/* Coding Achievements & Languages / Strengths */}
+                      <div className="space-y-2.5">
+                        {education.achievements.map((achievement, idx) => (
+                          <div
+                            key={idx}
+                            className="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20 text-xs text-zinc-700 dark:text-zinc-300 font-mono leading-relaxed"
+                          >
+                            ✓ {achievement}
+                          </div>
+                        ))}
                       </div>
                     </div>
 
