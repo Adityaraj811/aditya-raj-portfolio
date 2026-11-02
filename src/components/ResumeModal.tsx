@@ -114,28 +114,28 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
 
           <div className="flex flex-wrap items-center gap-2">
             {/* View Mode Toggle */}
-            <div className="hidden sm:flex items-center p-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs">
+            <div className="flex items-center p-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs">
               <button
                 type="button"
                 onClick={() => setViewMode('page')}
-                className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
                   viewMode === 'page'
                     ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs'
                     : 'text-zinc-600 dark:text-zinc-400'
                 }`}
               >
-                CV Page View
+                CV View
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('pdf')}
-                className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                className={`px-2 sm:px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
                   viewMode === 'pdf'
                     ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs'
                     : 'text-zinc-600 dark:text-zinc-400'
                 }`}
               >
-                Native PDF Reader
+                PDF Reader
               </button>
             </div>
 

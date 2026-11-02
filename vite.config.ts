@@ -27,14 +27,17 @@ function githubPagesSpaRoutesPlugin(): Plugin {
   };
 }
 
-export default defineConfig(({ command }) => {
+export default defineConfig(() => {
+  // On Netlify (or standard production builds), deploy at root '/'.
+  // On GitHub Actions (GitHub Pages), VITE_BASE_PATH is set to '/aditya-raj-portfolio/'.
+  const resolvedBase =
+    process.env.VITE_BASE_PATH ||
+    (process.env.GITHUB_ACTIONS === 'true' && !process.env.NETLIFY
+      ? '/aditya-raj-portfolio/'
+      : '/');
+
   return {
-    // Uses '/aditya-raj-portfolio/' for production builds deployed to
-    // https://Adityaraj811.github.io/aditya-raj-portfolio/ and '/' in local dev server.
-    // Can also be overridden via VITE_BASE_PATH environment variable.
-    base:
-      process.env.VITE_BASE_PATH ||
-      (command === 'build' ? '/aditya-raj-portfolio/' : '/'),
+    base: resolvedBase,
     plugins: [react(), tailwindcss(), githubPagesSpaRoutesPlugin()],
     resolve: {
       alias: {
