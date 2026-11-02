@@ -28,11 +28,11 @@ function githubPagesSpaRoutesPlugin(): Plugin {
 }
 
 export default defineConfig(() => {
-  // On Netlify (or standard production builds), deploy at root '/'.
+  // On Vercel, Netlify, or standard production builds, deploy at root '/'.
   // On GitHub Actions (GitHub Pages), VITE_BASE_PATH is set to '/aditya-raj-portfolio/'.
   const resolvedBase =
     process.env.VITE_BASE_PATH ||
-    (process.env.GITHUB_ACTIONS === 'true' && !process.env.NETLIFY
+    (process.env.GITHUB_ACTIONS === 'true' && !process.env.NETLIFY && !process.env.VERCEL
       ? '/aditya-raj-portfolio/'
       : '/');
 
