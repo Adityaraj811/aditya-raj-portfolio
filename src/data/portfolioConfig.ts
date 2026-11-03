@@ -152,7 +152,9 @@ export const portfolioConfig = {
       'Open to Java Backend, Android & Software Developer Opportunities & Selected Freelance Projects',
 
     // Profile image: Uses actual portrait resolved via import.meta.env.BASE_URL
-    profileImagePath: resolvePublicAsset('images/profile.webp'),
+    profileImagePath: resolvePublicAsset(
+      '/assets/aistudio/Gemini_Generated_Image_35wl4q35wl4q35wl-clean_43bc697e.png'
+    ),
     profileFallbackSvg: resolvePublicAsset('images/profile-placeholder.svg'),
 
     // Resume file configuration:
