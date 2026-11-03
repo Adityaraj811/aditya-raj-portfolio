@@ -2,14 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   X,
-  Github,
   ExternalLink,
   CheckCircle2,
   Layers,
   ArrowUpRight,
   Sparkles,
+  MessageSquare,
 } from 'lucide-react';
-import type { ProjectItem } from '../data/portfolioConfig';
+import { portfolioConfig, type ProjectItem } from '../data/portfolioConfig';
 import { ProjectVisual } from './ProjectVisual';
 import { velouraSoundEngine } from '../utils/velouraSoundEngine';
 
@@ -92,6 +92,14 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
   const isVeloura = project?.id === 'veloura-specialty-coffee';
 
+  const buildProjectWhatsappUrl = (title: string) => {
+    const cleanDigits = portfolioConfig.personal.whatsappNumber.replace(/[^0-9]/g, '');
+    const text = encodeURIComponent(
+      `Hi Aditya, I liked your project "${title}" on your portfolio and would like to get a similar website/app built and customized according to my requirements.`
+    );
+    return `https://wa.me/${cleanDigits}?text=${text}`;
+  };
+
   const handleCloseWithSound = () => {
     if (isVeloura) {
       velouraSoundEngine.playToggleSound();
@@ -159,7 +167,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           aria-modal="true"
           aria-labelledby="modal-project-title"
         >
-          {/* Ambient Expansion Aura (Warm Roasted Bronze for Veloura, Architectural Blue for others) */}
+          {/* Ambient Expansion Aura */}
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1.05 }}
@@ -221,12 +229,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 >
                   {project.title}
                 </h3>
-                {isVeloura && (
-                  <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#B47B44]/15 border border-[#B47B44]/40 text-[10px] font-mono text-[#B47B44] dark:text-[#D4A373]">
-                    <Sparkles className="w-2.5 h-2.5" />
-                    <span>Interactive Case Study</span>
-                  </span>
-                )}
+                <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-[10px] font-mono text-blue-600 dark:text-blue-400">
+                  <Sparkles className="w-2.5 h-2.5" />
+                  <span>Interactive App &amp; Sample Preview</span>
+                </span>
               </div>
               <button
                 ref={closeButtonRef}
@@ -290,7 +296,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                     <h4 className="font-display text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                      Key Features
+                      Key Features (Customizable)
                     </h4>
                   </div>
                   <ul className="space-y-2">
@@ -343,7 +349,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 </div>
               </motion.div>
 
-              {/* Technology Stack & Modal Footer Actions */}
+              {/* Technology Stack & Modal Footer Actions (Live Demo + Direct Contact for Customization) */}
               <motion.div
                 variants={sectionPopVariants}
                 className="pt-3.5 border-t border-zinc-200 dark:border-zinc-800 space-y-4"
@@ -357,32 +363,29 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2.5">
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
-                    >
-                      <Github className="w-4 h-4" />
-                      <span>{project.githubButtonLabel || 'View Source Code'}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </a>
                     {project.liveDemoUrl && (
                       <a
                         href={project.liveDemoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-xs font-medium transition-colors whitespace-nowrap ${
-                          isVeloura
-                            ? 'border-[#B47B44]/50 bg-[#B47B44]/15 text-[#B47B44] dark:text-[#D4A373] hover:bg-[#B47B44]/25'
-                            : 'border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                        }`}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
                       >
                         <ExternalLink className="w-4 h-4" />
                         <span>Live Demo</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </a>
                     )}
+
+                    <a
+                      href={buildProjectWhatsappUrl(project.title)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>WhatsApp for Custom Version</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
                   </div>
 
                   <button
@@ -391,9 +394,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                       handleCloseWithSound();
                       onDiscussSimilar(project.title);
                     }}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-100 text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer"
                   >
-                    <span>Let&apos;s Connect About This Project</span>
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <span>Contact for Customization</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -405,4 +409,3 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
     </AnimatePresence>
   );
 };
-

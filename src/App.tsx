@@ -6,7 +6,6 @@ import {
   X,
   ArrowUpRight,
   ArrowRight,
-  Download,
   Linkedin,
   Github,
   Instagram,
@@ -16,50 +15,64 @@ import {
   Copy,
   Check,
   GraduationCap,
-  Code2,
   Briefcase,
   Layers,
   ExternalLink,
-  BookOpen,
   FileText,
+  User,
+  Sparkles,
 } from 'lucide-react';
 import {
   portfolioConfig,
   type ProjectItem,
 } from './data/portfolioConfig';
-import { TechIcon } from './components/TechIcon';
 import { ProjectVisual } from './components/ProjectVisual';
+import { ServiceMockupVisual } from './components/ServiceMockupVisual';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
 import { ResumeModal } from './components/ResumeModal';
 import { ScrollReveal } from './components/ScrollReveal';
 import { Tilt3DCard } from './components/Tilt3DCard';
 import { HeroProfile3D } from './components/HeroProfile3D';
 import { FreelanceServicesPage } from './components/FreelanceServicesPage';
-import { handleDownloadResumePdf } from './utils/resumePdf';
+import { AboutPage } from './components/AboutPage';
 import { motion, AnimatePresence } from 'framer-motion';
 import { velouraSoundEngine } from './utils/velouraSoundEngine';
 
-function detectServicesRoute(): boolean {
-  if (typeof window === 'undefined') return false;
+type PageRoute = 'home' | 'services' | 'about';
+
+function detectInitialRoute(): PageRoute {
+  if (typeof window === 'undefined') return 'home';
   const pathname = window.location.pathname.replace(/\/+$/, '');
   const hash = window.location.hash;
   const searchParams = new URLSearchParams(window.location.search);
-  return (
+
+  if (
     pathname.endsWith('/services') ||
     hash === '#/services' ||
     hash === '#services-page' ||
     searchParams.get('page') === 'services'
-  );
+  ) {
+    return 'services';
+  }
+
+  if (
+    pathname.endsWith('/about') ||
+    hash === '#/about' ||
+    hash === '#about-page' ||
+    searchParams.get('page') === 'about'
+  ) {
+    return 'about';
+  }
+
+  return 'home';
 }
 
 export default function App() {
   const {
     personal,
     verifiedGithubRepos,
-    corePillars,
-    about,
-    skillCategories,
     projects,
+    freelanceSection,
     education,
   } = portfolioConfig;
 
@@ -86,9 +99,9 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Page Routing State ('home' | 'services') — Supports clean `/services` route + GitHub Pages
-  const [currentPage, setCurrentPage] = useState<'home' | 'services'>(() =>
-    detectServicesRoute() ? 'services' : 'home'
+  // Page Routing State ('home' | 'services' | 'about')
+  const [currentPage, setCurrentPage] = useState<PageRoute>(() =>
+    detectInitialRoute()
   );
 
   // Active Navigation Section Highlight State
@@ -96,7 +109,7 @@ export default function App() {
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPage(detectServicesRoute() ? 'services' : 'home');
+      setCurrentPage(detectInitialRoute());
     };
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('hashchange', handlePopState);
@@ -118,6 +131,17 @@ export default function App() {
       window.history.pushState({ page: 'services' }, '', targetUrl);
     }
     setCurrentPage('services');
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const navigateToAbout = useCallback(() => {
+    const base = getNormalizedBase();
+    const targetUrl = `${base}about`;
+    if (window.location.pathname !== targetUrl) {
+      window.history.pushState({ page: 'about' }, '', targetUrl);
+    }
+    setCurrentPage('about');
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -144,11 +168,11 @@ export default function App() {
   // Track active section while scrolling on the homepage
   useEffect(() => {
     if (currentPage !== 'home') {
-      setActiveSection('services');
+      setActiveSection(currentPage);
       return;
     }
 
-    const sectionIds = ['home', 'about', 'skills', 'projects', 'education', 'contact'];
+    const sectionIds = ['home', 'freelance', 'projects', 'about-gateway', 'contact'];
     const handleScroll = () => {
       const scrollY = window.scrollY + 180;
       for (let i = sectionIds.length - 1; i >= 0; i--) {
@@ -180,9 +204,6 @@ export default function App() {
     }
   };
 
-  // Skills Category Filter State
-  const [selectedSkillCat, setSelectedSkillCat] = useState<string>('all');
-
   // Project Domain Filter State
   const [selectedProjectDomain, setSelectedProjectDomain] = useState<string>('all');
 
@@ -206,7 +227,7 @@ export default function App() {
 
   // Inquiry Topic Selection State
   const [selectedInquiryTopic, setSelectedInquiryTopic] = useState<string>(
-    'Software Developer / App & Web Developer Role'
+    'Custom Business Website or Landing Page'
   );
 
   // Copy Field Feedback State
@@ -234,10 +255,10 @@ export default function App() {
 
   const buildMailtoLink = (topic?: string) => {
     const subject = encodeURIComponent(
-      `Portfolio Inquiry: ${topic || selectedInquiryTopic} — Aditya Raj`
+      `Project / Portfolio Inquiry: ${topic || selectedInquiryTopic} — Aditya Raj`
     );
     const body = encodeURIComponent(
-      `Hi Aditya,\n\nI visited your portfolio and would like to connect regarding: ${
+      `Hi Aditya,\n\nI visited your portfolio and would like to discuss: ${
         topic || selectedInquiryTopic
       }.\n\nBest regards,`
     );
@@ -255,20 +276,18 @@ export default function App() {
     return `https://wa.me/${cleanDigits}?text=${message}`;
   };
 
-  const filteredSkillCategories =
-    selectedSkillCat === 'all'
-      ? skillCategories
-      : skillCategories.filter((cat) => cat.id === selectedSkillCat);
-
   const filteredProjects =
     selectedProjectDomain === 'all'
       ? projects
       : projects.filter((p) => p.domain === selectedProjectDomain);
 
+  // Featured Freelance Services shown right below the Hero Profile
+  const homepageServicesShowcase = freelanceSection.services.slice(0, 6);
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-[#07080C] dark:text-zinc-100 bg-architectural-grid transition-colors duration-200">
       {/* =====================================================================
-          A. STICKY NAVIGATION BAR (Strict 3-Zone Top Bar Contract)
+          A. STICKY NAVIGATION BAR (3-Zone Top Bar Contract — Client-First!)
       ===================================================================== */}
       <header className="sticky top-0 z-40 w-full bg-zinc-50/85 dark:bg-[#07080C]/85 backdrop-blur-xl border-b border-zinc-200/80 dark:border-zinc-800/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
@@ -284,32 +303,40 @@ export default function App() {
             ADITYA RAJ
           </a>
 
-          {/* Zone 2: Concise Single-Line Navigation Links */}
+          {/* Zone 2: Client-First Navigation Links */}
           <nav
             aria-label="Primary Navigation"
             className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400"
           >
-            {[
-              { id: 'about', label: 'About' },
-              { id: 'skills', label: 'Skills' },
-              { id: 'projects', label: 'Projects' },
-            ].map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio(item.id);
-                }}
-                className={`transition-colors whitespace-nowrap shrink-0 ${
-                  currentPage === 'home' && activeSection === item.id
-                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                    : 'hover:text-zinc-900 dark:hover:text-zinc-100'
-                }`}
-              >
-                {item.label}
-              </a>
-            ))}
+            <a
+              href="#freelance"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateToPortfolio('freelance');
+              }}
+              className={`transition-colors whitespace-nowrap shrink-0 ${
+                currentPage === 'home' && activeSection === 'freelance'
+                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              Freelance Services
+            </a>
+
+            <a
+              href="#projects"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateToPortfolio('projects');
+              }}
+              className={`transition-colors whitespace-nowrap shrink-0 ${
+                currentPage === 'home' && activeSection === 'projects'
+                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              Projects &amp; Samples
+            </a>
 
             <a
               href={`${getNormalizedBase()}services`}
@@ -323,53 +350,53 @@ export default function App() {
                   : 'hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
             >
-              Services
+              All 8 Services
             </a>
 
-            {[
-              { id: 'education', label: 'Education' },
-              { id: 'contact', label: 'Contact' },
-            ].map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio(item.id);
-                }}
-                className={`transition-colors whitespace-nowrap shrink-0 ${
-                  currentPage === 'home' && activeSection === item.id
-                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                    : 'hover:text-zinc-900 dark:hover:text-zinc-100'
-                }`}
-              >
-                {item.label}
-              </a>
-            ))}
+            <a
+              href={`${getNormalizedBase()}about`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateToAbout();
+              }}
+              className={`transition-colors whitespace-nowrap shrink-0 ${
+                currentPage === 'about' ||
+                (currentPage === 'home' && activeSection === 'about-gateway')
+                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              About, Academics &amp; CV
+            </a>
 
             <a
-              href={personal.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap shrink-0"
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateToPortfolio('contact');
+              }}
+              className={`transition-colors whitespace-nowrap shrink-0 ${
+                currentPage === 'home' && activeSection === 'contact'
+                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
             >
-              GitHub
+              Contact
             </a>
           </nav>
 
-          {/* Zone 3: Primary Action (Download Resume) + Mobile Menu Trigger */}
+          {/* Zone 3: Primary Client Action + Mobile Menu Trigger */}
           <div className="flex items-center gap-3 shrink-0">
-            <a
-              href={personal.resumePdfPath}
-              download={personal.resumeDownloadFilename}
-              onClick={(e) =>
-                handleDownloadResumePdf(e, personal.resumePdfPath, personal.resumeDownloadFilename)
+            <button
+              type="button"
+              onClick={() =>
+                handleSelectInquiryTopicAndScroll('Custom Website, Landing Page or App Project')
               }
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-sm"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download Resume</span>
-            </a>
+              <span>Get Custom Website / App</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -397,24 +424,14 @@ export default function App() {
                 Home
               </a>
               <a
-                href="#about"
+                href="#freelance"
                 onClick={(e) => {
                   e.preventDefault();
-                  navigateToPortfolio('about');
+                  navigateToPortfolio('freelance');
                 }}
-                className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="py-2 text-blue-600 dark:text-blue-400 font-semibold"
               >
-                About
-              </a>
-              <a
-                href="#skills"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio('skills');
-                }}
-                className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Skills
+                Freelance Services
               </a>
               <a
                 href="#projects"
@@ -424,7 +441,7 @@ export default function App() {
                 }}
                 className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
               >
-                Projects
+                Projects &amp; Samples
               </a>
               <a
                 href={`${getNormalizedBase()}services`}
@@ -434,17 +451,17 @@ export default function App() {
                 }}
                 className="py-2 text-blue-600 dark:text-blue-400 font-semibold"
               >
-                Freelance Services →
+                All 8 Services →
               </a>
               <a
-                href="#education"
+                href={`${getNormalizedBase()}about`}
                 onClick={(e) => {
                   e.preventDefault();
-                  navigateToPortfolio('education');
+                  navigateToAbout();
                 }}
-                className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="py-2 text-indigo-600 dark:text-indigo-400 font-semibold"
               >
-                Education
+                About, Academics &amp; CV →
               </a>
               <a
                 href="#contact"
@@ -454,17 +471,7 @@ export default function App() {
                 }}
                 className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
               >
-                Contact
-              </a>
-              <a
-                href={personal.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 inline-flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                <Github className="w-4 h-4" />
-                <span>GitHub</span>
+                Contact Me
               </a>
             </div>
             <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
@@ -491,8 +498,10 @@ export default function App() {
       </header>
 
       {/* =====================================================================
-          MAIN VIEW: EITHER DEDICATED FREELANCE SERVICES PAGE (`/services`)
-          OR MAIN DEVELOPER PORTFOLIO HOMEPAGE (`/`)
+          MAIN VIEW:
+          - `/services`: Full 8 Freelance Services & Workflow Page
+          - `/about`: Dedicated About Me, Academic Journey, Technical Skills & Official CV Page
+          - `/`: Client-First Homepage (Hero Profile -> 01. Freelance Services -> 02. Live Samples & Projects -> 03. About/CV Gateway -> 04. Contact)
       ===================================================================== */}
       {currentPage === 'services' ? (
         <main>
@@ -503,14 +512,27 @@ export default function App() {
             buildMailtoLink={buildMailtoLink}
           />
         </main>
+      ) : currentPage === 'about' ? (
+        <main>
+          <AboutPage
+            onBackToPortfolio={() => navigateToPortfolio()}
+            onNavigateToServices={navigateToServices}
+            onNavigateToProjects={() => navigateToPortfolio('projects')}
+            onOpenResumeModal={() => setIsResumeModalOpen(true)}
+            onDiscussProject={(topic) => handleSelectInquiryTopicAndScroll(topic)}
+            profileImgSrc={profileImgSrc}
+            usingFallbackAvatar={usingFallbackAvatar}
+            onImageError={handleProfileImageError}
+          />
+        </main>
       ) : (
         <main>
           {/* ===================================================================
-              B. HERO SECTION (2-Column Split + 3D Animated Profile + Core Pillars)
+              B. HERO SECTION (2-Column Split + 3D Animated Profile)
           =================================================================== */}
           <section
             id="home"
-            className="relative pt-10 pb-16 sm:pt-16 sm:pb-24 overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800/80"
+            className="relative pt-10 pb-16 sm:pt-14 sm:pb-20 overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800/80"
           >
             {/* Subtle Ambient Radial Glows */}
             <div
@@ -545,28 +567,28 @@ export default function App() {
 
               {/* 2-Column Split Hero */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
-                {/* Left Column: Concise Developer Identity & Primary CTAs */}
+                {/* Left Column: Client-Focused Value Proposition & Direct CTAs */}
                 <ScrollReveal
                   direction="up"
                   className="lg:col-span-7 flex flex-col justify-between space-y-8"
                 >
                   <div className="space-y-5">
                     <p className="font-mono text-sm sm:text-base font-medium text-blue-600 dark:text-blue-400 tracking-wide">
-                      {personal.heroGreeting}
+                      {personal.heroGreeting} · CUSTOM WEBSITES, LANDING PAGES &amp; APPS
                     </p>
 
                     <h1
                       className="font-display font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-[1.06]"
                       style={{
-                        fontSize: 'clamp(2.5rem, 4.8vw, 4.25rem)',
+                        fontSize: 'clamp(2.4rem, 4.6vw, 4.1rem)',
                         textWrap: 'balance',
                       }}
                     >
-                      {personal.heroDisplayTitle}
+                      Building Custom Websites, Web Apps &amp; Android Applications
                     </h1>
 
                     <p className="text-base sm:text-xl text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl">
-                      {personal.heroDescription}
+                      Explore the types of websites, landing pages, and mobile apps I build below. Pick any live sample you like—I will build and customize it 100% according to your brand and business needs.
                     </p>
                   </div>
 
@@ -574,47 +596,32 @@ export default function App() {
                   <div className="pt-2 space-y-7">
                     <div className="flex flex-wrap items-center gap-3.5">
                       <a
-                        href="#projects"
+                        href="#freelance"
                         className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 shadow-lg shadow-blue-600/20"
                       >
-                        <span>View Projects</span>
+                        <Briefcase className="w-4 h-4" />
+                        <span>Explore Services I Provide</span>
+                      </a>
+
+                      <a
+                        href="#projects"
+                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
+                      >
+                        <span>View Live Samples &amp; Projects</span>
                         <ArrowUpRight className="w-4 h-4" />
-                      </a>
-
-                      <a
-                        href={personal.resumePdfPath}
-                        download={personal.resumeDownloadFilename}
-                        onClick={(e) =>
-                          handleDownloadResumePdf(
-                            e,
-                            personal.resumePdfPath,
-                            personal.resumeDownloadFilename
-                          )
-                        }
-                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 cursor-pointer"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span>Download Resume</span>
-                      </a>
-
-                      <a
-                        href="#contact"
-                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-blue-500/50 dark:hover:border-blue-500/50 text-zinc-800 dark:text-zinc-200 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
-                      >
-                        <span>Contact Me</span>
                       </a>
 
                       <button
                         type="button"
-                        onClick={() => setIsResumeModalOpen(true)}
-                        className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800/90 bg-zinc-100/70 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                        onClick={navigateToAbout}
+                        className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-blue-500/50 dark:hover:border-blue-500/50 text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 cursor-pointer"
                       >
-                        <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        <span>Preview CV</span>
+                        <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <span>About Me, Academics &amp; CV</span>
                       </button>
                     </div>
 
-                    {/* 3D Elevated Social Buttons & Highlighted Freelance Services CTA */}
+                    {/* 3D Elevated Social Buttons & Highlighted All-Services Button */}
                     <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-3.5">
                       <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                         {/* LinkedIn 3D Button */}
@@ -692,7 +699,7 @@ export default function App() {
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
-                                  Freelance Services
+                                  Freelance Services (View All 8)
                                 </span>
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/35 text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-300">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -700,13 +707,13 @@ export default function App() {
                                 </span>
                               </div>
                               <p className="text-[11px] font-mono text-zinc-600 dark:text-zinc-300">
-                                Websites · Landing Pages · Custom Apps
+                                Click to see all Website, Landing Page &amp; App Services
                               </p>
                             </div>
                           </div>
 
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 group-hover:bg-blue-500 text-white text-xs font-semibold transition-colors shrink-0">
-                            <span>Explore</span>
+                            <span>Open All Services</span>
                             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                           </span>
                         </button>
@@ -729,293 +736,167 @@ export default function App() {
                   />
                 </ScrollReveal>
               </div>
-
-              {/* Full-Width 3-Column Core Capabilities Strip Below Hero Split */}
-              <div className="mt-12 pt-10 border-t border-zinc-200/80 dark:border-zinc-800/80 grid grid-cols-1 md:grid-cols-3 gap-6">
-                {corePillars.map((pillar, idx) => (
-                  <ScrollReveal key={pillar.index} delayMs={idx * 90} direction="up">
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40">
-                      <div className="space-y-2">
-                        <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                          {pillar.index}
-                        </span>
-                        <h2 className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                          {pillar.title}
-                        </h2>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                          {pillar.summary}
-                        </p>
-                      </div>
-                      <p className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/80 font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                        {pillar.technologies}
-                      </p>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-                ))}
-              </div>
             </div>
           </section>
 
           {/* ===================================================================
-              C. COMPACT ABOUT SECTION + SEPARATE RECRUITER & FREELANCE CARDS
+              C. 01. FREELANCE SERVICES & CUSTOMIZATION SHOWCASE (Directly Below Profile!)
           =================================================================== */}
           <section
-            id="about"
+            id="freelance"
             className="py-20 sm:py-24 border-b border-zinc-200/80 dark:border-zinc-800/80"
           >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-              {/* Compact About Overview & 4 Highlight Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
-                <ScrollReveal direction="up" className="lg:col-span-5 flex flex-col justify-between space-y-6">
-                  <div className="space-y-3">
-                    <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      01. ABOUT ME
-                    </p>
-                    <h2
-                      className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
-                      style={{ textWrap: 'balance' }}
-                    >
-                      {about.sectionTitle}
-                    </h2>
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                      {about.shortIntro}
-                    </p>
-                  </div>
-
-                  {/* Clean Technology Stack Line */}
-                  <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 space-y-2.5">
-                    <p className="font-mono text-xs text-blue-600 dark:text-blue-400 font-semibold">
-                      CORE TECHNOLOGIES
-                    </p>
-                    <p className="font-mono text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                      {about.techBadges.join(' · ')}
-                    </p>
-                  </div>
-                </ScrollReveal>
-
-                {/* 4 Compact Info Cards Grid */}
-                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {about.highlights.map((item, idx) => (
-                    <ScrollReveal key={item.label} delayMs={idx * 70} direction="up">
-                      <Tilt3DCard className="h-full p-5 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40">
-                        <div className="space-y-1.5">
-                          <p className="font-mono text-xs text-blue-600 dark:text-blue-400">
-                            {item.label}
-                          </p>
-                          <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                            {item.value}
-                          </h3>
-                          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                            {item.detail}
-                          </p>
-                        </div>
-                      </Tilt3DCard>
-                    </ScrollReveal>
-                  ))}
-                </div>
-              </div>
-
-              {/* Dedicated Split: FOR SOFTWARE RECRUITERS vs FOR FREELANCE CLIENTS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                {/* Card 1: FOR SOFTWARE RECRUITERS (Employment Opportunities Only) */}
-                <ScrollReveal direction="up" delayMs={50}>
-                  <Tilt3DCard className="h-full p-6 sm:p-7 rounded-2xl bg-white dark:bg-zinc-900/75 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/50 dark:hover:border-blue-500/50">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                          <Code2 className="w-4 h-4" />
-                          <span>{about.recruiterCard.title}</span>
-                        </div>
-                        <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                          Software Engineering Roles
-                        </span>
-                      </div>
-
-                      <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                        {about.recruiterCard.description}
-                      </p>
-                    </div>
-
-                    <div className="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-wrap items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setIsResumeModalOpen(true)}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        <FileText className="w-3.5 h-3.5" />
-                        <span>View Resume</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleSelectInquiryTopicAndScroll(
-                            'Software Developer / App & Web Developer Role'
-                          )
-                        }
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        <span>Let&apos;s Connect</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </Tilt3DCard>
-                </ScrollReveal>
-
-                {/* Card 2: FOR FREELANCE CLIENTS (Entire Card + Button Opens Dedicated `/services` Page) */}
-                <ScrollReveal direction="up" delayMs={140}>
-                  <Tilt3DCard
-                    onClick={navigateToServices}
-                    role="button"
-                    tabIndex={0}
-                    ariaLabel="Explore Freelance Development Services"
-                    spotlightColor="rgba(99, 102, 241, 0.16)"
-                    className="h-full p-6 sm:p-7 rounded-2xl bg-white dark:bg-zinc-900/75 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-indigo-500/60 dark:hover:border-indigo-500/60 cursor-pointer group"
-                  >
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                          <Briefcase className="w-4 h-4" />
-                          <span>{about.freelanceCard.title}</span>
-                        </div>
-                        <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                          Websites &amp; Applications
-                        </span>
-                      </div>
-
-                      <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                        {about.freelanceCard.description}
-                      </p>
-                    </div>
-
-                    <div className="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-3">
-                      <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 group-hover:bg-blue-600 dark:group-hover:bg-blue-500 dark:group-hover:text-white text-xs font-semibold transition-colors whitespace-nowrap">
-                        <span>{about.freelanceCard.buttonText}</span>
-                      </span>
-
-                      <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">
-                        Opens Dedicated Services Page
-                      </span>
-                    </div>
-                  </Tilt3DCard>
-                </ScrollReveal>
-              </div>
-            </div>
-          </section>
-
-          {/* ===================================================================
-              D. TECHNICAL SKILLS SECTION (4 Categorized Groups, Zero Fake %)
-          =================================================================== */}
-          <section
-            id="skills"
-            className="py-20 sm:py-24 border-b border-zinc-200/80 dark:border-zinc-800/80"
-          >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
               <ScrollReveal direction="up">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-2 max-w-2xl">
+                  <div className="space-y-2.5 max-w-2xl">
                     <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      02. TECHNICAL SKILLS
+                      01. FREELANCE SERVICES · WEBSITES, LANDING PAGES &amp; APPS
                     </p>
                     <h2
-                      className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                      className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
                       style={{ textWrap: 'balance' }}
                     >
-                      Programming, Backend, Mobile &amp; Web Stack
+                      What Type of Website or Application Do You Want Built?
                     </h2>
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
-                      Core technologies applied across real web applications, Android MVVM projects, and Spring Boot backend systems.
+                    <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                      Browse the website and app categories I build below. Choose any style or sample you like—I will build it from scratch and customize every color, layout, and feature according to your requirements.
                     </p>
                   </div>
 
-                  {/* Interactive Domain Filter Control */}
-                  <div
-                    role="tablist"
-                    aria-label="Filter skills by category"
-                    className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800"
+                  <button
+                    type="button"
+                    onClick={navigateToServices}
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 cursor-pointer shadow-lg shadow-blue-600/20"
                   >
-                    <button
-                      role="tab"
-                      aria-selected={selectedSkillCat === 'all'}
-                      onClick={() => setSelectedSkillCat('all')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                        selectedSkillCat === 'all'
-                          ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                          : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-                      }`}
-                    >
-                      All Skills
-                    </button>
-                    {skillCategories.map((cat) => (
-                      <button
-                        key={cat.id}
-                        role="tab"
-                        aria-selected={selectedSkillCat === cat.id}
-                        onClick={() => setSelectedSkillCat(cat.id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                          selectedSkillCat === cat.id
-                            ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-                        }`}
-                      >
-                        {cat.title}
-                      </button>
-                    ))}
-                  </div>
+                    <Briefcase className="w-4 h-4" />
+                    <span>See All 8 Services &amp; Process</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </ScrollReveal>
 
-              {/* Skill Category Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredSkillCategories.map((category, idx) => (
-                  <ScrollReveal key={category.id} delayMs={idx * 80} direction="up">
-                    <Tilt3DCard className="h-full p-6 sm:p-7 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-1.5 border-b border-zinc-100 dark:border-zinc-800/80 pb-4 mb-5">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                            {category.index}
-                          </span>
-                          <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 tabular-nums">
-                            {category.skills.length} Technologies
-                          </span>
+              {/* 6 Interactive Service Showcase Cards with Visual Previews & Customization CTA */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {homepageServicesShowcase.map((service, idx) => (
+                  <ScrollReveal key={service.id} delayMs={idx * 70} direction="up">
+                    <Tilt3DCard className="h-full rounded-2xl bg-white dark:bg-zinc-900/65 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/50 dark:hover:border-blue-500/50 overflow-hidden flex flex-col justify-between">
+                      <div>
+                        <div
+                          onClick={navigateToServices}
+                          className="cursor-pointer group relative"
+                        >
+                          <ServiceMockupVisual
+                            serviceId={service.id}
+                            index={service.index}
+                            categoryTag={service.categoryTag}
+                          />
                         </div>
-                        <h3 className="font-display text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-                          {category.title}
-                        </h3>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                          {category.subtitle}
-                        </p>
+
+                        <div className="p-5 sm:p-6 space-y-3">
+                          <div className="flex items-center justify-between gap-2 text-xs font-mono">
+                            <span className="text-blue-600 dark:text-blue-400 font-semibold">
+                              {service.index} · {service.categoryTag}
+                            </span>
+                            <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                              100% Customizable
+                            </span>
+                          </div>
+
+                          <h3 className="font-display text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                            {service.title}
+                          </h3>
+
+                          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                            {service.summary}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {category.skills.map((skill) => (
-                          <div
-                            key={`${category.id}-${skill.name}`}
-                            className="p-3.5 rounded-xl bg-zinc-50/90 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/80 hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-colors flex items-start gap-3"
+                      <div className="px-5 sm:px-6 pb-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-4">
+                        <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                          {service.deliverables.join(' · ')}
+                        </p>
+
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleSelectInquiryTopicAndScroll(
+                                `Build & Customize: ${service.title}`
+                              )
+                            }
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer"
                           >
-                            <div className="p-2 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
-                              <TechIcon iconKey={skill.iconKey} className="w-4 h-4" />
-                            </div>
-                            <div className="min-w-0">
-                              <h4 className="font-display text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                                {skill.name}
-                              </h4>
-                              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
-                                {skill.context}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Customize for Me</span>
+                          </button>
+
+                          {service.liveExampleUrl ? (
+                            <a
+                              href={service.liveExampleUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:border-blue-500/50 text-xs font-semibold text-zinc-800 dark:text-zinc-200 transition-colors"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                              <span>Live Sample</span>
+                            </a>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={navigateToServices}
+                              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/40 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                            >
+                              <span>All Details</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </Tilt3DCard>
                   </ScrollReveal>
                 ))}
               </div>
+
+              {/* Full-Width Callout Banner to Open All 8 Services Page */}
+              <ScrollReveal direction="up">
+                <div
+                  onClick={navigateToServices}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      navigateToServices();
+                    }
+                  }}
+                  className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-blue-600/15 via-indigo-600/10 to-emerald-500/10 border border-blue-500/40 hover:border-blue-400 transition-all cursor-pointer flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group"
+                >
+                  <div className="space-y-1.5">
+                    <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                      <Briefcase className="w-4 h-4" />
+                      <span>COMPLETE FREELANCE SERVICES CATALOG</span>
+                    </div>
+                    <h3 className="font-display text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                      Want to see all 8 Freelance Services, Deliverables &amp; Step-by-Step Workflow?
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+                      Click here to open the dedicated Freelance Services page with all website, landing page, web app, and Android app packages.
+                    </p>
+                  </div>
+
+                  <span className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 group-hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0">
+                    <span>Open All 8 Services</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </div>
+              </ScrollReveal>
             </div>
           </section>
 
           {/* ===================================================================
-              E. FEATURED PROJECTS SECTION (Completed KHATA, Apple Vision UI, Library Mitra)
+              D. 02. LIVE SAMPLES & FEATURED PROJECTS SECTION (Below Freelance Services!)
           =================================================================== */}
           <section
             id="projects"
@@ -1024,18 +905,18 @@ export default function App() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-2 max-w-2xl">
+                  <div className="space-y-2.5 max-w-2xl">
                     <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      03. FEATURED PROJECTS
+                      02. LIVE WEBSITE &amp; APP SAMPLES · FEATURED PROJECTS
                     </p>
                     <h2
-                      className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                      className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
                       style={{ textWrap: 'balance' }}
                     >
-                      Applications &amp; Web Engineering Work
+                      Explore Working Samples &amp; Request Your Custom Version
                     </h2>
                     <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
-                      Hands-on mobile and web applications built with Java, Spring Boot, Android MVVM, and interactive frontend technologies.
+                      Interact with my live websites, spatial web interfaces, and Android + Spring Boot applications below. Like any sample? Click &ldquo;Customize Similar for Me&rdquo; to get one tailored for your brand.
                     </p>
                   </div>
 
@@ -1045,7 +926,12 @@ export default function App() {
                     aria-label="Filter projects by domain"
                     className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800"
                   >
-                    {['all', 'Website Design & Development', 'Android & Backend', 'Web Application'].map((domain) => (
+                    {[
+                      'all',
+                      'Website Design & Development',
+                      'Android & Backend',
+                      'Web Application',
+                    ].map((domain) => (
                       <button
                         key={domain}
                         role="tab"
@@ -1057,7 +943,7 @@ export default function App() {
                             : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                         }`}
                       >
-                        {domain === 'all' ? `All Projects (${projects.length})` : domain}
+                        {domain === 'all' ? `All Samples (${projects.length})` : domain}
                       </button>
                     ))}
                   </div>
@@ -1087,7 +973,6 @@ export default function App() {
                         }}
                         className="relative"
                       >
-                        {/* Expanding Radial Bronze Bloom on Click */}
                         <AnimatePresence>
                           {isExpanding && (
                             <motion.div
@@ -1118,7 +1003,7 @@ export default function App() {
                             <div
                               role="button"
                               tabIndex={0}
-                              aria-label={`Inspect architecture and case study for ${project.title}`}
+                              aria-label={`Inspect interactive preview and case study for ${project.title}`}
                               onClick={() => handleOpenProjectCaseStudy(project)}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
@@ -1134,13 +1019,12 @@ export default function App() {
                               />
                             </div>
 
-                            {/* Content & Architecture Column (Click to Pop-In Case Study) */}
+                            {/* Content & Customization Action Column */}
                             <div
                               onClick={() => handleOpenProjectCaseStudy(project)}
                               className="lg:col-span-7 p-5 sm:p-8 flex flex-col justify-between space-y-6 cursor-pointer group/cardcontent"
                             >
                               <div className="space-y-4">
-                                {/* Unboxed Metadata Line */}
                                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
                                   <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
                                     <span
@@ -1190,7 +1074,7 @@ export default function App() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                                   <div className="space-y-1.5">
                                     <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                                      KEY FEATURES
+                                      WHAT&apos;S INCLUDED IN THIS SAMPLE
                                     </p>
                                     <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
                                       {project.implementedFeatures.map((feat, i) => (
@@ -1212,7 +1096,7 @@ export default function App() {
 
                                   <div className="space-y-1.5">
                                     <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                                      ARCHITECTURAL HIGHLIGHTS
+                                      TECHNICAL ARCHITECTURE
                                     </p>
                                     <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
                                       {project.architectureHighlights.map((arch, i) => (
@@ -1239,42 +1123,44 @@ export default function App() {
                                 </div>
                               </div>
 
-                              {/* Tech Stack & Action Buttons */}
+                              {/* Tech Stack & Action Buttons (Live Demo / Open App + Direct Contact for Customization) */}
                               <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
                                 <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                                   <span className="text-zinc-800 dark:text-zinc-200 font-medium">
-                                    Stack:{' '}
+                                    Built With:{' '}
                                   </span>
                                   {project.technologies.join(' · ')}
                                 </p>
 
+                                {/* Primary Action Row: Live Demo OR Open App + Interactive Preview */}
                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                   <div className="flex flex-wrap items-center gap-2.5">
-                                    {project.liveDemoUrl && (
+                                    {project.liveDemoUrl ? (
                                       <a
                                         href={project.liveDemoUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap shrink-0 shadow-xs"
+                                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 shadow-xs"
                                       >
                                         <ExternalLink className="w-3.5 h-3.5" />
                                         <span>Live Demo</span>
                                         <ArrowUpRight className="w-3 h-3" />
                                       </a>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleOpenProjectCaseStudy(project);
+                                        }}
+                                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
+                                      >
+                                        <ExternalLink className="w-3.5 h-3.5" />
+                                        <span>Open App</span>
+                                        <ArrowUpRight className="w-3 h-3" />
+                                      </button>
                                     )}
-
-                                    <a
-                                      href={project.githubUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap shrink-0"
-                                    >
-                                      <Github className="w-3.5 h-3.5" />
-                                      <span>{project.githubButtonLabel}</span>
-                                      <ArrowUpRight className="w-3 h-3" />
-                                    </a>
 
                                     <motion.button
                                       type="button"
@@ -1284,22 +1170,57 @@ export default function App() {
                                         e.stopPropagation();
                                         handleOpenProjectCaseStudy(project);
                                       }}
-                                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                                      className={`inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                                         isVelouraCard
                                           ? 'border border-[#B47B44]/50 bg-[#B47B44]/15 text-[#B47B44] dark:text-[#D4A373] hover:bg-[#B47B44]/25 shadow-xs'
-                                          : project.liveDemoUrl
-                                          ? 'border border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20'
-                                          : 'bg-blue-600 hover:bg-blue-500 text-white'
+                                          : 'border border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20'
                                       }`}
                                     >
                                       <Layers className="w-3.5 h-3.5" />
-                                      <span>Project Case Study</span>
+                                      <span>Interactive Preview</span>
                                     </motion.button>
                                   </div>
+                                </div>
 
-                                  <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-                                    {project.githubPlaceholderNote}
-                                  </span>
+                                {/* Dedicated Contact & Customization Strip Below Every Project */}
+                                <div className="p-3.5 sm:p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/75 border border-zinc-200/80 dark:border-zinc-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                  <div className="space-y-0.5">
+                                    <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                                      Liked this {project.domain.toLowerCase()}?
+                                    </p>
+                                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                                      I can build &amp; customize a similar version tailored to your brand and features.
+                                    </p>
+                                  </div>
+
+                                  <div className="flex flex-wrap items-center gap-2 shrink-0">
+                                    <a
+                                      href={buildWhatsappLink(
+                                        `Customize Project Like: ${project.title}`
+                                      )}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+                                    >
+                                      <MessageSquare className="w-3.5 h-3.5" />
+                                      <span>WhatsApp to Customize</span>
+                                    </a>
+
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSelectInquiryTopicAndScroll(
+                                          `Customize Project Like: ${project.title}`
+                                        );
+                                      }}
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer"
+                                    >
+                                      <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                                      <span>Contact for Customization</span>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1310,290 +1231,78 @@ export default function App() {
                   );
                 })}
               </div>
-
-              {/* Verified Public GitHub Repositories Strip */}
-              <ScrollReveal direction="up">
-                <div className="pt-8 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <p className="font-mono text-xs text-blue-600 dark:text-blue-400">
-                        PUBLIC REPOSITORIES · @{personal.githubUsername}
-                      </p>
-                      <h3 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                        Featured GitHub Repositories
-                      </h3>
-                    </div>
-                    <a
-                      href={personal.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
-                    >
-                      <Github className="w-4 h-4" />
-                      <span>View GitHub Profile (@{personal.githubUsername})</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {verifiedGithubRepos.map((repo) => (
-                      <Tilt3DCard
-                        key={repo.name}
-                        className="p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40"
-                      >
-                        <div className="space-y-2.5">
-                          <div className="flex items-center justify-between gap-2 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-                            <span>{repo.category}</span>
-                            <span>Public Repo</span>
-                          </div>
-                          <h4 className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100 break-all">
-                            {repo.name}
-                          </h4>
-                          <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                            {repo.description}
-                          </p>
-                        </div>
-
-                        <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-                          <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400 truncate max-w-[65%]">
-                            github.com/{personal.githubUsername}/{repo.name}
-                          </span>
-                          <a
-                            href={repo.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-                          >
-                            <span>Open Repository</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </a>
-                        </div>
-                      </Tilt3DCard>
-                    ))}
-                  </div>
-                </div>
-              </ScrollReveal>
             </div>
           </section>
 
           {/* ===================================================================
-              F. EDUCATION, CERTIFICATIONS & EXPERIENCE SECTION
+              E. 03. COMPACT GATEWAY TO DEDICATED ABOUT ME, ACADEMIC JOURNEY & CV PAGE
           =================================================================== */}
           <section
-            id="education"
-            className="py-20 sm:py-24 border-b border-zinc-200/80 dark:border-zinc-800/80"
+            id="about-gateway"
+            className="py-16 sm:py-20 border-b border-zinc-200/80 dark:border-zinc-800/80"
           >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
               <ScrollReveal direction="up">
-                <div className="space-y-2 max-w-2xl">
-                  <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                    04. EDUCATION, CERTIFICATIONS &amp; EXPERIENCE
-                  </p>
-                  <h2
-                    className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
-                    style={{ textWrap: 'balance' }}
-                  >
-                    Academic Qualification, Internship &amp; Certifications
-                  </h2>
-                </div>
-              </ScrollReveal>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Column: Complete Academic Timeline (B.Tech, Class XII, Class X) */}
-                <ScrollReveal direction="up" delayMs={50} className="lg:col-span-7">
-                  <Tilt3DCard className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                    <div className="space-y-5">
-                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-500 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800/80 pb-3.5">
-                        <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
-                          <GraduationCap className="w-4 h-4" />
-                          <span>ACADEMIC QUALIFICATIONS (B.TECH · CLASS XII · CLASS X)</span>
-                        </span>
-                        <span>RGPV &amp; BSEB</span>
+                <Tilt3DCard className="p-7 sm:p-10 rounded-2xl bg-white dark:bg-zinc-900/75 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/50">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div className="lg:col-span-8 space-y-3">
+                      <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                        <GraduationCap className="w-4 h-4" />
+                        <span>03. ABOUT ME · ACADEMIC JOURNEY · TECHNICAL SKILLS · OFFICIAL CV</span>
                       </div>
-
-                      {/* Academic Timeline Items */}
-                      <div className="space-y-4">
-                        {education.academicTimeline.map((item) => (
-                          <div
-                            key={item.degreeOrClass}
-                            className="p-4 rounded-xl bg-zinc-50/90 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 space-y-1.5"
-                          >
-                            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                              <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                                {item.level}
-                              </span>
-                              <div className="flex items-center gap-2 tabular-nums">
-                                <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                                  {item.score}
-                                </span>
-                                <span aria-hidden="true" className="text-zinc-400">
-                                  ·
-                                </span>
-                                <span className="text-zinc-500 dark:text-zinc-400">
-                                  {item.duration}
-                                </span>
-                              </div>
-                            </div>
-
-                            <h3 className="font-display text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                              {item.degreeOrClass}
-                            </h3>
-
-                            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
-                              {item.institution}{' '}
-                              <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                                ({item.boardOrUniversity})
-                              </span>
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="pt-5 mt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-3">
-                      <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                        CORE COMPUTER SCIENCE COURSEWORK
+                      <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                        Want to View My Academic Journey, Technical Skills &amp; Official CV?
+                      </h2>
+                      <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                        {education.degree} at {education.institution} ({education.duration}) ·{' '}
+                        {education.internship.role} at {education.internship.company} · Certified in Java SE 21 (Infosys) &amp; GenAI (Oracle). Open my dedicated About page to view my full academic timeline, technical stack, and download my official CV.
                       </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-700 dark:text-zinc-300">
-                        {education.coreCoursework.map((course, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <span className="font-mono text-blue-600 dark:text-blue-400">
-                              0{idx + 1}.
-                            </span>
-                            <span>{course}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </Tilt3DCard>
-                </ScrollReveal>
-
-                {/* Right Column: Internship, Certifications & Achievements */}
-                <ScrollReveal direction="up" delayMs={130} className="lg:col-span-5">
-                  <Tilt3DCard className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold border-b border-zinc-100 dark:border-zinc-800/80 pb-3.5">
-                        <BookOpen className="w-4 h-4" />
-                        <span>INTERNSHIP, CERTIFICATIONS &amp; ACHIEVEMENTS</span>
-                      </div>
-
-                      {/* Internship Experience Highlight */}
-                      <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/90 space-y-1.5">
-                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                            INTERNSHIP EXPERIENCE · {education.internship.company.toUpperCase()}
-                          </span>
-                          <span>{education.internship.duration}</span>
-                        </div>
-                        <h3 className="font-display text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">
-                          {education.internship.role}
-                        </h3>
-                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                          {education.internship.description}
-                        </p>
-                      </div>
-
-                      {/* Certifications Highlight */}
-                      {education.certifications.map((cert) => (
-                        <div
-                          key={cert.title}
-                          className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/90 space-y-2"
-                        >
-                          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                            <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                              {cert.issuer.toUpperCase()}
-                            </span>
-                            <span>
-                              {cert.date}
-                              {cert.validity ? ` · ${cert.validity}` : ''}
-                            </span>
-                          </div>
-
-                          <h3 className="font-display text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                            {cert.title}
-                          </h3>
-
-                          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                            {cert.description}
-                          </p>
-
-                          {cert.credentialUrl && (
-                            <div className="pt-1">
-                              <a
-                                href={cert.credentialUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                              >
-                                <span>{cert.credentialLabel || 'Verify Credential'}</span>
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                              </a>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-
-                      {/* Coding Achievements & Languages / Strengths */}
-                      <div className="space-y-2.5">
-                        {education.achievements.map((achievement, idx) => (
-                          <div
-                            key={idx}
-                            className="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20 text-xs text-zinc-700 dark:text-zinc-300 font-mono leading-relaxed"
-                          >
-                            ✓ {achievement}
-                          </div>
-                        ))}
-                      </div>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      <a
-                        href={personal.resumePdfPath}
-                        download={personal.resumeDownloadFilename}
-                        onClick={(e) =>
-                          handleDownloadResumePdf(
-                            e,
-                            personal.resumePdfPath,
-                            personal.resumeDownloadFilename
-                          )
-                        }
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap cursor-pointer"
+                    <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
+                      <button
+                        type="button"
+                        onClick={navigateToAbout}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 cursor-pointer shadow-lg shadow-blue-600/20"
                       >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download Resume</span>
-                      </a>
+                        <User className="w-4 h-4" />
+                        <span>Open About, Academics &amp; CV Page</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => setIsResumeModalOpen(true)}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer whitespace-nowrap"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200 transition-colors cursor-pointer"
                       >
-                        <span>Preview CV (PDF)</span>
+                        <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <span>Quick Preview Official CV</span>
                       </button>
                     </div>
-                  </Tilt3DCard>
-                </ScrollReveal>
-              </div>
+                  </div>
+                </Tilt3DCard>
+              </ScrollReveal>
             </div>
           </section>
 
           {/* ===================================================================
-              G. CONTACT SECTION (Verified Channels + Topic Launcher)
+              F. 04. CONTACT & CUSTOMIZATION INQUIRY SECTION
           =================================================================== */}
           <section id="contact" className="py-20 sm:py-24">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
                 <div className="space-y-3 max-w-2xl">
                   <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                    05. CONTACT ME
+                    04. START YOUR PROJECT OR CONNECT
                   </p>
                   <h2
                     className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
                     style={{ textWrap: 'balance' }}
                   >
-                    Let&apos;s Connect on Software Roles or Development Projects
+                    Tell Me What Website or App You Want to Build &amp; Customize
                   </h2>
                   <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    Reach out directly for Software Developer / App &amp; Web Developer opportunities or to discuss a website or application project.
+                    Liked a website or app sample above? Select your requirement below and message me directly on WhatsApp or Email to get started.
                   </p>
                 </div>
               </ScrollReveal>
@@ -1601,69 +1310,15 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column: Direct Verified Contact Cards */}
                 <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* LinkedIn Card */}
-                  <ScrollReveal direction="up" delayMs={40}>
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-2">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                          <Linkedin className="w-5 h-5" />
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          LinkedIn Profile
-                        </h3>
-                        <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 break-all">
-                          {personal.linkedinHandle}
-                        </p>
-                      </div>
-
-                      <a
-                        href={personal.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap"
-                      >
-                        <span>Connect on LinkedIn</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-
-                  {/* GitHub Profile Card */}
-                  <ScrollReveal direction="up" delayMs={80}>
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-2">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-500/10 border border-zinc-500/20 flex items-center justify-center text-zinc-700 dark:text-zinc-300">
-                          <Github className="w-5 h-5" />
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          GitHub Profile
-                        </h3>
-                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300 break-all">
-                          github.com/{personal.githubUsername}
-                        </p>
-                      </div>
-
-                      <a
-                        href={personal.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-xs font-medium transition-opacity whitespace-nowrap"
-                      >
-                        <span>View GitHub (@{personal.githubUsername})</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-
                   {/* Mobile & WhatsApp Direct Card */}
-                  <ScrollReveal direction="up" delayMs={120}>
+                  <ScrollReveal direction="up" delayMs={40}>
                     <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
                       <div className="space-y-2">
                         <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                           <MessageSquare className="w-5 h-5" />
                         </div>
                         <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          Mobile &amp; WhatsApp
+                          WhatsApp &amp; Direct Call
                         </h3>
                         <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300">
                           {personal.mobileNumber}
@@ -1706,7 +1361,7 @@ export default function App() {
                   </ScrollReveal>
 
                   {/* Email Card */}
-                  <ScrollReveal direction="up" delayMs={160}>
+                  <ScrollReveal direction="up" delayMs={80}>
                     <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
                       <div className="space-y-2">
                         <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
@@ -1745,6 +1400,60 @@ export default function App() {
                     </Tilt3DCard>
                   </ScrollReveal>
 
+                  {/* LinkedIn Card */}
+                  <ScrollReveal direction="up" delayMs={120}>
+                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
+                      <div className="space-y-2">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                          <Linkedin className="w-5 h-5" />
+                        </div>
+                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                          LinkedIn Profile
+                        </h3>
+                        <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 break-all">
+                          {personal.linkedinHandle}
+                        </p>
+                      </div>
+
+                      <a
+                        href={personal.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap"
+                      >
+                        <span>Connect on LinkedIn</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    </Tilt3DCard>
+                  </ScrollReveal>
+
+                  {/* GitHub Profile Card */}
+                  <ScrollReveal direction="up" delayMs={160}>
+                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
+                      <div className="space-y-2">
+                        <div className="w-10 h-10 rounded-xl bg-zinc-500/10 border border-zinc-500/20 flex items-center justify-center text-zinc-700 dark:text-zinc-300">
+                          <Github className="w-5 h-5" />
+                        </div>
+                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                          GitHub Profile
+                        </h3>
+                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300 break-all">
+                          github.com/{personal.githubUsername}
+                        </p>
+                      </div>
+
+                      <a
+                        href={personal.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-xs font-medium transition-opacity whitespace-nowrap"
+                      >
+                        <span>View GitHub (@{personal.githubUsername})</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    </Tilt3DCard>
+                  </ScrollReveal>
+
                   {/* Instagram Social Card */}
                   <ScrollReveal direction="up" delayMs={200} className="sm:col-span-2">
                     <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1780,27 +1489,28 @@ export default function App() {
                   <div className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between space-y-6">
                     <div className="space-y-4">
                       <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                        DIRECT INQUIRY LAUNCHER
+                        CUSTOM PROJECT &amp; SAMPLE INQUIRY
                       </p>
                       <h3 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                        Start a Conversation
+                        Select What You Want Built
                       </h3>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Select a topic below to open a pre-structured message on WhatsApp ({personal.mobileNumber}), Email, or LinkedIn.
+                        Choose an option below to send a pre-structured message on WhatsApp ({personal.mobileNumber}) or Email.
                       </p>
 
                       {/* Topic Selector Buttons */}
                       <div className="space-y-2 pt-1">
                         <label className="block font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                          SELECT INQUIRY PURPOSE:
+                          SELECTED REQUIREMENT:
                         </label>
                         <div className="grid grid-cols-1 gap-2">
                           {[
-                            'Software Developer / App & Web Developer Role',
-                            'Java Backend / Android Application Role',
-                            'Business Website or Landing Page Project',
-                            'Web Application or Android App Project',
+                            'Custom Business Website or Landing Page',
+                            'Customize a Sample Website / App from Portfolio',
+                            'Full-Stack Web Application or Dashboard',
+                            'Native Android Mobile App (Java / MVVM)',
                             'Personal Portfolio or Website Redesign',
+                            'Software Developer / Engineering Role',
                           ].map((topic) => (
                             <button
                               key={topic}
@@ -1863,7 +1573,7 @@ export default function App() {
       )}
 
       {/* =====================================================================
-          H. FOOTER (No Source Code ZIP Download — Clean Links Only)
+          G. FOOTER
       ===================================================================== */}
       <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/80 py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
@@ -1872,7 +1582,7 @@ export default function App() {
               {personal.name}
             </p>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              {personal.professionalHeadline}
+              Custom Websites · Landing Pages · Web Apps · Android Applications
             </p>
             <p className="text-xs font-mono text-zinc-400 dark:text-zinc-500 pt-1">
               © {new Date().getFullYear()} {personal.name}. Built with React, TypeScript &amp; Tailwind CSS.
@@ -1889,35 +1599,32 @@ export default function App() {
             </button>
             <button
               type="button"
-              onClick={() => navigateToPortfolio('projects')}
-              className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-            >
-              Projects
-            </button>
-            <button
-              type="button"
-              onClick={navigateToServices}
+              onClick={() => navigateToPortfolio('freelance')}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               Freelance Services
             </button>
             <button
               type="button"
-              onClick={() => setIsResumeModalOpen(true)}
+              onClick={() => navigateToPortfolio('projects')}
               className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
-              Preview CV
+              Samples &amp; Projects
             </button>
-            <a
-              href={personal.resumePdfPath}
-              download={personal.resumeDownloadFilename}
-              onClick={(e) =>
-                handleDownloadResumePdf(e, personal.resumePdfPath, personal.resumeDownloadFilename)
-              }
+            <button
+              type="button"
+              onClick={navigateToServices}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
-              Download Resume
-            </a>
+              All 8 Services
+            </button>
+            <button
+              type="button"
+              onClick={navigateToAbout}
+              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+            >
+              About, Academics &amp; CV
+            </button>
             <a
               href={personal.linkedinUrl}
               target="_blank"
@@ -1960,7 +1667,9 @@ export default function App() {
       <ProjectDetailModal
         project={activeProjectModal}
         onClose={() => setActiveProjectModal(null)}
-        onDiscussSimilar={(topic) => handleSelectInquiryTopicAndScroll(`Project Inquiry: ${topic}`)}
+        onDiscussSimilar={(topic) =>
+          handleSelectInquiryTopicAndScroll(`Customize Sample Like: ${topic}`)
+        }
       />
 
       <ResumeModal
