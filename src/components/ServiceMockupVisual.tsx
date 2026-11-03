@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Smartphone,
   Coffee,
+  Dumbbell,
   ExternalLink,
 } from 'lucide-react';
 import { resolvePublicAsset, type FreelanceServiceItem } from '../data/portfolioConfig';
@@ -86,31 +87,69 @@ export const ServiceMockupVisual: React.FC<ServiceMockupVisualProps> = ({ mockup
 
     case 'landing':
       return (
-        <div className="relative h-36 rounded-xl bg-zinc-950 border border-zinc-800/90 p-3.5 flex flex-col justify-between overflow-hidden select-none">
-          <div
-            className="absolute -bottom-10 -right-10 w-36 h-36 rounded-full pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle, rgba(99,102,241,0.24) 0%, transparent 70%)',
-            }}
-          />
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="font-mono text-[10px] text-zinc-300">HIGH-IMPACT LANDING PAGE</span>
+        <div
+          data-testid="landing-fitness-jym-preview"
+          className="group/fitness relative h-48 sm:h-52 rounded-xl bg-[#08090B] border border-[#FF5E00]/40 flex flex-col justify-between overflow-hidden select-none shadow-md"
+        >
+          {/* Browser Frame Top Chrome */}
+          <div className="relative z-10 px-3 py-2 bg-[#0D0F13]/95 border-b border-[#FF5E00]/25 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="w-2 h-2 rounded-full bg-[#FF5E00] shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-amber-400/85 shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400/85 shrink-0" />
+              <span className="ml-1.5 font-mono text-[10px] text-[#FF5E00] truncate">
+                fitness-jym.adityaraj81156.workers.dev
+              </span>
             </div>
-            <span className="font-mono text-[10px] text-indigo-400">Fast CTA</span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FF5E00]/20 border border-[#FF5E00]/45 font-mono text-[9px] text-white shrink-0">
+              <Dumbbell className="w-2.5 h-2.5 text-[#FF5E00]" />
+              <span>Cloudflare Live</span>
+            </span>
           </div>
-          <div className="my-auto pt-1 flex flex-col items-center text-center p-2 rounded-lg bg-zinc-900/90 border border-zinc-800/80">
-            <p className="font-display text-xs font-semibold text-zinc-100">
-              Hero Headline &amp; Value Proposition
-            </p>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-blue-600 text-[10px] font-medium text-white">
-                Get Started
+
+          {/* Fitness JYM Interactive Visual Preview */}
+          <div className="relative flex-1 p-3.5 flex flex-col justify-between overflow-hidden bg-[#08090B]">
+            <div
+              className="absolute -top-10 -right-10 w-44 h-44 rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(255,94,0,0.28) 0%, transparent 70%)',
+              }}
+            />
+            <div className="relative z-10 space-y-1">
+              <span className="inline-block font-mono text-[9px] uppercase tracking-widest text-[#FF5E00] font-bold">
+                IRON SANCTUARY · TRAINING &amp; BMI DIAGNOSTIC
               </span>
-              <span className="px-2.5 py-0.5 rounded border border-zinc-700 text-[10px] text-zinc-300">
-                Learn More
-              </span>
+              <p className="font-display text-xs sm:text-sm font-bold text-white leading-snug">
+                Fitness JYM — Build Strength. Unleash Your Potential.
+              </p>
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[9px] font-mono text-zinc-300">
+                  Programs
+                </span>
+                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[9px] font-mono text-zinc-300">
+                  Membership Plans
+                </span>
+                <span className="px-2 py-0.5 rounded bg-[#FF5E00]/15 border border-[#FF5E00]/35 text-[9px] font-mono text-[#FF5E00]">
+                  BMI Calculator
+                </span>
+              </div>
+            </div>
+
+            <div className="relative z-10 flex items-end justify-between gap-2 pt-2 border-t border-zinc-800/80">
+              <p className="font-mono text-[9px] text-zinc-400 truncate">
+                React · TypeScript · Tailwind · Three.js · Cloudflare
+              </p>
+              <a
+                href="https://fitness-jym.adityaraj81156.workers.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                aria-label="Open Fitness JYM Website Live Demo"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF5E00] hover:bg-[#ff7424] text-black font-mono text-[10px] font-bold shadow-sm transition-colors shrink-0"
+              >
+                <span>Live Preview</span>
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
             </div>
           </div>
         </div>

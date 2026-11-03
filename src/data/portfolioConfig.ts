@@ -70,7 +70,12 @@ export interface ProjectItem {
   githubButtonLabel: string;
   githubPlaceholderNote: string;
   liveDemoUrl?: string;
-  visualType: 'veloura-cafe-web' | 'khata-android' | 'apple-vision-web' | 'krishi-mitra-web';
+  visualType:
+    | 'veloura-cafe-web'
+    | 'fitness-jym-web'
+    | 'khata-android'
+    | 'apple-vision-web'
+    | 'krishi-mitra-web';
 }
 
 export interface PublicGithubRepo {
@@ -211,6 +216,13 @@ export const portfolioConfig = {
       description:
         'Valoura (Veloura) – Live Website: Deployed to production on Vercel with source-code versioning and deployment workflow managed using Git and GitHub.',
       category: 'React · TypeScript · Vite · Motion · Vercel',
+    },
+    {
+      name: 'fitness-jym',
+      url: 'https://github.com/Adityaraj811',
+      description:
+        'Fitness JYM – Build Strength. Unleash Your Potential: Live gym & fitness club website deployed on Cloudflare Workers with Git and GitHub workflow.',
+      category: 'React · TypeScript · Vite · Tailwind CSS · Three.js · Cloudflare',
     },
     {
       name: 'Apple-Vision-ui-Web-application',
@@ -538,8 +550,64 @@ export const portfolioConfig = {
       visualType: 'veloura-cafe-web',
     },
     {
-      id: 'khata-expense-app',
+      id: 'fitness-jym-website',
       index: '02.',
+      title: 'Fitness JYM – Build Strength. Unleash Your Potential.',
+      subtitle: 'Live Gym & Fitness Club Website · Deployed on Cloudflare with Git & GitHub Workflow',
+      status: 'Completed Application',
+      statusNote:
+        'Deployed live gym and fitness club website on Cloudflare Workers (fitness-jym.adityaraj81156.workers.dev) with source code versioned and managed on GitHub.',
+      domain: 'Website Design & Development',
+      overview:
+        'A high-energy, responsive gym and fitness club website ("Build Strength. Unleash Your Potential.") hosted on Cloudflare Workers, featuring the Iron Sanctuary showcase, structured Training Programs, Membership Plan tiers, an interactive BMI Metric Diagnostic calculator, and direct WhatsApp quick-chat integration.',
+      objectives: [
+        'Deploy a fast, responsive gym and fitness brand website on Cloudflare Workers with Git and GitHub source-code versioning.',
+        'Craft an athletic dark-obsidian (#08090B) and high-voltage orange (#FF5E00) visual identity using Syne, Outfit, and JetBrains Mono typography.',
+        'Provide interactive visitor tools including Training Programs, Membership Plan tiers, a real-time BMI Metric Diagnostic calculator, and instant WhatsApp inquiry actions.',
+      ],
+      contribution: [
+        'Designed, developed, and deployed the live Fitness JYM website on Cloudflare Workers with source code hosted on GitHub.',
+        'Implemented interactive sections including Iron Sanctuary, Training Programs, Membership Plans, and the BMI Metric Diagnostic calculator.',
+        'Engineered responsive layouts across mobile, tablet, and desktop screens with floating WhatsApp quick-chat and gym location contact integration.',
+      ],
+      implementedFeatures: [
+        'Live production deployment on Cloudflare Workers (fitness-jym.adityaraj81156.workers.dev) with Git & GitHub workflow.',
+        'Iron Sanctuary athletic showcase, Training Programs breakdown, and transparent Membership Plan tiers.',
+        'Interactive BMI Metric Diagnostic calculator and floating WhatsApp quick-chat integration for instant membership inquiries.',
+      ],
+      technologies: [
+        'React',
+        'TypeScript',
+        'Vite',
+        'Tailwind CSS',
+        'Three.js',
+        'Git',
+        'GitHub',
+        'Cloudflare',
+      ],
+      architectureHighlights: [
+        {
+          layer: 'Cloudflare Edge Deployment & GitHub Workflow',
+          detail: 'Deployed on Cloudflare Workers for ultra-fast global edge delivery with complete source code versioned on GitHub.',
+        },
+        {
+          layer: 'Interactive Fitness & BMI Diagnostic Modules',
+          detail: 'Modular React + TypeScript sections for Training Programs, Membership tiers, and real-time BMI Metric Diagnostics.',
+        },
+        {
+          layer: 'Responsive Athletic Design System',
+          detail: 'High-contrast obsidian (#08090B) and neon-orange (#FF5E00) interface optimized for mobile phones, tablets, and desktops.',
+        },
+      ],
+      githubUrl: 'https://github.com/Adityaraj811',
+      githubButtonLabel: 'View on GitHub',
+      githubPlaceholderNote: 'github.com/Adityaraj811 · Hosted on Cloudflare',
+      liveDemoUrl: 'https://fitness-jym.adityaraj81156.workers.dev/',
+      visualType: 'fitness-jym-web',
+    },
+    {
+      id: 'khata-expense-app',
+      index: '03.',
       title: 'KHATA – Shared Expense Management App',
       subtitle: 'Android Application & Spring Boot Backend for Household Groups',
       status: 'In Development',
@@ -597,7 +665,7 @@ export const portfolioConfig = {
     },
     {
       id: 'apple-vision-ui-web',
-      index: '03.',
+      index: '04.',
       title: 'Apple Vision UI — Interactive Spatial Web Application',
       subtitle:
         'Responsive Apple Vision Pro-Inspired Web Interface · GSAP, ScrollTrigger & Canvas API',
@@ -654,7 +722,7 @@ export const portfolioConfig = {
     },
     {
       id: 'krishi-mitra-ai',
-      index: '04.',
+      index: '05.',
       title: 'KrishiMitra – AI-Based Crop Recommendation System',
       subtitle: 'Team Project · ML Crop Recommendation Platform & Multilingual PWA',
       status: 'Team Project',
@@ -731,7 +799,7 @@ export const portfolioConfig = {
           'Services showcase, location details & fast contact actions',
           'Mobile-friendly responsive design & SEO-ready structure',
         ],
-        idealFor: 'Shops, cafés, local businesses, agencies & growing companies',
+        idealFor: 'Shops, cafés, gyms, local businesses, agencies & growing companies',
         inquiryTopic: 'Business Website Development',
         featuredDemoUrl: 'https://valoura-one.vercel.app/',
         featuredDemoTitle: 'Featured Demo — Veloura Café Website',
@@ -741,17 +809,20 @@ export const portfolioConfig = {
       {
         id: 'landing-pages',
         index: '02.',
-        title: 'Landing Pages',
-        tagline: 'Attractive landing pages for products, services, campaigns and startups.',
+        title: 'Landing Pages & Fitness / Brand Sites',
+        tagline: 'Attractive landing pages for gyms, fitness clubs, products, services, and startups.',
         description:
-          'Attractive landing pages for products, services, campaigns and startups with clear visual hierarchy, smooth animations, and focused call-to-action sections.',
+          'Attractive, high-conversion landing pages and brand websites for gyms, fitness clubs, products, and startups with bold visual hierarchy, smooth animations, and instant WhatsApp / lead actions.',
         deliverables: [
           'High-impact hero section & clear value proposition',
-          'Interactive feature cards & conversion-focused CTAs',
-          'Fast loading performance across mobile and desktop',
+          'Interactive programs, pricing tiers & conversion CTAs',
+          'Fast edge performance across mobile, tablet, and desktop',
         ],
-        idealFor: 'Product launches, marketing campaigns & service promotions',
-        inquiryTopic: 'Landing Page Development',
+        idealFor: 'Gyms, fitness studios, product launches, campaigns & brand promotions',
+        inquiryTopic: 'Landing Page / Gym & Brand Website Development',
+        featuredDemoUrl: 'https://fitness-jym.adityaraj81156.workers.dev/',
+        featuredDemoTitle: 'Featured Demo — Fitness JYM Website',
+        featuredDemoBadge: 'Live on Cloudflare',
         mockupType: 'landing',
       },
       {

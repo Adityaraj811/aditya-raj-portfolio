@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import {
+  Activity,
   Box,
   Cpu,
+  Dumbbell,
+  ExternalLink,
   Eye,
+  Flame,
   Globe,
   Leaf,
   Sparkles,
@@ -17,6 +21,185 @@ interface ProjectVisualProps {
   variant?: 'card' | 'modal';
   onExpandCaseStudy?: () => void;
 }
+
+const FITNESS_JYM_TABS = [
+  {
+    id: 'sanctuary',
+    label: 'Iron Sanctuary',
+    badge: 'STRENGTH & CONDITIONING',
+    headline: 'Build Strength. Unleash Your Potential.',
+    metric: 'Pro Equipment · Elite Coaching · 24/7 Access',
+    subtext: 'Designed for athletes & beginners seeking real physical transformation',
+  },
+  {
+    id: 'programs',
+    label: 'Programs & Plans',
+    badge: 'TRAINING & MEMBERSHIP TIERS',
+    headline: 'Hypertrophy, Cross-Training & Personal Coaching',
+    metric: 'Flexible Monthly, Quarterly & Annual Memberships',
+    subtext: 'Structured strength splits with guided progression & WhatsApp support',
+  },
+  {
+    id: 'bmi',
+    label: 'BMI Diagnostic',
+    badge: 'INTERACTIVE FITNESS CALCULATOR',
+    headline: 'Real-Time BMI Metric Diagnostic & Goal Planner',
+    metric: '178 cm · 74 kg → BMI 23.4 (Optimal Athletic Range)',
+    subtext: 'Instant body-mass index analysis paired with tailored program guidance',
+  },
+] as const;
+
+const FitnessJymPreview: React.FC<{
+  variant?: 'card' | 'modal';
+  onExpandCaseStudy?: () => void;
+}> = ({ variant = 'card', onExpandCaseStudy }) => {
+  const [activeTabIdx, setActiveTabIdx] = useState(0);
+  const currentTab = FITNESS_JYM_TABS[activeTabIdx];
+  const isModal = variant === 'modal';
+
+  return (
+    <div
+      className={`relative w-full h-full ${
+        isModal ? 'min-h-[220px] p-4 sm:p-5' : 'min-h-[260px] p-5'
+      } bg-[#08090B] text-zinc-100 flex flex-col justify-between overflow-hidden select-none group-hover:bg-[#0C0E12] transition-colors duration-300`}
+    >
+      {/* Ambient High-Voltage Orange Glow (#FF5E00) */}
+      <div
+        className="absolute -top-20 -right-12 w-72 h-72 rounded-full pointer-events-none transition-transform duration-500 group-hover:scale-110"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(255,94,0,0.24) 0%, rgba(255,94,0,0.06) 55%, transparent 75%)',
+        }}
+      />
+
+      {/* Top Browser/Brand Bar + Interactive Module Switcher */}
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/90 pb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-[#FF5E00]/15 border border-[#FF5E00]/45 flex items-center justify-center text-[#FF5E00] shrink-0">
+            <Dumbbell className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <p className="text-xs font-mono font-bold text-white tracking-tight truncate">
+                FITNESS JYM · LIVE WEBSITE
+              </p>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#FF5E00]/20 border border-[#FF5E00]/40 text-[9px] font-mono text-[#FF5E00] font-semibold shrink-0">
+                Cloudflare
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-400 font-mono truncate">
+              fitness-jym.adityaraj81156.workers.dev
+            </p>
+          </div>
+        </div>
+
+        {/* Interactive Tab Switcher */}
+        <div
+          className="flex items-center gap-1 bg-zinc-900/95 border border-zinc-800 rounded-lg p-0.5 shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {FITNESS_JYM_TABS.map((tab, idx) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTabIdx(idx);
+              }}
+              className={`px-2 py-1 rounded-md text-[10px] font-mono transition-colors cursor-pointer ${
+                idx === activeTabIdx
+                  ? 'bg-[#FF5E00] text-black font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Centerpiece: Active Fitness JYM Section Showcase + 3 Core Website Pillars */}
+      <div className="relative z-10 my-3.5 space-y-3">
+        <div className="p-3.5 rounded-xl bg-zinc-900/90 border border-[#FF5E00]/35 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1 min-w-0">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#FF5E00] font-bold tracking-wider">
+              <Flame className="w-3 h-3 shrink-0" />
+              <span>{currentTab.badge}</span>
+            </span>
+            <p className="text-xs sm:text-sm font-bold text-white truncate">
+              {currentTab.headline}
+            </p>
+            <p className="text-[11px] text-zinc-400 leading-snug">
+              {currentTab.subtext}
+            </p>
+          </div>
+
+          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0">
+            <span className="inline-block px-2.5 py-1 rounded-lg bg-[#FF5E00]/15 border border-[#FF5E00]/35 text-[10px] font-mono text-[#FF5E00] font-semibold">
+              {currentTab.metric}
+            </span>
+            <a
+              href="https://fitness-jym.adityaraj81156.workers.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF5E00] hover:bg-[#ff7424] text-black font-mono text-[10px] font-bold transition-colors"
+            >
+              <span>Visit Live Site</span>
+              <ExternalLink className="w-2.5 h-2.5" />
+            </a>
+          </div>
+        </div>
+
+        {/* 3 Core Highlights of Fitness JYM */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#FF5E00]">
+              <Dumbbell className="w-3 h-3 shrink-0" />
+              <span>IRON SANCTUARY</span>
+            </div>
+            <p className="text-xs font-semibold text-zinc-100 mt-1">Training &amp; Plans</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+              Programs, coaching &amp; membership tiers
+            </p>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400">
+              <Activity className="w-3 h-3 shrink-0" />
+              <span>BMI DIAGNOSTIC</span>
+            </div>
+            <p className="text-xs font-semibold text-zinc-100 mt-1">Metric Calculator</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+              Interactive body-mass index diagnostics
+            </p>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
+              <Globe className="w-3 h-3 shrink-0" />
+              <span>CLOUDFLARE EDGE</span>
+            </div>
+            <p className="text-xs font-semibold text-zinc-100 mt-1">Responsive + WhatsApp</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
+              Fast edge hosting &amp; quick chat CTA
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Stack & Action */}
+      <div className="relative z-10 flex items-center justify-between gap-2 text-[11px] font-mono text-zinc-400 pt-2.5 border-t border-zinc-800/80">
+        <span className="truncate">
+          React · TypeScript · Vite · Tailwind CSS · Three.js · Cloudflare
+        </span>
+        <span className="shrink-0 text-[#FF5E00] font-semibold">
+          {onExpandCaseStudy ? 'Inspect →' : 'Live on Cloudflare'}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 type VisionPreviewThemeId = 'solaris' | 'cupertino' | 'mounthood' | 'nebula';
 
@@ -418,6 +601,15 @@ export const ProjectVisual: React.FC<ProjectVisualProps> = ({
   if (visualType === 'veloura-cafe-web') {
     return (
       <VelouraInteractiveShowcase
+        variant={variant}
+        onExpandCaseStudy={onExpandCaseStudy}
+      />
+    );
+  }
+
+  if (visualType === 'fitness-jym-web') {
+    return (
+      <FitnessJymPreview
         variant={variant}
         onExpandCaseStudy={onExpandCaseStudy}
       />
