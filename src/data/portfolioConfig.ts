@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- * CENTRALIZED PORTFOLIO CONFIGURATION — ADITYA RAJ
+ * CENTRALIZED PORTFOLIO & SAHAYAK.STUDIO CONFIGURATION — ADITYA RAJ
  * ============================================================================
- * Edit this file to update your personal details, GitHub username, email,
- * mobile / WhatsApp number, college information, resume link, and project URLs.
- * Changes made here automatically reflect across the entire portfolio website.
+ * Single source of truth for personal details, Sahayak.Studio branding,
+ * all 12 services from the digital solutions poster, GitHub repositories,
+ * live website/app samples, FAQs, and academic CV details.
  */
 
 export interface SkillItem {
@@ -54,7 +54,7 @@ export interface ProjectItem {
   index: string;
   title: string;
   subtitle: string;
-  status: 'Completed Application' | 'Featured Platform' | 'Public Repository' | 'In Development' | 'Team Project';
+  status: 'Live Website' | 'Completed Application' | 'Public GitHub Repo' | 'In Development' | 'Team Project';
   statusNote: string;
   domain: 'Website Design & Development' | 'Android & Backend' | 'Web Application';
   overview: string;
@@ -73,6 +73,7 @@ export interface ProjectItem {
   visualType:
     | 'veloura-cafe-web'
     | 'fitness-jym-web'
+    | 'dental-clinic-web'
     | 'khata-android'
     | 'apple-vision-web'
     | 'krishi-mitra-web';
@@ -81,13 +82,17 @@ export interface ProjectItem {
 export interface PublicGithubRepo {
   name: string;
   url: string;
+  homepage?: string;
+  language: string;
   description: string;
   category: string;
+  visibilityLabel: 'Public GitHub Repo' | 'Live Production Deployment';
 }
 
 export interface FreelanceServiceItem {
   id: string;
   index: string;
+  category: 'web' | 'apps' | 'growth';
   title: string;
   tagline: string;
   description: string;
@@ -99,13 +104,23 @@ export interface FreelanceServiceItem {
   featuredDemoBadge?: string;
   mockupType:
     | 'business'
-    | 'landing'
-    | 'portfolio'
-    | 'startup'
-    | 'professional'
+    | 'design'
     | 'webapp'
-    | 'redesign'
-    | 'android';
+    | 'android'
+    | 'crm'
+    | 'marketing'
+    | 'messaging'
+    | 'video'
+    | 'landing'
+    | 'software'
+    | 'uiux'
+    | 'it';
+}
+
+export interface FaqItem {
+  index: string;
+  question: string;
+  answer: string;
 }
 
 export interface EducationHistoryItem {
@@ -129,7 +144,7 @@ export interface CertificationItem {
 
 /**
  * Helper to resolve public static assets accurately across both local development ('/')
- * and GitHub Pages ('https://Adityaraj811.github.io/aditya-raj-portfolio/').
+ * and Vercel / GitHub Pages deployments.
  */
 export const resolvePublicAsset = (relativePath: string): string => {
   const baseUrl = import.meta.env.BASE_URL || '/';
@@ -142,94 +157,137 @@ export const resolvePublicAsset = (relativePath: string): string => {
 
 export const portfolioConfig = {
   // --------------------------------------------------------------------------
-  // 1. PERSONAL IDENTITY & CONTACT CONFIGURATION
+  // 1. PERSONAL IDENTITY & SAHAYAK.STUDIO BRAND CONFIGURATION
   // --------------------------------------------------------------------------
   personal: {
     name: 'Aditya Raj',
     monogram: 'AR',
-    professionalHeadline: 'Java Backend Developer | Web & Android Developer',
-    roleTriad: 'Java Backend Systems · Android Applications · Modern Web Interfaces',
-    heroGreeting: "Hi, I'm Aditya Raj.",
-    heroDisplayTitle: 'Java Backend, Web & Android Developer',
+    professionalHeadline: 'Web, App & Java Full-Stack Developer',
+    roleTriad: 'Websites · Mobile Apps · CRM & Digital Solutions',
+    heroGreeting: "Hi, I'm Aditya Raj",
+    heroDisplayTitle: 'We Build Digital Systems, Websites & Apps',
     heroDescription:
-      'Developer focused on Java backend engineering, with hands-on project experience building Android applications using Java/XML, backend services using Spring Boot, REST APIs, JPA/Hibernate, and SQL, and responsive web interfaces.',
-    availabilityBanner:
-      'Open to Java Backend, Android & Software Developer Opportunities & Selected Freelance Projects',
+      'From startups and clinics to gyms, cafés, and growing brands — explore live deployed websites, full-stack applications, and 12 complete digital & IT solutions tailored for your business.',
+    availabilityBanner: 'Open for Freelance Projects & Engineering Roles',
+    availabilityNotice: 'Available for Freelance Projects & SDE Roles',
 
-    // Profile image: Uses actual portrait resolved via import.meta.env.BASE_URL
     profileImagePath: resolvePublicAsset(
       '/assets/aistudio/Gemini_Generated_Image_35wl4q35wl4q35wl-clean_43bc697e.png'
     ),
     profileFallbackSvg: resolvePublicAsset('images/profile-placeholder.svg'),
 
-    // Resume file configuration:
-    // Uses the updated CV PDF at /assets/aistudio/Aditya_Raj_CV__2__345c35da.pdf
     resumePdfPath: resolvePublicAsset('assets/aistudio/Aditya_Raj_CV__2__345c35da.pdf'),
     resumePreviewImagePath: resolvePublicAsset('images/resume-preview.webp'),
     resumeDownloadFilename: 'Aditya_Raj_CV.pdf',
     hasResumePdf: true,
 
-    // Verified LinkedIn Profile
     linkedinUrl: 'https://www.linkedin.com/in/aditya-raj-523b15265/',
     linkedinHandle: 'linkedin.com/in/aditya-raj-523b15265',
 
-    // Verified GitHub Profile (https://github.com/Adityaraj811)
     githubUsername: 'Adityaraj811',
     githubUrl: 'https://github.com/Adityaraj811',
     isGithubConfigured: true,
 
-    // Live Portfolio Website Link
-    portfolioUrl: 'https://adityaraj811.github.io/aditya-raj-portfolio/',
+    portfolioUrl: 'https://aditya-raj-portfolio-phi.vercel.app/',
 
-    // Verified Instagram Profile
     instagramUrl: 'https://www.instagram.com/_.adityarajsingh?cplk=aDZhd2hzc3RjZG4w',
     instagramHandle: '@_.adityarajsingh',
 
-    // Verified Mobile & WhatsApp Contact
     mobileNumber: '+91 9263605950',
     whatsappNumber: '919263605950',
     whatsappDisplay: '+91 9263605950',
     whatsappDirectUrl: 'https://wa.me/919263605950',
     isWhatsappConfigured: true,
 
-    // Verified Email Address
     emailAddress: 'adityaraj81156@gmail.com',
+    studioEmail: 'Support@sahayak.studio',
     isEmailConfigured: true,
 
-    location: 'Bhopal, India · Open to Remote & On-Site Opportunities',
+    location: 'Bhopal, India · Worldwide Remote',
+  },
+
+  studioBrand: {
+    name: 'SAHAYAK.STUDIO',
+    subtitle: 'DIGITAL · TECHNOLOGY · INNOVATION',
+    parentCompany: 'A Branch of Sahayak Innovations Private Limited',
+    tagline: 'From Ideas to Innovation – We Build Your Digital Future.',
+    heroLead: 'Your Complete Digital & IT Solutions Partner',
+    description:
+      'Sahayak.Studio provides professional digital, technology and business solutions to help startups, small businesses and established companies grow digitally.',
+    closingCallout: "Let's Build Something Great Together!",
+    posterImagePath: resolvePublicAsset(
+      '/assets/aistudio/Sahayak_Studio_Digital_Solutions_Poster__1__1e63f177.png'
+    ),
+    gstNumber: '10ABPCS1392A1ZP',
+    metrics: [
+      { value: '100+', label: 'Projects Delivered' },
+      { value: '500+', label: 'Happy Clients' },
+      { value: '99%', label: 'Client Satisfaction' },
+      { value: '∞', label: 'Endless Possibilities' },
+    ],
   },
 
   // --------------------------------------------------------------------------
-  // 2. VERIFIED PUBLIC GITHUB REPOSITORIES (https://github.com/Adityaraj811)
+  // 2. GITHUB REPOSITORIES & LIVE DEPLOYMENTS (https://github.com/Adityaraj811)
   // --------------------------------------------------------------------------
   verifiedGithubRepos: [
     {
-      name: 'khata-expence-manager',
-      url: 'https://github.com/Adityaraj811/khata-expence-manager',
+      name: 'aditya-raj-portfolio',
+      url: 'https://github.com/Adityaraj811/aditya-raj-portfolio',
+      homepage: 'https://aditya-raj-portfolio-phi.vercel.app',
+      language: 'TypeScript',
       description:
-        'KHATA – Shared Expense Management App built for household groups to record shared expenses, split costs, track member balances, and manage settlements.',
-      category: 'Java · Android XML · MVVM · Room · Retrofit · Spring Boot · MySQL',
-    },
-    {
-      name: 'caffetaria',
-      url: 'https://github.com/Adityaraj811/caffetaria',
-      description:
-        'Valoura (Veloura) – Live Website: Deployed to production on Vercel with source-code versioning and deployment workflow managed using Git and GitHub.',
-      category: 'React · TypeScript · Vite · Motion · Vercel',
-    },
-    {
-      name: 'fitness-jym',
-      url: 'https://github.com/Adityaraj811',
-      description:
-        'Fitness JYM – Build Strength. Unleash Your Potential: Live gym & fitness club website deployed on Cloudflare Workers with Git and GitHub workflow.',
-      category: 'React · TypeScript · Vite · Tailwind CSS · Three.js · Cloudflare',
+        'Personal developer portfolio & Sahayak.Studio showcase featuring live website previews, Android app screens, interactive animations, and client customization inquiry workflows.',
+      category: 'React · TypeScript · Tailwind CSS · Framer Motion · Vercel',
+      visibilityLabel: 'Public GitHub Repo',
     },
     {
       name: 'Apple-Vision-ui-Web-application',
       url: 'https://github.com/Adityaraj811/Apple-Vision-ui-Web-application',
+      language: 'TypeScript',
       description:
-        'Responsive Apple Vision Pro-inspired spatial web interface with scroll-driven GSAP/ScrollTrigger animations, 3D scenes, and interactive Canvas visuals.',
-      category: 'HTML5 · CSS3 · JavaScript · React 19 · GSAP · ScrollTrigger · Canvas API',
+        'Responsive high-fidelity recreation of the Apple Vision Pro spatial interface with GSAP ScrollTrigger timelines, 3D scenes, and interactive HTML5 Canvas visuals.',
+      category: 'HTML5 · CSS3 · TypeScript · React 19 · GSAP · Canvas API',
+      visibilityLabel: 'Public GitHub Repo',
+    },
+    {
+      name: 'dental-clinic (Dr. Shantanu Dental Clinic)',
+      url: 'https://github.com/Adityaraj811',
+      homepage: 'https://dental-clinic.adityaraj81156.workers.dev/',
+      language: 'TypeScript',
+      description:
+        'International-grade dental clinic & healthcare website featuring interactive 3D visuals, dental treatment breakdowns, Schema.org Dentist SEO, and direct WhatsApp booking.',
+      category: 'React · TypeScript · Vite · Tailwind CSS · 3D · Cloudflare Workers',
+      visibilityLabel: 'Live Production Deployment',
+    },
+    {
+      name: 'fitness-jym (Fitness JYM Club)',
+      url: 'https://github.com/Adityaraj811',
+      homepage: 'https://fitness-jym.adityaraj81156.workers.dev/',
+      language: 'TypeScript',
+      description:
+        'High-energy athletic gym & fitness brand website ("Build Strength. Unleash Your Potential.") featuring training programs, membership tiers, and real-time BMI diagnostics.',
+      category: 'React · TypeScript · Vite · Tailwind CSS · Three.js · Cloudflare Workers',
+      visibilityLabel: 'Live Production Deployment',
+    },
+    {
+      name: 'caffetaria (Veloura Specialty Coffee)',
+      url: 'https://github.com/Adityaraj811',
+      homepage: 'https://valoura-one.vercel.app/',
+      language: 'TypeScript',
+      description:
+        'Specialty coffee & creative sanctuary website deployed to production on Vercel featuring interactive espresso & alchemy showcases, smooth Motion animations, and responsive design.',
+      category: 'React · TypeScript · Vite · Motion · Vercel',
+      visibilityLabel: 'Live Production Deployment',
+    },
+    {
+      name: 'khata-expence-manager (KHATA Android + Spring Boot)',
+      url: 'https://github.com/Adityaraj811',
+      language: 'Java',
+      description:
+        'Household shared expense management Android app (Java, XML, MVVM, Room, Retrofit) paired with a Spring Boot REST API, Spring Security, JPA/Hibernate, and MySQL backend.',
+      category: 'Java · Android MVVM · Room · Retrofit · Spring Boot · MySQL',
+      visibilityLabel: 'Live Production Deployment',
     },
   ] as PublicGithubRepo[],
 
@@ -253,10 +311,10 @@ export const portfolioConfig = {
     },
     {
       index: '03.',
-      title: 'Responsive Web Interfaces',
+      title: 'Responsive Web & Product UI',
       summary:
-        'Crafting modern web interfaces, PWAs, and interactive animations using HTML5, CSS3, React, TypeScript, GSAP, ScrollTrigger, and Canvas API.',
-      technologies: 'HTML5 · CSS3 · JavaScript · React · TypeScript · GSAP · Canvas API',
+        'Crafting modern websites, SaaS dashboards, CRM portals, and interactive animations using React, TypeScript, GSAP, Three.js, and Canvas API.',
+      technologies: 'React · TypeScript · Tailwind CSS · GSAP · Three.js · Canvas API',
     },
   ],
 
@@ -264,9 +322,9 @@ export const portfolioConfig = {
   // 4. COMPACT ABOUT SECTION & DUAL AUDIENCE CARDS
   // --------------------------------------------------------------------------
   about: {
-    sectionTitle: 'Java Backend Engineering, Android Apps & Responsive Web Interfaces',
+    sectionTitle: 'Java Backend Engineering, Android Apps & Full-Stack Digital Solutions',
     shortIntro:
-      'Developer focused on Java backend engineering, with hands-on project experience building Android applications using Java/XML and backend services using Spring Boot, REST APIs, JPA/Hibernate, and SQL. Also experienced in responsive web interfaces, object-oriented programming, and data structures and algorithms; solved 400+ coding problems across online platforms.',
+      'Developer and digital solutions builder focused on custom websites, web applications, Java Spring Boot backends, and native Android apps. Solved 400+ coding problems across LeetCode, CodeChef, HackerRank, and GeeksforGeeks while delivering 100+ digital projects through Sahayak.Studio.',
     highlights: [
       {
         label: 'Core Engineering Focus',
@@ -292,11 +350,11 @@ export const portfolioConfig = {
     techBadges: [
       'Java',
       'JavaScript',
+      'TypeScript',
       'SQL',
       'Spring Boot',
       'Spring Security',
       'REST APIs',
-      'JDBC',
       'Hibernate & JPA',
       'Core Java & OOP',
       'DSA',
@@ -305,15 +363,13 @@ export const portfolioConfig = {
       'MVVM · ViewModel · LiveData',
       'Room & Retrofit',
       'HTML5 & CSS3',
-      'React & TypeScript',
-      'GSAP & ScrollTrigger',
+      'React & Tailwind CSS',
+      'GSAP & Three.js',
       'Canvas API',
       'MySQL & PostgreSQL',
       'Git & GitHub',
       'Postman',
-      'Android Studio & VS Code',
       'Linux/Ubuntu',
-      'Maven & Gradle',
     ],
     recruiterCard: {
       title: 'FOR SOFTWARE RECRUITERS',
@@ -321,10 +377,10 @@ export const portfolioConfig = {
         'Open to Java Backend Developer, Android Developer, and Software Engineer opportunities. Hands-on experience with Java, Spring Boot, REST APIs, JPA/Hibernate, SQL, Android MVVM, and 400+ solved coding problems.',
     },
     freelanceCard: {
-      title: 'FOR FREELANCE CLIENTS',
+      title: 'FOR BUSINESSES & CLIENTS',
       description:
-        'Need a modern website or application for your business or idea? Explore my development services.',
-      buttonText: 'Explore Services →',
+        'Need a custom website, mobile app, CRM software, e-commerce store, or Meta Ads growth partner? Explore all 12 services.',
+      buttonText: 'Explore All 12 Services →',
     },
   },
 
@@ -351,7 +407,7 @@ export const portfolioConfig = {
           iconKey: 'java',
         },
         {
-          name: 'JavaScript',
+          name: 'JavaScript & TypeScript',
           category: 'Programming & Core Concepts',
           context: 'Interactive web interfaces, asynchronous logic, DOM & Canvas scripting',
           iconKey: 'javascript',
@@ -473,7 +529,7 @@ export const portfolioConfig = {
         {
           name: 'Git & GitHub',
           category: 'Web & Tools',
-          context: 'Source-code versioning, team collaboration, and production Vercel/GitHub deployments',
+          context: 'Source-code versioning, team collaboration, and production Vercel/Cloudflare deployments',
           iconKey: 'git',
         },
         {
@@ -499,40 +555,134 @@ export const portfolioConfig = {
   ] as SkillCategory[],
 
   // --------------------------------------------------------------------------
-  // 6. SELECTED PROJECTS (MATCHING UPDATED CV — LIBRARY MITRA REMOVED, KRISHIMITRA ADDED)
+  // 6. SELECTED PROJECTS & LIVE WEBSITE SAMPLES
   // --------------------------------------------------------------------------
   projects: [
     {
-      id: 'veloura-specialty-coffee',
+      id: 'dental-clinic-website',
       index: '01.',
-      title: 'Veloura – Specialty Coffee & Creative Sanctuary',
-      subtitle: 'Valoura Live Website · Deployed on Vercel with Git & GitHub Workflow',
-      status: 'Completed Application',
+      title: 'Dr. Shantanu Dental Clinic – Personalized Dental Care',
+      subtitle: 'Live Healthcare & Dental Clinic Website · Deployed on Cloudflare Workers',
+      status: 'Live Website',
       statusNote:
-        'Deployed web project to production on Vercel and managed its source-code versioning and deployment workflow using Git and GitHub.',
+        'Deployed live healthcare & dental clinic website on Cloudflare Workers (dental-clinic.adityaraj81156.workers.dev) with interactive 3D dental visuals and WhatsApp appointment booking.',
       domain: 'Website Design & Development',
       overview:
-        'A premium, responsive specialty coffee and creative sanctuary website deployed to production on Vercel, featuring interactive UI screens, specialty coffee photography, smooth animations, and complete Git/GitHub source-code versioning and deployment workflow.',
+        'An international-grade, responsive dental clinic and healthcare website hosted on Cloudflare Workers, featuring an interactive 3D dental visual, treatment showcases (Root Canal, Implants, Cosmetic Dentistry, Orthodontics, Whitening), Schema.org Dentist SEO structured data, and instant WhatsApp appointment booking.',
       objectives: [
-        'Deploy a production-ready responsive web project on Vercel with structured Git and GitHub version control.',
-        'Deliver fluid, scroll-responsive animations and interactive café experiences using React, TypeScript, Vite, and Motion.',
-        'Ensure responsive layout precision, fast asset delivery, and seamless visual hierarchy across mobile, tablet, and desktop devices.',
+        'Deploy a trustworthy, fast-loading medical and dental clinic website on Cloudflare Workers.',
+        'Deliver a calming clinical palette (#F6FAFA & #153656 navy with #80BCB8 teal) paired with Playfair Display and Manrope typography.',
+        'Enable seamless patient conversion through interactive 3D dental visuals and instant WhatsApp appointment booking.',
       ],
       contribution: [
-        'Deployed the web project to production on Vercel and managed its source-code versioning and deployment workflow using Git and GitHub.',
-        'Designed and developed the frontend interface using React, TypeScript, and Vite with modular, reusable UI components.',
+        'Designed, developed, and deployed the live Dr. Shantanu Dental Clinic website on Cloudflare Workers.',
+        'Implemented interactive 3D dental visuals, categorized dental treatment modules, clinic timings (Mon–Sat, 10 AM – 8 PM), and WhatsApp booking.',
+        'Configured Schema.org Dentist JSON-LD structured data, OpenGraph metadata, and responsive mobile/tablet/desktop layouts.',
+      ],
+      implementedFeatures: [
+        'Live production deployment on Cloudflare Workers (dental-clinic.adityaraj81156.workers.dev).',
+        'Interactive 3D visual showcase and comprehensive treatment catalog (Root Canal, Implants, Cosmetic Dentistry, Orthodontics, Scaling).',
+        'Direct WhatsApp appointment booking system and Schema.org Local Dentist SEO structured data.',
+      ],
+      technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', '3D Visuals', 'JSON-LD SEO', 'Cloudflare'],
+      architectureHighlights: [
+        {
+          layer: 'Cloudflare Edge Deployment',
+          detail: 'Hosted on Cloudflare Workers for instant global page loads across India and worldwide.',
+        },
+        {
+          layer: 'Patient Experience & WhatsApp Flow',
+          detail: 'Interactive 3D dental visual paired with structured treatment cards and one-click WhatsApp slot scheduling.',
+        },
+        {
+          layer: 'Healthcare SEO & Responsive UI',
+          detail: 'Built with Schema.org Dentist JSON-LD structured data and mobile-first responsive layouts.',
+        },
+      ],
+      githubUrl: 'https://github.com/Adityaraj811',
+      githubButtonLabel: 'GitHub Profile',
+      githubPlaceholderNote: 'Hosted on Cloudflare Workers',
+      liveDemoUrl: 'https://dental-clinic.adityaraj81156.workers.dev/',
+      visualType: 'dental-clinic-web',
+    },
+    {
+      id: 'fitness-jym-website',
+      index: '02.',
+      title: 'Fitness JYM – Build Strength. Unleash Your Potential.',
+      subtitle: 'Live Gym & Fitness Club Website · Deployed on Cloudflare Workers',
+      status: 'Live Website',
+      statusNote:
+        'Deployed live gym and fitness club website on Cloudflare Workers (fitness-jym.adityaraj81156.workers.dev) with training programs, membership tiers, and BMI calculator.',
+      domain: 'Website Design & Development',
+      overview:
+        'A high-energy, responsive gym and fitness club website hosted on Cloudflare Workers, featuring the Iron Sanctuary showcase, structured Training Programs, Membership Plan tiers, an interactive BMI Metric Diagnostic calculator, and direct WhatsApp quick-chat integration.',
+      objectives: [
+        'Deploy a fast, responsive gym and fitness brand website on Cloudflare Workers.',
+        'Craft an athletic dark-obsidian (#08090B) and high-voltage orange (#FF5E00) visual identity.',
+        'Provide interactive visitor tools including Training Programs, Membership Plan tiers, and a real-time BMI Diagnostic calculator.',
+      ],
+      contribution: [
+        'Designed, developed, and deployed the live Fitness JYM website on Cloudflare Workers.',
+        'Implemented interactive sections including Iron Sanctuary, Training Programs, Membership Plans, and the BMI Metric Diagnostic calculator.',
+        'Engineered responsive layouts across mobile, tablet, and desktop screens with floating WhatsApp quick-chat CTA.',
+      ],
+      implementedFeatures: [
+        'Live production deployment on Cloudflare Workers (fitness-jym.adityaraj81156.workers.dev).',
+        'Iron Sanctuary athletic showcase, Training Programs breakdown, and transparent Membership Plan tiers.',
+        'Interactive BMI Metric Diagnostic calculator and floating WhatsApp quick-chat integration.',
+      ],
+      technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Three.js', 'Cloudflare'],
+      architectureHighlights: [
+        {
+          layer: 'Cloudflare Edge Deployment',
+          detail: 'Deployed on Cloudflare Workers for ultra-fast global edge delivery across phones and desktops.',
+        },
+        {
+          layer: 'Interactive Fitness & BMI Modules',
+          detail: 'Modular React + TypeScript sections for Training Programs, Membership tiers, and real-time BMI diagnostics.',
+        },
+        {
+          layer: 'Responsive Athletic Design System',
+          detail: 'High-contrast obsidian (#08090B) and neon-orange (#FF5E00) interface optimized for all devices.',
+        },
+      ],
+      githubUrl: 'https://github.com/Adityaraj811',
+      githubButtonLabel: 'GitHub Profile',
+      githubPlaceholderNote: 'Hosted on Cloudflare Workers',
+      liveDemoUrl: 'https://fitness-jym.adityaraj81156.workers.dev/',
+      visualType: 'fitness-jym-web',
+    },
+    {
+      id: 'veloura-specialty-coffee',
+      index: '03.',
+      title: 'Veloura – Specialty Coffee & Creative Sanctuary',
+      subtitle: 'Valoura Live Website · Deployed on Vercel',
+      status: 'Live Website',
+      statusNote:
+        'Deployed web project to production on Vercel (valoura-one.vercel.app) with source-code versioning via Git and GitHub.',
+      domain: 'Website Design & Development',
+      overview:
+        'A premium, responsive specialty coffee and creative sanctuary website deployed to production on Vercel, featuring interactive UI screens, specialty coffee photography, smooth animations, and responsive layout precision across phones, tablets, and desktops.',
+      objectives: [
+        'Deploy a production-ready responsive hospitality and café web project on Vercel.',
+        'Deliver fluid, scroll-responsive animations and interactive café experiences using React, TypeScript, Vite, and Motion.',
+        'Ensure responsive layout precision, fast asset delivery, and seamless visual hierarchy across all screen sizes.',
+      ],
+      contribution: [
+        'Deployed the web project to production on Vercel with Git and GitHub versioning workflow.',
+        'Designed and developed the frontend interface using React, TypeScript, and Vite with modular UI components.',
         'Implemented interactive showcase screens, menu filtering, and atmospheric visual storytelling using Motion.',
       ],
       implementedFeatures: [
-        'Production Vercel deployment with continuous Git and GitHub source-code versioning workflow.',
+        'Production Vercel deployment (valoura-one.vercel.app) with responsive mobile/desktop engineering.',
         'Interactive Sanctuary espresso simulator, Alchemy Menu tray, Coffee Lab cards, and Courtyard Ritual preview.',
         'Fully responsive frontend design tailored for mobile phones, tablets, and desktop screens.',
       ],
       technologies: ['React', 'TypeScript', 'Vite', 'Motion', 'Git', 'GitHub', 'Vercel'],
       architectureHighlights: [
         {
-          layer: 'Production Deployment & Git Workflow',
-          detail: 'Deployed to production on Vercel with source-code versioning and release management via Git and GitHub.',
+          layer: 'Production Vercel Deployment',
+          detail: 'Deployed to production on Vercel with source-code versioning and release management via Git.',
         },
         {
           layer: 'Component Architecture',
@@ -543,71 +693,70 @@ export const portfolioConfig = {
           detail: 'Smooth entrance transitions, hover micro-interactions, and interactive showcase modules powered by Motion.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811/caffetaria',
-      githubButtonLabel: 'View Source Code',
-      githubPlaceholderNote: 'github.com/Adityaraj811/caffetaria',
+      githubUrl: 'https://github.com/Adityaraj811',
+      githubButtonLabel: 'GitHub Profile',
+      githubPlaceholderNote: 'Deployed on Vercel',
       liveDemoUrl: 'https://valoura-one.vercel.app/',
       visualType: 'veloura-cafe-web',
     },
     {
-      id: 'fitness-jym-website',
-      index: '02.',
-      title: 'Fitness JYM – Build Strength. Unleash Your Potential.',
-      subtitle: 'Live Gym & Fitness Club Website · Deployed on Cloudflare with Git & GitHub Workflow',
-      status: 'Completed Application',
+      id: 'apple-vision-ui-web',
+      index: '04.',
+      title: 'Apple Vision UI — Interactive Spatial Web Application',
+      subtitle: 'Public GitHub Repo · Responsive Spatial Web Interface · GSAP & Canvas API',
+      status: 'Public GitHub Repo',
       statusNote:
-        'Deployed live gym and fitness club website on Cloudflare Workers (fitness-jym.adityaraj81156.workers.dev) with source code versioned and managed on GitHub.',
-      domain: 'Website Design & Development',
+        'Open-source repository on GitHub (Adityaraj811/Apple-Vision-ui-Web-application) featuring scroll-driven GSAP animations and interactive HTML5 Canvas visuals.',
+      domain: 'Web Application',
       overview:
-        'A high-energy, responsive gym and fitness club website ("Build Strength. Unleash Your Potential.") hosted on Cloudflare Workers, featuring the Iron Sanctuary showcase, structured Training Programs, Membership Plan tiers, an interactive BMI Metric Diagnostic calculator, and direct WhatsApp quick-chat integration.',
+        'Designed and developed a responsive, high-fidelity recreation of the Apple Vision Pro spatial web interface featuring scroll-driven GSAP and ScrollTrigger animations, 3D WebGL scenes, interactive HTML5 Canvas visuals, and customizable visionOS visual themes.',
       objectives: [
-        'Deploy a fast, responsive gym and fitness brand website on Cloudflare Workers with Git and GitHub source-code versioning.',
-        'Craft an athletic dark-obsidian (#08090B) and high-voltage orange (#FF5E00) visual identity using Syne, Outfit, and JetBrains Mono typography.',
-        'Provide interactive visitor tools including Training Programs, Membership Plan tiers, a real-time BMI Metric Diagnostic calculator, and instant WhatsApp inquiry actions.',
+        'Build a responsive Apple Vision Pro-inspired web interface with smooth scroll-driven GSAP and ScrollTrigger animations.',
+        'Render 360° hardware frame scrubbing, optical stack layers, and real-time sensor visualizers via HTML5 Canvas API and Three.js.',
+        'Support customizable visionOS themes, adaptive dark/light mode, and responsive multi-device layouts.',
       ],
       contribution: [
-        'Designed, developed, and deployed the live Fitness JYM website on Cloudflare Workers with source code hosted on GitHub.',
-        'Implemented interactive sections including Iron Sanctuary, Training Programs, Membership Plans, and the BMI Metric Diagnostic calculator.',
-        'Engineered responsive layouts across mobile, tablet, and desktop screens with floating WhatsApp quick-chat and gym location contact integration.',
+        'Built and published the complete spatial web interface on GitHub (Apple-Vision-ui-Web-application).',
+        'Engineered HTML5 2D Canvas modules for 360° scrubbing, 5-layer optical stack inspection, and M2 + R1 / Eye Tracking visualizers.',
+        'Implemented GSAP ScrollTrigger timelines, interactive Three.js 3D hardware studio, and customizable visionOS themes.',
       ],
       implementedFeatures: [
-        'Live production deployment on Cloudflare Workers (fitness-jym.adityaraj81156.workers.dev) with Git & GitHub workflow.',
-        'Iron Sanctuary athletic showcase, Training Programs breakdown, and transparent Membership Plan tiers.',
-        'Interactive BMI Metric Diagnostic calculator and floating WhatsApp quick-chat integration for instant membership inquiries.',
+        'Scroll-driven GSAP + ScrollTrigger animations and 360° HTML5 Canvas frame scrubbing.',
+        'Interactive Three.js 3D scene with OrbitControls, exploded view, and 6 hardware callouts.',
+        'Customizable visionOS themes alongside Eye Tracking, LiDAR Sensor, and M2 + R1 Canvas visualizers.',
       ],
       technologies: [
-        'React',
+        'HTML5',
+        'CSS3',
         'TypeScript',
-        'Vite',
-        'Tailwind CSS',
+        'React 19',
         'Three.js',
-        'Git',
-        'GitHub',
-        'Cloudflare',
+        'GSAP',
+        'ScrollTrigger',
+        'Canvas API',
       ],
       architectureHighlights: [
         {
-          layer: 'Cloudflare Edge Deployment & GitHub Workflow',
-          detail: 'Deployed on Cloudflare Workers for ultra-fast global edge delivery with complete source code versioned on GitHub.',
+          layer: 'Scroll & Canvas Engine',
+          detail: 'GSAP ScrollTrigger timelines paired with interactive HTML5 Canvas visualizers and 360° frame scrubbing.',
         },
         {
-          layer: 'Interactive Fitness & BMI Diagnostic Modules',
-          detail: 'Modular React + TypeScript sections for Training Programs, Membership tiers, and real-time BMI Metric Diagnostics.',
+          layer: '3D Spatial Studio',
+          detail: 'Three.js WebGL scene with OrbitControls, Micro-OLED shaders, and hardware camera presets.',
         },
         {
-          layer: 'Responsive Athletic Design System',
-          detail: 'High-contrast obsidian (#08090B) and neon-orange (#FF5E00) interface optimized for mobile phones, tablets, and desktops.',
+          layer: 'Responsive Theme & UI System',
+          detail: 'HTML5, CSS3, React & TypeScript architecture with visionOS environment themes and responsive layouts.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811',
-      githubButtonLabel: 'View on GitHub',
-      githubPlaceholderNote: 'github.com/Adityaraj811 · Hosted on Cloudflare',
-      liveDemoUrl: 'https://fitness-jym.adityaraj81156.workers.dev/',
-      visualType: 'fitness-jym-web',
+      githubUrl: 'https://github.com/Adityaraj811/Apple-Vision-ui-Web-application',
+      githubButtonLabel: 'View GitHub Repo',
+      githubPlaceholderNote: 'github.com/Adityaraj811/Apple-Vision-ui-Web-application',
+      visualType: 'apple-vision-web',
     },
     {
       id: 'khata-expense-app',
-      index: '03.',
+      index: '05.',
       title: 'KHATA – Shared Expense Management App',
       subtitle: 'Android Application & Spring Boot Backend for Household Groups',
       status: 'In Development',
@@ -658,71 +807,14 @@ export const portfolioConfig = {
           detail: 'Spring Boot REST endpoints secured with Spring Security and persisted via JPA/Hibernate repositories in MySQL.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811/khata-expence-manager',
-      githubButtonLabel: 'View on GitHub',
-      githubPlaceholderNote: 'github.com/Adityaraj811/khata-expence-manager',
+      githubUrl: 'https://github.com/Adityaraj811',
+      githubButtonLabel: 'GitHub Profile',
+      githubPlaceholderNote: 'Android + Spring Boot Architecture',
       visualType: 'khata-android',
     },
     {
-      id: 'apple-vision-ui-web',
-      index: '04.',
-      title: 'Apple Vision UI — Interactive Spatial Web Application',
-      subtitle:
-        'Responsive Apple Vision Pro-Inspired Web Interface · GSAP, ScrollTrigger & Canvas API',
-      status: 'Public Repository',
-      statusNote:
-        'Built a responsive Apple Vision Pro-inspired web interface with scroll-driven animations and interactive Canvas visuals.',
-      domain: 'Web Application',
-      overview:
-        'Built a responsive Apple Vision Pro-inspired spatial web interface featuring scroll-driven animations, interactive HTML5 Canvas visuals, 3D scenes, customizable visual themes, and hardware technology visualizers.',
-      objectives: [
-        'Build a responsive Apple Vision Pro-inspired web interface with smooth scroll-driven GSAP and ScrollTrigger animations.',
-        'Render 360° hardware frame scrubbing, optical stack layers, and real-time sensor visualizers via HTML5 Canvas API and Three.js.',
-        'Support customizable visionOS themes, adaptive dark/light mode, and responsive multi-device layouts.',
-      ],
-      contribution: [
-        'Built a responsive Apple Vision Pro-inspired web interface with scroll-driven animations and interactive Canvas visuals.',
-        'Engineered HTML5 2D Canvas modules for 360° scrubbing, 5-layer optical stack inspection, and M2 + R1 / Eye Tracking visualizers.',
-        'Implemented GSAP ScrollTrigger timelines, interactive Three.js 3D hardware studio, and customizable visionOS themes.',
-      ],
-      implementedFeatures: [
-        'Scroll-driven GSAP + ScrollTrigger animations and 360° HTML5 Canvas frame scrubbing.',
-        'Interactive Three.js 3D scene with OrbitControls, exploded view, and 6 hardware callouts.',
-        'Customizable visionOS themes alongside Eye Tracking, LiDAR Sensor, and M2 + R1 Canvas visualizers.',
-      ],
-      technologies: [
-        'HTML5',
-        'CSS3',
-        'JavaScript',
-        'React 19',
-        'TypeScript',
-        'Three.js',
-        'GSAP',
-        'ScrollTrigger',
-        'Canvas API',
-      ],
-      architectureHighlights: [
-        {
-          layer: 'Scroll & Canvas Engine',
-          detail: 'GSAP ScrollTrigger timelines paired with interactive HTML5 Canvas visualizers and 360° frame scrubbing.',
-        },
-        {
-          layer: '3D Spatial Studio',
-          detail: 'Three.js WebGL scene with OrbitControls, Micro-OLED shaders, and hardware camera presets.',
-        },
-        {
-          layer: 'Responsive Theme & UI System',
-          detail: 'HTML5, CSS3, React & TypeScript architecture with visionOS environment themes and responsive layouts.',
-        },
-      ],
-      githubUrl: 'https://github.com/Adityaraj811/Apple-Vision-ui-Web-application',
-      githubButtonLabel: 'View Source Code',
-      githubPlaceholderNote: 'github.com/Adityaraj811/Apple-Vision-ui-Web-application',
-      visualType: 'apple-vision-web',
-    },
-    {
       id: 'krishi-mitra-ai',
-      index: '05.',
+      index: '06.',
       title: 'KrishiMitra – AI-Based Crop Recommendation System',
       subtitle: 'Team Project · ML Crop Recommendation Platform & Multilingual PWA',
       status: 'Team Project',
@@ -732,32 +824,25 @@ export const portfolioConfig = {
       overview:
         'Collaborated in a four-member team to build an AI-based crop recommendation platform; evaluated 22 machine-learning algorithms and selected Extra Trees based on accuracy and inference latency, paired with a multilingual PWA interface featuring offline fallback content and an agriculture economics dashboard.',
       objectives: [
-        'Benchmark 22 machine-learning classification algorithms on soil and climate features to select the optimal crop recommendation model based on accuracy and inference latency.',
-        'Deliver a multilingual Progressive Web App (PWA) with offline fallback content so farmers and users can access recommendations reliably in low-connectivity regions.',
+        'Benchmark 22 machine-learning classification algorithms on soil and climate features to select the optimal crop recommendation model.',
+        'Deliver a multilingual Progressive Web App (PWA) with offline fallback content for low-connectivity regions.',
         'Provide an interactive agriculture economics dashboard for analyzing yield potential, input costs, and crop profitability.',
       ],
       contribution: [
-        'Collaborated in a four-member team to build a crop recommendation platform; evaluated 22 machine-learning algorithms and selected Extra Trees based on accuracy and inference latency.',
+        'Collaborated in a four-member team to build a crop recommendation platform evaluating 22 ML algorithms.',
         'Developed a multilingual PWA interface with offline fallback content and an agriculture economics dashboard using React and TypeScript.',
-        'Integrated Java and Python (Scikit-learn) model inference pipelines with structured soil (N-P-K, pH) and weather parameter inputs.',
+        'Integrated Java and Python (Scikit-learn) model inference pipelines with soil (N-P-K, pH) and weather parameter inputs.',
       ],
       implementedFeatures: [
         'Extra Trees ML crop recommendation engine selected after benchmarking 22 algorithms for accuracy and low inference latency.',
         'Multilingual PWA interface with service-worker offline fallback content for rural connectivity.',
         'Interactive agriculture economics dashboard displaying estimated yield, cultivation cost, and market return insights.',
       ],
-      technologies: [
-        'Java',
-        'Python',
-        'Scikit-learn',
-        'React',
-        'TypeScript',
-        'PWA',
-      ],
+      technologies: ['Java', 'Python', 'Scikit-learn', 'React', 'TypeScript', 'PWA'],
       architectureHighlights: [
         {
           layer: 'ML Evaluation & Extra Trees Engine',
-          detail: 'Evaluated 22 Scikit-learn machine-learning models and selected Extra Trees for optimal accuracy and fast inference latency.',
+          detail: 'Evaluated 22 Scikit-learn machine-learning models and selected Extra Trees for optimal accuracy and fast latency.',
         },
         {
           layer: 'Multilingual PWA & Offline Fallback',
@@ -770,162 +855,289 @@ export const portfolioConfig = {
       ],
       githubUrl: 'https://github.com/Adityaraj811',
       githubButtonLabel: 'GitHub Profile',
-      githubPlaceholderNote: 'github.com/Adityaraj811 · Team Project',
+      githubPlaceholderNote: 'Team Project · Multilingual PWA',
       visualType: 'krishi-mitra-web',
     },
   ] as ProjectItem[],
 
   // --------------------------------------------------------------------------
-  // 7. DEDICATED FREELANCE SERVICES PAGE DATA (8 SERVICES)
+  // 7. ALL 12 SERVICES FROM SAHAYAK.STUDIO DIGITAL SOLUTIONS POSTER
   // --------------------------------------------------------------------------
   freelanceSection: {
-    pageHeadline: 'Websites & Applications Built for Your Ideas.',
+    pageHeadline: 'From Ideas to Innovation – We Build Your Digital Future.',
     pageSubheading:
-      'From business websites to modern landing pages and applications, I help turn ideas into practical digital experiences.',
-    ctaHeadline: "Have a Project in Mind? Let's Build It.",
-    ctaButtonLabel: 'Discuss Your Project',
+      'Complete Digital & IT Solutions powered by Sahayak.Studio & Aditya Raj — from custom websites, mobile apps, CRM & SaaS platforms to Meta Ads, Bulk SMS, branding, and cloud hosting.',
+    ctaHeadline: "Let's Build Something Great Together!",
+    ctaButtonLabel: 'Start Your Project',
     personalCommitmentNote:
-      'You work directly with me—ensuring clean design, responsive layouts, reliable code, and clear communication from start to launch.',
+      'Work directly with Aditya Raj & Sahayak.Studio for clean code, custom brand design, responsive mobile/tablet/desktop support, and dedicated ongoing technical care.',
     services: [
       {
-        id: 'business-websites',
+        id: 'website-development',
         index: '01.',
-        title: 'Business Websites',
-        tagline: 'Professional websites for shops, businesses and companies.',
+        category: 'web',
+        title: 'Website Development',
+        tagline: 'Business, corporate, portfolio & high-converting landing pages.',
         description:
-          'Professional websites for shops, businesses and companies designed to showcase your offerings, establish credibility, and help customers reach you effortlessly.',
+          'Complete website solutions designed to establish brand authority, showcase your offerings, and convert visitors on every phone, tablet, and desktop screen.',
         deliverables: [
-          'Modern multi-section layout tailored to your business',
-          'Services showcase, location details & fast contact actions',
-          'Mobile-friendly responsive design & SEO-ready structure',
+          'Business Website Development',
+          'Personal & Professional Portfolio',
+          'Corporate Website & Landing Page Development',
+          'Custom Website Design, Responsive & Redesign/Maintenance',
         ],
-        idealFor: 'Shops, cafés, gyms, local businesses, agencies & growing companies',
-        inquiryTopic: 'Business Website Development',
+        idealFor: 'Businesses, founders, clinics, gyms, cafés & professionals',
+        inquiryTopic: 'Website Development (Business / Portfolio / Landing Page)',
         featuredDemoUrl: 'https://valoura-one.vercel.app/',
         featuredDemoTitle: 'Featured Demo — Veloura Café Website',
-        featuredDemoBadge: 'Personal Showcase',
+        featuredDemoBadge: 'Live on Vercel',
         mockupType: 'business',
       },
       {
-        id: 'landing-pages',
+        id: 'logo-graphic-design',
         index: '02.',
-        title: 'Landing Pages & Fitness / Brand Sites',
-        tagline: 'Attractive landing pages for gyms, fitness clubs, products, services, and startups.',
+        category: 'growth',
+        title: 'Logo & Graphic Design',
+        tagline: 'Distinctive visual identity, print collaterals & digital graphics.',
         description:
-          'Attractive, high-conversion landing pages and brand websites for gyms, fitness clubs, products, and startups with bold visual hierarchy, smooth animations, and instant WhatsApp / lead actions.',
+          'Complete brand visual systems engineered to make startups and local businesses instantly recognizable online and offline.',
         deliverables: [
-          'High-impact hero section & clear value proposition',
-          'Interactive programs, pricing tiers & conversion CTAs',
-          'Fast edge performance across mobile, tablet, and desktop',
+          'Professional Logo Design & Brand Identity Design',
+          'Business Card Design',
+          'Social Media Post Design',
+          'Brochure & Banner Design',
         ],
-        idealFor: 'Gyms, fitness studios, product launches, campaigns & brand promotions',
-        inquiryTopic: 'Landing Page / Gym & Brand Website Development',
+        idealFor: 'New brands, startups, shops & product launches',
+        inquiryTopic: 'Logo & Graphic Design / Brand Identity',
+        mockupType: 'design',
+      },
+      {
+        id: 'web-application-development',
+        index: '03.',
+        category: 'apps',
+        title: 'Web Application Development',
+        tagline: 'Custom web portals, admin dashboards & SaaS automation platforms.',
+        description:
+          'Interactive, scalable web applications and internal dashboards engineered with React, TypeScript, Java Spring Boot REST APIs, and relational SQL databases.',
+        deliverables: [
+          'Custom Web Application Development',
+          'Dashboard & Admin Panel',
+          'SaaS Application Development',
+          'Business Automation Solutions',
+        ],
+        idealFor: 'Clinics, SaaS founders, institutes & operations teams',
+        inquiryTopic: 'Web Application / Dashboard / SaaS Development',
+        featuredDemoUrl: 'https://dental-clinic.adityaraj81156.workers.dev/',
+        featuredDemoTitle: 'Featured Demo — Dr. Shantanu Dental Clinic',
+        featuredDemoBadge: 'Live on Cloudflare',
+        mockupType: 'webapp',
+      },
+      {
+        id: 'mobile-app-development',
+        index: '04.',
+        category: 'apps',
+        title: 'Mobile App Development',
+        tagline: 'Android & iOS apps, e-commerce apps & custom business mobile tools.',
+        description:
+          'Clean, high-performance mobile applications built for everyday usability—covering native Android (Java/MVVM/Room), cross-platform apps, e-commerce, and maintenance.',
+        deliverables: [
+          'Android & iOS Apps',
+          'E-commerce Apps & Custom Business Apps',
+          'App UI/UX Design',
+          'App Maintenance & Feature Upgrades',
+        ],
+        idealFor: 'D2C brands, utility startups, service providers & businesses',
+        inquiryTopic: 'Mobile App Development (Android / iOS / Business App)',
+        mockupType: 'android',
+      },
+      {
+        id: 'crm-solutions',
+        index: '05.',
+        category: 'apps',
+        title: 'CRM Solutions',
+        tagline: 'Custom CRM pipelines, lead tracking & team automation.',
+        description:
+          'Tailored Customer Relationship Management software built around your exact sales funnel, follow-up reminders, and staff workflows.',
+        deliverables: [
+          'Custom CRM Development',
+          'Lead Management & Pipeline Tracking',
+          'Sales & Marketing Automation',
+          'Employee Management Portal',
+        ],
+        idealFor: 'Real estate, agencies, coaching centers, sales teams & SMEs',
+        inquiryTopic: 'Custom CRM & Lead Management Solution',
+        mockupType: 'crm',
+      },
+      {
+        id: 'digital-marketing-meta-ads',
+        index: '06.',
+        category: 'growth',
+        title: 'Digital Marketing & Meta Ads',
+        tagline: 'Targeted Facebook & Instagram ad funnels for qualified business leads.',
+        description:
+          'ROI-focused ad campaigns, creative funnels, and audience optimization crafted to bring real enquiries directly to your WhatsApp or website.',
+        deliverables: [
+          'Facebook & Instagram Ads',
+          'Lead Generation Campaigns',
+          'Social Media Marketing',
+          'Campaign Optimization & Analytics',
+        ],
+        idealFor: 'Clinics, gyms, local businesses, D2C stores & coaches',
+        inquiryTopic: 'Digital Marketing & Meta Ads Campaign',
+        mockupType: 'marketing',
+      },
+      {
+        id: 'bulk-sms-messaging',
+        index: '07.',
+        category: 'growth',
+        title: 'Bulk SMS & Messaging Services',
+        tagline: 'Promotional SMS, transactional alerts, WhatsApp & OTP APIs.',
+        description:
+          'Reliable, high-deliverability messaging infrastructure for customer alerts, automated WhatsApp notifications, and secure OTP verification.',
+        deliverables: [
+          'Promotional & Transactional SMS',
+          'WhatsApp Messaging Automation',
+          'OTP SMS Integration',
+          'Custom SMS API Solutions',
+        ],
+        idealFor: 'E-commerce stores, coaching institutes, apps & hospitals',
+        inquiryTopic: 'Bulk SMS, WhatsApp Messaging & OTP API',
+        mockupType: 'messaging',
+      },
+      {
+        id: 'launching-promotional-videos',
+        index: '08.',
+        category: 'growth',
+        title: 'Launching & Promotional Videos',
+        tagline: 'High-impact launch reels, product promos & motion graphics.',
+        description:
+          'Engaging launch films, product showcase edits, and crisp motion-graphics reels designed to capture attention across social feeds and landing pages.',
+        deliverables: [
+          'Business Launch Videos',
+          'Product Promotional Videos',
+          'Brand Promotional Videos',
+          'Motion Graphics & Kinetic Typography',
+        ],
+        idealFor: 'Product launches, events, brands & Meta Ad creatives',
+        inquiryTopic: 'Launching & Promotional Video Production',
+        mockupType: 'video',
+      },
+      {
+        id: 'ecommerce-solutions',
+        index: '09.',
+        category: 'web',
+        title: 'E-commerce Solutions',
+        tagline: 'Complete online stores with catalog, checkout & payment integration.',
+        description:
+          'End-to-end online storefronts built for speed and conversion—featuring product management, payment gateways, and smooth order tracking.',
+        deliverables: [
+          'Online Store Development',
+          'Product & Inventory Management',
+          'Payment Gateway Integration',
+          'Order & Delivery Workflow',
+        ],
+        idealFor: 'Retail brands, boutiques, food/fitness brands & wholesalers',
+        inquiryTopic: 'E-commerce Online Store Development',
         featuredDemoUrl: 'https://fitness-jym.adityaraj81156.workers.dev/',
-        featuredDemoTitle: 'Featured Demo — Fitness JYM Website',
+        featuredDemoTitle: 'Featured Demo — Fitness JYM Showcase',
         featuredDemoBadge: 'Live on Cloudflare',
         mockupType: 'landing',
       },
       {
-        id: 'portfolio-websites',
-        index: '03.',
-        title: 'Personal Portfolio Websites',
-        tagline: 'Professional portfolios for developers, students, freelancers and professionals.',
+        id: 'software-development',
+        index: '10.',
+        category: 'apps',
+        title: 'Software Development',
+        tagline: 'Bespoke business software, cloud systems & backend REST APIs.',
         description:
-          'Professional portfolios for developers, students, freelancers and professionals to present projects, skills, resume, and contact links with a standout look.',
+          'Dependable custom software engineered to digitize manual operations—backed by Java Spring Boot, PostgreSQL/MySQL, and cloud architecture.',
         deliverables: [
-          'Custom project gallery & interactive skill showcase',
-          'Resume download & social profile integration',
-          'Clean, modern dark/light visual styling',
+          'Custom Software Solutions',
+          'Business Management Software',
+          'Cloud-Based Solutions',
+          'Scalable REST API Development',
         ],
-        idealFor: 'Developers, students, designers, freelancers & creators',
-        inquiryTopic: 'Personal Portfolio Website',
-        mockupType: 'portfolio',
+        idealFor: 'Enterprises, billing/inventory workflows & custom SaaS teams',
+        inquiryTopic: 'Custom Software & API Development',
+        mockupType: 'software',
       },
       {
-        id: 'startup-websites',
-        index: '04.',
-        title: 'Startup Websites',
-        tagline: 'Modern websites for new businesses and startup ideas.',
+        id: 'ui-ux-product-design',
+        index: '11.',
+        category: 'web',
+        title: 'UI/UX & Product Design',
+        tagline: 'Wireframing, interactive prototypes & modern web/app interfaces.',
         description:
-          'Modern websites for new businesses and startup ideas built with scalable component architecture, sleek visual polish, and clear product storytelling.',
+          'Human-centered interface architecture that turns complex user journeys into intuitive, responsive, high-conversion digital products.',
         deliverables: [
-          'Contemporary tech-inspired UI/UX & interactive previews',
-          'Modular React / modern web frontend architecture',
-          'Ready for fast cloud or static hosting deployment',
+          'Complete UI/UX Design Systems',
+          'Interactive Wireframing & Prototyping',
+          'User Experience Optimization',
+          'Modern Web & Mobile App Design',
         ],
-        idealFor: 'Early-stage founders, SaaS products & new ventures',
-        inquiryTopic: 'Startup Website Development',
-        mockupType: 'startup',
+        idealFor: 'Startups, SaaS products, mobile apps & website revamps',
+        inquiryTopic: 'UI/UX & Product Design Project',
+        mockupType: 'uiux',
       },
       {
-        id: 'professional-websites',
-        index: '05.',
-        title: 'Professional Websites',
-        tagline: 'Custom websites designed around individual and business requirements.',
+        id: 'it-technical-services',
+        index: '12.',
+        category: 'growth',
+        title: 'IT & Technical Services',
+        tagline: 'Domain, Vercel/Cloudflare cloud hosting, SSL security & ongoing support.',
         description:
-          'Custom websites designed around individual and business requirements—built from scratch with clean typography, structured content, and dependable performance.',
+          'Hassle-free technical infrastructure management so your website and apps stay fast, secure, and always online without downtime.',
         deliverables: [
-          'Tailored page structure built around your exact goals',
-          'Accessible navigation & cross-browser compatibility',
-          'Direct WhatsApp, email, and inquiry integration',
+          'Domain & DNS Hosting Setup',
+          'Cloud Hosting Solutions (Vercel, Cloudflare, AWS)',
+          'Website Security & SSL Hardening',
+          'Dedicated Ongoing Technical Support',
         ],
-        idealFor: 'Consultants, doctors, educators, professionals & organizations',
-        inquiryTopic: 'Custom Professional Website',
-        mockupType: 'professional',
-      },
-      {
-        id: 'web-applications',
-        index: '06.',
-        title: 'Web Applications',
-        tagline: 'Interactive web applications with useful frontend and backend functionality.',
-        description:
-          'Interactive web applications with useful frontend and backend functionality—combining responsive interfaces with Java, Spring Boot REST APIs, and SQL databases.',
-        deliverables: [
-          'Dynamic frontend views & interactive user workflows',
-          'REST API integration & structured database persistence',
-          'Clean, maintainable full-stack code architecture',
-        ],
-        idealFor: 'Custom portals, management tools & interactive platforms',
-        inquiryTopic: 'Web Application Development',
-        mockupType: 'webapp',
-      },
-      {
-        id: 'website-redesign',
-        index: '07.',
-        title: 'Website Redesign',
-        tagline: 'Modernize outdated websites with improved UI/UX and responsive layouts.',
-        description:
-          'Modernize outdated websites with improved UI/UX and responsive layouts—transforming slow or cluttered pages into a fresh, mobile-first digital presence.',
-        deliverables: [
-          'Complete visual UI/UX overhaul & modern typography',
-          'Mobile & tablet responsiveness upgrade',
-          'Cleaner navigation flow & faster page performance',
-        ],
-        idealFor: 'Existing websites needing a modern visual & mobile upgrade',
-        inquiryTopic: 'Website Redesign Project',
-        mockupType: 'redesign',
-      },
-      {
-        id: 'android-applications',
-        index: '08.',
-        title: 'Android Applications',
-        tagline: 'Functional Android applications with clean interfaces and practical features.',
-        description:
-          'Functional Android applications with clean interfaces and practical features—built in Java using XML layouts, MVVM architecture, Room Database, and REST API connectivity.',
-        deliverables: [
-          'Native Android UI with XML layouts & Material components',
-          'Structured MVVM architecture with Room local storage',
-          'Backend API connectivity via Retrofit & Spring Boot',
-        ],
-        idealFor: 'Mobile app ideas, utility apps & business companion apps',
-        inquiryTopic: 'Android Application Development',
-        mockupType: 'android',
+        idealFor: 'Businesses wanting stress-free hosting, security & upkeep',
+        inquiryTopic: 'IT, Domain, Cloud Hosting & Technical Support',
+        mockupType: 'it',
       },
     ] as FreelanceServiceItem[],
   },
 
   // --------------------------------------------------------------------------
-  // 8. EDUCATION, INTERNSHIP & CERTIFICATIONS (FROM OFFICIAL UPDATED CV)
+  // 8. INTERACTIVE FAQ (MATCHING FRAMER SECTION 12 — BEFORE YOU ASK)
+  // --------------------------------------------------------------------------
+  faqs: [
+    {
+      index: '01',
+      question: 'Can you customize any live website or app sample shown in your portfolio?',
+      answer:
+        'Yes. Every sample (Veloura Café, Fitness JYM, Dr. Shantanu Dental Clinic, KHATA Android App, or a fresh layout) is 100% customizable—colors, branding, logo, features, WhatsApp booking, admin dashboard, and custom domain.',
+    },
+    {
+      index: '02',
+      question: 'What services are included under Sahayak.Studio & your freelance work?',
+      answer:
+        'We cover all 12 digital & IT solutions: Website Development, Logo & Graphic Design, Web Applications & SaaS, Mobile Apps (Android/iOS), CRM Solutions, Digital Marketing & Meta Ads, Bulk SMS & WhatsApp APIs, Launch Videos, E-commerce Stores, Custom Software, UI/UX Design, and Cloud Hosting/IT Support.',
+    },
+    {
+      index: '03',
+      question: 'Will my website or app work smoothly on mobile phones, tablets, and laptops?',
+      answer:
+        'Always. Every interface is built mobile-first and tested across mobile screens, tablets, and desktop/laptop viewports with fast Cloudflare/Vercel edge performance and clean touch targets.',
+    },
+    {
+      index: '04',
+      question: 'How fast can a custom website, landing page, or app be delivered?',
+      answer:
+        'Standard business websites and landing pages typically launch within 5–10 days once content is ready. Custom web applications, CRM systems, and mobile apps take 2–6 weeks depending on feature scope.',
+    },
+    {
+      index: '05',
+      question: 'How do I start a project or request pricing?',
+      answer:
+        'Message directly on WhatsApp (+91 9263605950) or email adityaraj81156@gmail.com / Support@sahayak.studio with your requirement or favorite sample link. You will get a clear timeline and transparent quote right away.',
+    },
+  ] as FaqItem[],
+
+  // --------------------------------------------------------------------------
+  // 9. EDUCATION, INTERNSHIP & CERTIFICATIONS (FROM OFFICIAL UPDATED CV)
   // --------------------------------------------------------------------------
   education: {
     degree: 'Bachelor of Technology (B.Tech)',
@@ -993,4 +1205,3 @@ export const portfolioConfig = {
     ],
   },
 };
-

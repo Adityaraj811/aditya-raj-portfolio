@@ -187,10 +187,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className={`relative w-full max-w-4xl max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl text-zinc-900 dark:text-zinc-100 border ${
+            className={`relative w-full max-w-4xl max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl bg-white dark:bg-[#0E0E0E] shadow-2xl text-zinc-900 dark:text-[#F2F0EB] border ${
               isVeloura
                 ? 'border-[#B47B44]/55 dark:border-[#B47B44]/50 shadow-[0_25px_80px_-15px_rgba(180,123,68,0.35)]'
-                : 'border-zinc-200 dark:border-zinc-800'
+                : 'border-zinc-200 dark:border-[#F2F0EB]/15'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -207,10 +207,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
 
             {/* Sticky Modal Header */}
             <div
-              className={`sticky top-0 z-20 flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b ${
+              className={`sticky top-0 z-20 flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-white/95 dark:bg-[#0E0E0E]/95 backdrop-blur-md border-b ${
                 isVeloura
                   ? 'border-[#B47B44]/30 dark:border-[#B47B44]/30'
-                  : 'border-zinc-200 dark:border-zinc-800'
+                  : 'border-zinc-200 dark:border-[#F2F0EB]/12'
               }`}
             >
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 min-w-0">
@@ -368,7 +368,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                         href={project.liveDemoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs font-semibold transition-colors whitespace-nowrap"
                       >
                         <ExternalLink className="w-4 h-4" />
                         <span>Live Demo</span>

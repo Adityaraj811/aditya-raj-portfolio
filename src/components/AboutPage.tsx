@@ -60,12 +60,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({
       {/* =====================================================================
           1. ABOUT ME PAGE HERO, DEVELOPER BIO & OFFICIAL CV ACTIONS
       ===================================================================== */}
-      <section className="relative pt-10 pb-16 sm:pt-14 sm:pb-20 border-b border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden">
+      <section className="relative pt-10 pb-16 sm:pt-14 sm:pb-20 border-b border-zinc-300/70 dark:border-[#F2F0EB]/12 overflow-hidden">
         <div
-          className="absolute top-0 left-1/3 -translate-x-1/2 w-[620px] h-[360px] rounded-full pointer-events-none opacity-60 dark:opacity-100"
+          className="absolute top-0 left-1/3 -translate-x-1/2 w-[620px] h-[360px] rounded-full pointer-events-none opacity-45 dark:opacity-85"
           style={{
             background:
-              'radial-gradient(circle, rgba(59,130,246,0.14) 0%, rgba(99,102,241,0.06) 55%, transparent 75%)',
+              'radial-gradient(circle, rgba(225,6,0,0.16) 0%, rgba(225,6,0,0.04) 55%, transparent 75%)',
           }}
         />
 
@@ -75,7 +75,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
             <button
               type="button"
               onClick={onBackToPortfolio}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-blue-500/50 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/15 bg-white/90 dark:bg-[#0E0E0E] hover:border-[#E10600] text-xs font-medium text-zinc-700 dark:text-[#F2F0EB] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Freelance Portfolio &amp; Samples</span>
@@ -85,9 +85,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <button
                 type="button"
                 onClick={onOpenResumeModal}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-blue-500/50 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/15 bg-white/90 dark:bg-[#0E0E0E] hover:border-[#E10600] text-xs font-medium text-zinc-700 dark:text-[#F2F0EB] transition-colors cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <FileText className="w-3.5 h-3.5 text-[#E10600]" />
                 <span>Preview Official CV</span>
               </button>
 
@@ -101,7 +101,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     personal.resumeDownloadFilename
                   )
                 }
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Download CV (PDF)</span>
@@ -116,12 +116,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               className="lg:col-span-7 flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-[#E10600]">
                   <span>ABOUT ME · ACADEMIC JOURNEY · TECHNICAL SKILLS · OFFICIAL CV</span>
                 </div>
 
                 <h1
-                  className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-[1.1]"
+                  className="font-display text-3xl sm:text-5xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[1.02]"
                   style={{ textWrap: 'balance' }}
                 >
                   {about.sectionTitle}
@@ -136,9 +136,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 </p>
 
                 {/* Location & Availability Metadata */}
-                <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-600 dark:text-zinc-300">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-                    <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#0E0E0E] border border-zinc-300 dark:border-[#F2F0EB]/15">
+                    <MapPin className="w-3.5 h-3.5 text-[#E10600]" />
                     <span>{personal.location}</span>
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300">
@@ -149,19 +149,19 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               </div>
 
               {/* Official CV Highlight Box inside About Hero */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-blue-600/10 via-indigo-600/10 to-emerald-500/5 border border-blue-500/30 dark:border-blue-400/30 space-y-4">
+              <div className="p-5 sm:p-6 rounded-xl bg-gradient-to-r from-[#E10600]/10 via-[#E10600]/5 to-transparent border border-[#E10600]/30 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                  <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-[#E10600]">
                     <FileText className="w-4 h-4" />
                     <span>OFFICIAL CURRICULUM VITAE (CV / RESUME)</span>
                   </div>
-                  <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                    Updated · B.Tech CSE (2023–2027)
+                  <span className="font-mono text-[11px] text-zinc-500 dark:text-[#A8A8A8]">
+                    Updated · B.Tech CSE (2022–2026)
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                  View or download my complete official CV including academic qualifications, SmartED internship experience, Infosys Java SE 21 &amp; Oracle GenAI certifications, and project architecture details.
+                <p className="text-xs sm:text-sm text-zinc-700 dark:text-[#F2F0EB]/85 leading-relaxed">
+                  View or download my complete official CV including B.Tech CSE academics, Inspireleap Android internship experience, Rinex &amp; E-Cell (IIT Bhubaneswar) certification, and project architecture details.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3">
@@ -175,7 +175,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                         personal.resumeDownloadFilename
                       )
                     }
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer shadow-sm"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download Official CV (PDF)</span>
@@ -184,7 +184,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   <button
                     type="button"
                     onClick={onOpenResumeModal}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-xs sm:text-sm font-semibold transition-opacity cursor-pointer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#111111] text-white dark:bg-[#F2F0EB] dark:text-[#050505] hover:opacity-90 text-xs sm:text-sm font-semibold transition-opacity cursor-pointer"
                   >
                     <FileText className="w-4 h-4" />
                     <span>Open Full-Screen CV Viewer</span>
@@ -215,22 +215,22 @@ export const AboutPage: React.FC<AboutPageProps> = ({
       ===================================================================== */}
       <section
         id="academics"
-        className="py-16 sm:py-20 border-b border-zinc-200/80 dark:border-zinc-800/80"
+        className="py-16 sm:py-20 border-b border-zinc-300/70 dark:border-[#F2F0EB]/12"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
           <ScrollReveal direction="up">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="space-y-2 max-w-2xl">
-                <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <p className="font-mono text-xs font-semibold text-[#E10600]">
                   01. ACADEMIC JOURNEY, INTERNSHIP &amp; CERTIFICATIONS
                 </p>
                 <h2
-                  className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                  className="font-display text-2xl sm:text-4xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]"
                   style={{ textWrap: 'balance' }}
                 >
                   Education Timeline, Internship Experience &amp; Verified Credentials
                 </h2>
-                <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
+                <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
                   My complete academic progression from secondary schooling to B.Tech in Computer Science &amp; Engineering, industry internship, and technical certifications.
                 </p>
               </div>
@@ -238,9 +238,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <button
                 type="button"
                 onClick={onOpenResumeModal}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-blue-500/50 text-xs font-semibold text-zinc-800 dark:text-zinc-200 transition-colors cursor-pointer shrink-0"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/15 bg-white dark:bg-[#0E0E0E] hover:border-[#E10600] text-xs font-semibold text-zinc-800 dark:text-[#F2F0EB] transition-colors cursor-pointer shrink-0"
               >
-                <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <FileText className="w-4 h-4 text-[#E10600]" />
                 <span>View Formatted CV Document</span>
               </button>
             </div>
@@ -249,10 +249,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left Column: Complete Academic Timeline (B.Tech, Class XII, Class X) */}
             <ScrollReveal direction="up" delayMs={50} className="lg:col-span-7">
-              <Tilt3DCard className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
+              <Tilt3DCard className="h-full p-6 sm:p-8 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12">
                 <div className="space-y-5">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-500 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800/80 pb-3.5">
-                    <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-500 dark:text-[#A8A8A8] border-b border-zinc-200 dark:border-[#F2F0EB]/10 pb-3.5">
+                    <span className="inline-flex items-center gap-1.5 text-[#E10600] font-semibold">
                       <GraduationCap className="w-4 h-4" />
                       <span>ACADEMIC QUALIFICATIONS (B.TECH · CLASS XII · CLASS X)</span>
                     </span>
@@ -263,32 +263,32 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     {education.academicTimeline.map((item) => (
                       <div
                         key={item.degreeOrClass}
-                        className="p-4 rounded-xl bg-zinc-50/90 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 space-y-1.5"
+                        className="p-4 rounded-lg bg-zinc-50/90 dark:bg-[#141414] border border-zinc-200/80 dark:border-[#F2F0EB]/10 space-y-1.5"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                          <span className="text-blue-600 dark:text-blue-400 font-semibold">
+                          <span className="text-[#E10600] font-semibold">
                             {item.level}
                           </span>
                           <div className="flex items-center gap-2 tabular-nums">
-                            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                            <span className="font-semibold text-[#111111] dark:text-[#F2F0EB]">
                               {item.score}
                             </span>
                             <span aria-hidden="true" className="text-zinc-400">
                               ·
                             </span>
-                            <span className="text-zinc-500 dark:text-zinc-400">
+                            <span className="text-zinc-500 dark:text-[#A8A8A8]">
                               {item.duration}
                             </span>
                           </div>
                         </div>
 
-                        <h3 className="font-display text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                        <h3 className="font-display text-lg uppercase tracking-wide text-[#111111] dark:text-[#F2F0EB]">
                           {item.degreeOrClass}
                         </h3>
 
-                        <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+                        <p className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8]">
                           {item.institution}{' '}
-                          <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                          <span className="font-mono text-xs text-zinc-500 dark:text-[#A8A8A8]">
                             ({item.boardOrUniversity})
                           </span>
                         </p>
@@ -297,14 +297,14 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-5 mt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-3">
-                  <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="pt-5 mt-6 border-t border-zinc-200/80 dark:border-[#F2F0EB]/10 space-y-3">
+                  <p className="font-mono text-xs text-zinc-500 dark:text-[#A8A8A8]">
                     CORE COMPUTER SCIENCE COURSEWORK
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-700 dark:text-zinc-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-700 dark:text-[#F2F0EB]/85">
                     {education.coreCoursework.map((course, idx) => (
                       <div key={idx} className="flex items-center gap-2">
-                        <span className="font-mono text-blue-600 dark:text-blue-400">
+                        <span className="font-mono text-[#E10600]">
                           0{idx + 1}.
                         </span>
                         <span>{course}</span>
@@ -317,25 +317,25 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
             {/* Right Column: Internship, Certifications & Achievements */}
             <ScrollReveal direction="up" delayMs={130} className="lg:col-span-5">
-              <Tilt3DCard className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
+              <Tilt3DCard className="h-full p-6 sm:p-8 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold border-b border-zinc-100 dark:border-zinc-800/80 pb-3.5">
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#E10600] font-semibold border-b border-zinc-200 dark:border-[#F2F0EB]/10 pb-3.5">
                     <BookOpen className="w-4 h-4" />
                     <span>INTERNSHIP, CERTIFICATIONS &amp; ACHIEVEMENTS</span>
                   </div>
 
                   {/* Internship Experience Highlight */}
-                  <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/90 space-y-1.5">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
+                  <div className="p-4 rounded-lg bg-zinc-50 dark:bg-[#141414] border border-zinc-200/80 dark:border-[#F2F0EB]/10 space-y-1.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-[#A8A8A8]">
                       <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                         INTERNSHIP EXPERIENCE · {education.internship.company.toUpperCase()}
                       </span>
                       <span>{education.internship.duration}</span>
                     </div>
-                    <h3 className="font-display text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">
+                    <h3 className="font-display text-base uppercase text-[#111111] dark:text-[#F2F0EB]">
                       {education.internship.role}
                     </h3>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
                       {education.internship.description}
                     </p>
                   </div>
@@ -344,10 +344,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   {education.certifications.map((cert) => (
                     <div
                       key={cert.title}
-                      className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/90 space-y-2"
+                      className="p-4 rounded-lg bg-zinc-50 dark:bg-[#141414] border border-zinc-200/80 dark:border-[#F2F0EB]/10 space-y-2"
                     >
-                      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                        <span className="text-blue-600 dark:text-blue-400 font-semibold">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500 dark:text-[#A8A8A8]">
+                        <span className="text-[#E10600] font-semibold">
                           {cert.issuer.toUpperCase()}
                         </span>
                         <span>
@@ -356,11 +356,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                         </span>
                       </div>
 
-                      <h3 className="font-display text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+                      <h3 className="font-display text-base uppercase text-[#111111] dark:text-[#F2F0EB] leading-snug">
                         {cert.title}
                       </h3>
 
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                      <p className="text-xs text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
                         {cert.description}
                       </p>
 
@@ -370,7 +370,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                             href={cert.credentialUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                            className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#E10600] hover:underline"
                           >
                             <span>{cert.credentialLabel || 'Verify Credential'}</span>
                             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -385,7 +385,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     {education.achievements.map((achievement, idx) => (
                       <div
                         key={idx}
-                        className="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20 text-xs text-zinc-700 dark:text-zinc-300 font-mono leading-relaxed"
+                        className="p-3.5 rounded-lg bg-[#E10600]/5 border border-[#E10600]/20 text-xs text-zinc-700 dark:text-[#F2F0EB]/85 font-mono leading-relaxed"
                       >
                         ✓ {achievement}
                       </div>
@@ -393,7 +393,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="pt-6 mt-6 border-t border-zinc-200 dark:border-[#F2F0EB]/10 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <a
                     href={personal.resumePdfPath}
                     download={personal.resumeDownloadFilename}
@@ -404,7 +404,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                         personal.resumeDownloadFilename
                       )
                     }
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download CV (PDF)</span>
@@ -412,7 +412,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   <button
                     type="button"
                     onClick={onOpenResumeModal}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 text-xs font-medium text-zinc-800 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors cursor-pointer whitespace-nowrap"
                   >
                     <span>Preview Official CV</span>
                   </button>
@@ -428,22 +428,22 @@ export const AboutPage: React.FC<AboutPageProps> = ({
       ===================================================================== */}
       <section
         id="skills"
-        className="py-16 sm:py-20 border-b border-zinc-200/80 dark:border-zinc-800/80"
+        className="py-16 sm:py-20 border-b border-zinc-300/70 dark:border-[#F2F0EB]/12"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
           <ScrollReveal direction="up">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="space-y-2 max-w-2xl">
-                <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <p className="font-mono text-xs font-semibold text-[#E10600]">
                   02. TECHNICAL SKILLS
                 </p>
                 <h2
-                  className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                  className="font-display text-2xl sm:text-4xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]"
                   style={{ textWrap: 'balance' }}
                 >
                   Programming, Backend, Mobile &amp; Web Stack
                 </h2>
-                <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
+                <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
                   Core technologies applied across real web applications, Android MVVM projects, and Spring Boot backend systems.
                 </p>
               </div>
@@ -452,16 +452,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <div
                 role="tablist"
                 aria-label="Filter skills by category"
-                className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800"
+                className="flex flex-wrap items-center gap-1 p-1 rounded-lg bg-zinc-200/70 dark:bg-[#0E0E0E] border border-zinc-300/70 dark:border-[#F2F0EB]/15"
               >
                 <button
                   role="tab"
                   aria-selected={selectedSkillCat === 'all'}
                   onClick={() => setSelectedSkillCat('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                     selectedSkillCat === 'all'
-                      ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+                      ? 'bg-[#E10600] text-white'
+                      : 'text-zinc-600 dark:text-[#A8A8A8] hover:text-[#111111] dark:hover:text-[#F2F0EB]'
                   }`}
                 >
                   All Skills
@@ -472,10 +472,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     role="tab"
                     aria-selected={selectedSkillCat === cat.id}
                     onClick={() => setSelectedSkillCat(cat.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                       selectedSkillCat === cat.id
-                        ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+                        ? 'bg-[#E10600] text-white'
+                        : 'text-zinc-600 dark:text-[#A8A8A8] hover:text-[#111111] dark:hover:text-[#F2F0EB]'
                     }`}
                   >
                     {cat.title}
@@ -489,20 +489,20 @@ export const AboutPage: React.FC<AboutPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredSkillCategories.map((category, idx) => (
               <ScrollReveal key={category.id} delayMs={idx * 80} direction="up">
-                <Tilt3DCard className="h-full p-6 sm:p-7 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                  <div className="space-y-1.5 border-b border-zinc-100 dark:border-zinc-800/80 pb-4 mb-5">
+                <Tilt3DCard className="h-full p-6 sm:p-7 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12">
+                  <div className="space-y-1.5 border-b border-zinc-200 dark:border-[#F2F0EB]/10 pb-4 mb-5">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                      <span className="font-mono text-xs font-semibold text-[#E10600]">
                         {category.index}
                       </span>
-                      <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 tabular-nums">
+                      <span className="font-mono text-xs text-zinc-500 dark:text-[#A8A8A8] tabular-nums">
                         {category.skills.length} Technologies
                       </span>
                     </div>
-                    <h3 className="font-display text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+                    <h3 className="font-display text-2xl uppercase tracking-wide text-[#111111] dark:text-[#F2F0EB]">
                       {category.title}
                     </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="text-xs text-zinc-500 dark:text-[#A8A8A8]">
                       {category.subtitle}
                     </p>
                   </div>
@@ -511,16 +511,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     {category.skills.map((skill) => (
                       <div
                         key={`${category.id}-${skill.name}`}
-                        className="p-3.5 rounded-xl bg-zinc-50/90 dark:bg-zinc-950/60 border border-zinc-200/70 dark:border-zinc-800/80 hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-colors flex items-start gap-3"
+                        className="p-3.5 rounded-lg bg-zinc-50/90 dark:bg-[#141414] border border-zinc-200/80 dark:border-[#F2F0EB]/10 hover:border-[#E10600]/50 transition-colors flex items-start gap-3"
                       >
-                        <div className="p-2 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                        <div className="p-2 rounded-lg bg-white dark:bg-[#0A0A0A] border border-zinc-200/80 dark:border-[#F2F0EB]/15 text-[#E10600] shrink-0 mt-0.5">
                           <TechIcon iconKey={skill.iconKey} className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="font-display text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                          <h4 className="font-sans text-sm font-semibold text-[#111111] dark:text-[#F2F0EB] truncate">
                             {skill.name}
                           </h4>
-                          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
+                          <p className="text-xs text-zinc-500 dark:text-[#A8A8A8] mt-0.5 leading-snug">
                             {skill.context}
                           </p>
                         </div>
@@ -537,13 +537,13 @@ export const AboutPage: React.FC<AboutPageProps> = ({
       {/* =====================================================================
           4. SNAPSHOT HIGHLIGHTS & RECRUITER / FREELANCE CARDS
       ===================================================================== */}
-      <section className="py-16 sm:py-20 border-b border-zinc-200/80 dark:border-zinc-800/80">
+      <section className="py-16 sm:py-20 border-b border-zinc-300/70 dark:border-[#F2F0EB]/12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
           <div className="space-y-2">
-            <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <p className="font-mono text-xs font-semibold text-[#E10600]">
               03. KEY HIGHLIGHTS &amp; CORE PILLARS
             </p>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            <h2 className="font-display text-2xl sm:text-4xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
               Engineering Focus &amp; Career Snapshot
             </h2>
           </div>
@@ -552,15 +552,15 @@ export const AboutPage: React.FC<AboutPageProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {about.highlights.map((item, idx) => (
               <ScrollReveal key={item.label} delayMs={idx * 70} direction="up">
-                <Tilt3DCard className="h-full p-5 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40">
+                <Tilt3DCard className="h-full p-5 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12 hover:border-[#E10600]/50">
                   <div className="space-y-1.5">
-                    <p className="font-mono text-xs text-blue-600 dark:text-blue-400">
+                    <p className="font-mono text-xs text-[#E10600]">
                       {item.label}
                     </p>
-                    <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                    <h3 className="font-display text-xl uppercase text-[#111111] dark:text-[#F2F0EB]">
                       {item.value}
                     </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-zinc-500 dark:text-[#A8A8A8] leading-relaxed">
                       {item.detail}
                     </p>
                   </div>
@@ -573,19 +573,19 @@ export const AboutPage: React.FC<AboutPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {corePillars.map((pillar, idx) => (
               <ScrollReveal key={pillar.index} delayMs={idx * 90} direction="up">
-                <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40">
+                <Tilt3DCard className="h-full p-6 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12 hover:border-[#E10600]/50">
                   <div className="space-y-2">
-                    <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    <span className="font-mono text-xs font-semibold text-[#E10600]">
                       {pillar.index}
                     </span>
-                    <h3 className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                    <h3 className="font-display text-2xl uppercase tracking-wide text-[#111111] dark:text-[#F2F0EB]">
                       {pillar.title}
                     </h3>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                    <p className="text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
                       {pillar.summary}
                     </p>
                   </div>
-                  <p className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/80 font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  <p className="pt-4 mt-4 border-t border-zinc-200 dark:border-[#F2F0EB]/10 font-mono text-xs text-zinc-500 dark:text-[#A8A8A8]">
                     {pillar.technologies}
                   </p>
                 </Tilt3DCard>
@@ -596,28 +596,28 @@ export const AboutPage: React.FC<AboutPageProps> = ({
           {/* Dedicated Split: FOR SOFTWARE RECRUITERS vs FOR FREELANCE CLIENTS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
             <ScrollReveal direction="up" delayMs={50}>
-              <Tilt3DCard className="h-full p-6 sm:p-7 rounded-2xl bg-white dark:bg-zinc-900/75 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/50 dark:hover:border-blue-500/50">
+              <Tilt3DCard className="h-full p-6 sm:p-7 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12 hover:border-[#E10600]/50">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-[#E10600]">
                       <Code2 className="w-4 h-4" />
                       <span>{about.recruiterCard.title}</span>
                     </div>
-                    <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                    <span className="font-mono text-[11px] text-zinc-500 dark:text-[#A8A8A8]">
                       Software Engineering Roles
                     </span>
                   </div>
 
-                  <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                  <p className="text-sm sm:text-base text-zinc-700 dark:text-[#F2F0EB]/85 leading-relaxed">
                     {about.recruiterCard.description}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-wrap items-center gap-3">
+                <div className="pt-6 mt-6 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={onOpenResumeModal}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>View Official CV</span>
@@ -628,7 +628,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     onClick={() =>
                       onDiscussProject('Software Developer / App & Web Developer Role')
                     }
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] text-xs font-medium transition-colors cursor-pointer whitespace-nowrap"
                   >
                     <span>Let&apos;s Connect</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -643,32 +643,32 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 role="button"
                 tabIndex={0}
                 ariaLabel="Explore Freelance Development Services"
-                spotlightColor="rgba(99, 102, 241, 0.16)"
-                className="h-full p-6 sm:p-7 rounded-2xl bg-white dark:bg-zinc-900/75 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-indigo-500/60 dark:hover:border-indigo-500/60 cursor-pointer group"
+                spotlightColor="rgba(225, 6, 0, 0.14)"
+                className="h-full p-6 sm:p-7 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12 hover:border-[#E10600]/60 cursor-pointer group"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                    <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-[#E10600]">
                       <Briefcase className="w-4 h-4" />
                       <span>{about.freelanceCard.title}</span>
                     </div>
-                    <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                    <span className="font-mono text-[11px] text-zinc-500 dark:text-[#A8A8A8]">
                       Websites &amp; Applications
                     </span>
                   </div>
 
-                  <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                  <p className="text-sm sm:text-base text-zinc-700 dark:text-[#F2F0EB]/85 leading-relaxed">
                     {about.freelanceCard.description}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 group-hover:bg-blue-600 dark:group-hover:bg-blue-500 dark:group-hover:text-white text-xs font-semibold transition-colors whitespace-nowrap">
+                <div className="pt-6 mt-6 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#111111] text-white dark:bg-[#F2F0EB] dark:text-[#050505] group-hover:bg-[#E10600] group-hover:text-white text-xs font-semibold transition-colors whitespace-nowrap">
                     <span>{about.freelanceCard.buttonText}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
 
-                  <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors">
+                  <span className="font-mono text-xs text-zinc-500 dark:text-[#A8A8A8] group-hover:text-[#E10600] transition-colors">
                     Opens Services Page
                   </span>
                 </div>
@@ -684,15 +684,15 @@ export const AboutPage: React.FC<AboutPageProps> = ({
       <section className="pt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <ScrollReveal direction="up">
-            <div className="p-7 sm:p-10 rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200/90 dark:border-zinc-800/90 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="p-7 sm:p-10 rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
               <div className="space-y-2 max-w-xl">
-                <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <p className="font-mono text-xs font-semibold text-[#E10600]">
                   LET&apos;S CONNECT
                 </p>
-                <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                <h2 className="font-display text-2xl sm:text-3xl uppercase text-[#111111] dark:text-[#F2F0EB]">
                   Interested in hiring me or discussing a custom website/app?
                 </h2>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
                   Reach out directly via WhatsApp, Email, LinkedIn, or return to the main portfolio to browse customizable website &amp; app samples.
                 </p>
               </div>
@@ -701,7 +701,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 <button
                   type="button"
                   onClick={onBackToPortfolio}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs font-semibold transition-colors cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Browse Website &amp; App Samples</span>
@@ -711,7 +711,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   href={personal.whatsappDirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>WhatsApp ({personal.mobileNumber})</span>
@@ -719,9 +719,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
                 <a
                   href={`mailto:${personal.emailAddress}`}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 text-xs font-medium text-zinc-800 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors"
                 >
-                  <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <Mail className="w-4 h-4 text-[#E10600]" />
                   <span>{personal.emailAddress}</span>
                 </a>
 
@@ -729,9 +729,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                   href={personal.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 text-xs font-medium text-zinc-800 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors"
                 >
-                  <Linkedin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <Linkedin className="w-4 h-4 text-sky-500" />
                   <span>LinkedIn</span>
                 </a>
               </div>

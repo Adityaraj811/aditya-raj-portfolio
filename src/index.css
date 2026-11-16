@@ -3,9 +3,11 @@
 
 @layer base {
   :root {
-    --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Anton', Impact, sans-serif;
+    --font-serif-accent: 'Instrument Serif', 'Playfair Display', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --accent-crimson: #E10600;
   }
 
   html {
@@ -18,8 +20,13 @@
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, .font-display {
+  .font-display {
     font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+
+  .font-editorial {
+    font-family: var(--font-serif-accent);
   }
 
   code, pre, .font-mono {
@@ -28,18 +35,102 @@
   }
 }
 
-/* Subtle architectural grid pattern for premium dark/light canvas */
+/* Whisper-quiet luxury studio hairline grid */
 .bg-architectural-grid {
-  background-size: 48px 48px;
+  background-size: 96px 96px;
   background-image:
-    linear-gradient(to right, rgba(161, 161, 170, 0.07) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(161, 161, 170, 0.07) 1px, transparent 1px);
+    linear-gradient(to right, rgba(17, 17, 17, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.03) 1px, transparent 1px);
 }
 
 .dark .bg-architectural-grid {
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
+    linear-gradient(to right, rgba(242, 240, 235, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(242, 240, 235, 0.022) 1px, transparent 1px);
+}
+
+/* ============================================================================
+   NOIR SIGNAL FRAMER ANIMATIONS (tsWord Blur Reveal, tsBar Sweep, Marquee)
+============================================================================ */
+@keyframes tsWord {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tsBar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes tsFade {
+  from {
+    opacity: 0;
+    letter-spacing: 0.28em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.08em;
+  }
+}
+
+@keyframes noirMarquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-ts-word {
+  display: inline-block;
+  animation: tsWord 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+.animate-ts-bar {
+  transform-origin: left center;
+  animation: tsBar 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform;
+}
+
+.animate-ts-fade {
+  animation: tsFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.animate-noir-marquee {
+  display: flex;
+  width: max-content;
+  animation: noirMarquee 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-noir-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ts-word,
+  .animate-ts-bar,
+  .animate-ts-fade,
+  .animate-noir-marquee {
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
 }
 
 /* ============================================================================
@@ -93,7 +184,7 @@
 .profile-3d-ring-wrapper {
   position: relative;
   overflow: hidden;
-  background: rgba(24, 24, 27, 0.65);
+  background: rgba(14, 14, 14, 0.85);
 }
 
 .profile-3d-spinning-ring {
@@ -102,11 +193,11 @@
   background: conic-gradient(
     from 0deg,
     transparent 0%,
-    #3b82f6 20%,
-    #6366f1 40%,
-    #38bdf8 55%,
-    transparent 70%,
-    #6366f1 90%,
+    #e10600 20%,
+    #f2f0eb 40%,
+    #e10600 60%,
+    transparent 75%,
+    #ff4d47 90%,
     transparent 100%
   );
   animation: spinSlow 6s linear infinite;
@@ -120,9 +211,9 @@
   background: conic-gradient(
     from 180deg,
     transparent 0%,
-    rgba(56, 189, 248, 0.65) 25%,
+    rgba(225, 6, 0, 0.65) 25%,
     transparent 50%,
-    rgba(99, 102, 241, 0.65) 75%,
+    rgba(242, 240, 235, 0.35) 75%,
     transparent 100%
   );
   animation: spinReverseSlow 9s linear infinite;
@@ -143,28 +234,6 @@
 .animate-float-reverse {
   animation: floatReverse 4.3s ease-in-out infinite;
   will-change: transform;
-}
-
-@keyframes khataScreenEnter {
-  0% {
-    opacity: 0;
-    transform: perspective(600px) translate3d(14px, 0, -24px) rotateY(-8deg) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: perspective(600px) translate3d(0, 0, 0) rotateY(0deg) scale(1);
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(6px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 @media print {

@@ -6,6 +6,7 @@ import {
   X,
   ArrowUpRight,
   ArrowRight,
+  ArrowUp,
   Linkedin,
   Github,
   Instagram,
@@ -15,16 +16,18 @@ import {
   Copy,
   Check,
   GraduationCap,
-  Briefcase,
   Layers,
   ExternalLink,
   FileText,
   User,
   Sparkles,
+  Plus,
+  Minus,
 } from 'lucide-react';
 import {
   portfolioConfig,
   type ProjectItem,
+  type PublicGithubRepo,
 } from './data/portfolioConfig';
 import { ProjectVisual } from './components/ProjectVisual';
 import { ServiceMockupVisual } from './components/ServiceMockupVisual';
@@ -35,10 +38,18 @@ import { Tilt3DCard } from './components/Tilt3DCard';
 import { HeroProfile3D } from './components/HeroProfile3D';
 import { FreelanceServicesPage } from './components/FreelanceServicesPage';
 import { AboutPage } from './components/AboutPage';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { velouraSoundEngine } from './utils/velouraSoundEngine';
 
 type PageRoute = 'home' | 'services' | 'about';
+
+interface GithubApiRepo {
+  name: string;
+  html_url: string;
+  homepage: string | null;
+  language: string | null;
+  description: string | null;
+}
 
 function detectInitialRoute(): PageRoute {
   if (typeof window === 'undefined') return 'home';
@@ -67,16 +78,64 @@ function detectInitialRoute(): PageRoute {
   return 'home';
 }
 
+const MARQUEE_ITEMS = [
+  'WEBSITE DEVELOPMENT',
+  'MOBILE APPS',
+  'CRM SOLUTIONS',
+  'META ADS',
+  'E-COMMERCE',
+  'BULK SMS & OTP API',
+  'LOGO & GRAPHIC DESIGN',
+  'UI/UX DESIGN',
+  'LAUNCH VIDEOS',
+  'CUSTOM SOFTWARE',
+  'IT & CLOUD HOSTING',
+  'SAHAYAK.STUDIO',
+];
+
+const STUDIO_PROCESS_STEPS = [
+  {
+    step: 'STEP 01 / 04',
+    index: '01',
+    title: 'DISCOVER',
+    description:
+      'Understanding your brand, audience, and business goals — picking the right live layout, mobile app architecture, or growth funnel.',
+  },
+  {
+    step: 'STEP 02 / 04',
+    index: '02',
+    title: 'CONCEPT',
+    description:
+      'Crafting bespoke UI/UX directions, typography systems, wireframes, and interactive motion tests tailored to your identity.',
+  },
+  {
+    step: 'STEP 03 / 04',
+    index: '03',
+    title: 'CRAFT',
+    description:
+      'Engineering clean React, TypeScript, Android (Java/MVVM), and Spring Boot systems with mobile-first speed across every device.',
+  },
+  {
+    step: 'STEP 04 / 04',
+    index: '04',
+    title: 'LAUNCH',
+    description:
+      'Edge deployment on Cloudflare & Vercel, domain SSL hardening, Meta Ads or WhatsApp automation setup, and dedicated tech care.',
+  },
+];
+
 export default function App() {
   const {
     personal,
+    studioBrand,
     verifiedGithubRepos,
     projects,
     freelanceSection,
+    faqs,
     education,
   } = portfolioConfig;
 
-  // Theme management: Premium dark theme default with light mode toggle
+  // Theme management: Deep Obsidian Noir (#050505) default with Paper light toggle
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('aditya-portfolio-theme');
@@ -99,13 +158,79 @@ export default function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Page Routing State ('home' | 'services' | 'about')
-  const [currentPage, setCurrentPage] = useState<PageRoute>(() =>
-    detectInitialRoute()
-  );
+  // Scroll Progress Crimson Bar
+  const [scrollProgress, setScrollProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        setScrollProgress(Math.min(1, Math.max(0, window.scrollY / docHeight)));
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  // Active Navigation Section Highlight State
+  // Live IST Studio Timecode
+  const [liveTimeIst, setLiveTimeIst] = useState<string>('--:--:--');
+  useEffect(() => {
+    const updateClock = () => {
+      try {
+        const formatted = new Intl.DateTimeFormat('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        }).format(new Date());
+        setLiveTimeIst(`${formatted} IST`);
+      } catch {
+        setLiveTimeIst('ONLINE');
+      }
+    };
+    updateClock();
+    const id = window.setInterval(updateClock, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // Live GitHub Repository Sync (@Adityaraj811 public repos + verified deployments)
+  const [githubRepos, setGithubRepos] = useState<PublicGithubRepo[]>(verifiedGithubRepos);
+  useEffect(() => {
+    let active = true;
+    fetch(`https://api.github.com/users/${personal.githubUsername}/repos?per_page=100&sort=updated`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: GithubApiRepo[] | null) => {
+        if (!active || !Array.isArray(data) || data.length === 0) return;
+        const apiMapped: PublicGithubRepo[] = data.map((repo) => ({
+          name: repo.name,
+          url: repo.html_url,
+          homepage: repo.homepage || undefined,
+          language: repo.language || 'TypeScript',
+          description:
+            repo.description || `Source repository for ${repo.name} by ${personal.name}.`,
+          category: `${repo.language || 'Web'} · Public GitHub Repository`,
+          visibilityLabel: 'Public GitHub Repo',
+        }));
+
+        const apiNames = new Set(apiMapped.map((r) => r.name.toLowerCase()));
+        const remainingVerified = verifiedGithubRepos.filter(
+          (v) => !apiNames.has(v.name.toLowerCase().split(' ')[0])
+        );
+        setGithubRepos([...apiMapped, ...remainingVerified]);
+      })
+      .catch(() => {
+        // Silent fallback to verified repositories
+      });
+    return () => {
+      active = false;
+    };
+  }, [personal.githubUsername, personal.name, verifiedGithubRepos]);
+
+  // Page Routing State ('home' | 'services' | 'about')
+  const [currentPage, setCurrentPage] = useState<PageRoute>(() => detectInitialRoute());
   const [activeSection, setActiveSection] = useState<string>('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -165,14 +290,13 @@ export default function App() {
     }
   }, []);
 
-  // Track active section while scrolling on the homepage
   useEffect(() => {
     if (currentPage !== 'home') {
       setActiveSection(currentPage);
       return;
     }
 
-    const sectionIds = ['home', 'freelance', 'projects', 'about-gateway', 'contact'];
+    const sectionIds = ['home', 'projects', 'freelance', 'process', 'about-gateway', 'contact'];
     const handleScroll = () => {
       const scrollY = window.scrollY + 180;
       for (let i = sectionIds.length - 1; i >= 0; i--) {
@@ -190,10 +314,7 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage]);
 
-  // Mobile Menu State
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Profile Photo Fallback State
+  // Profile Photo Fallback
   const [profileImgSrc, setProfileImgSrc] = useState<string>(personal.profileImagePath);
   const [usingFallbackAvatar, setUsingFallbackAvatar] = useState(false);
 
@@ -204,10 +325,17 @@ export default function App() {
     }
   };
 
-  // Project Domain Filter State
+  // Interactive Controls & Selections
+  const [selectedServiceCategory, setSelectedServiceCategory] = useState<
+    'all' | 'web' | 'apps' | 'growth'
+  >('all');
+  const [activeServiceId, setActiveServiceId] = useState<string>(
+    freelanceSection.services[0]?.id || 'website-development'
+  );
   const [selectedProjectDomain, setSelectedProjectDomain] = useState<string>('all');
+  const [openFaqIndex, setOpenFaqIndex] = useState<string | null>('01');
 
-  // Modals & Card Pop-In Expansion State
+  // Modals & Pop-In Expansion
   const [activeProjectModal, setActiveProjectModal] = useState<ProjectItem | null>(null);
   const [expandingProjectId, setExpandingProjectId] = useState<string | null>(null);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
@@ -225,12 +353,10 @@ export default function App() {
     }, 520);
   }, []);
 
-  // Inquiry Topic Selection State
+  // Inquiry Topic State
   const [selectedInquiryTopic, setSelectedInquiryTopic] = useState<string>(
-    'Custom Business Website or Landing Page'
+    'Website Development (Business / Portfolio / Landing Page)'
   );
-
-  // Copy Field Feedback State
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const handleCopyText = (text: string, label: string) => {
@@ -255,7 +381,7 @@ export default function App() {
 
   const buildMailtoLink = (topic?: string) => {
     const subject = encodeURIComponent(
-      `Project / Portfolio Inquiry: ${topic || selectedInquiryTopic} — Aditya Raj`
+      `Project Inquiry: ${topic || selectedInquiryTopic} — Aditya Raj / Sahayak.Studio`
     );
     const body = encodeURIComponent(
       `Hi Aditya,\n\nI visited your portfolio and would like to discuss: ${
@@ -266,30 +392,42 @@ export default function App() {
   };
 
   const buildWhatsappLink = (topic?: string) => {
-    if (!topic) {
-      return personal.whatsappDirectUrl;
-    }
+    if (!topic) return personal.whatsappDirectUrl;
     const cleanDigits = personal.whatsappNumber.replace(/[^0-9]/g, '');
     const message = encodeURIComponent(
-      `Hi Aditya, I visited your portfolio and would like to discuss: ${topic}.`
+      `Hi Aditya, I visited your portfolio (Sahayak.Studio) and would like to discuss: ${topic}.`
     );
     return `https://wa.me/${cleanDigits}?text=${message}`;
   };
+
+  const filteredServices =
+    selectedServiceCategory === 'all'
+      ? freelanceSection.services
+      : freelanceSection.services.filter((s) => s.category === selectedServiceCategory);
+
+  const activeService =
+    filteredServices.find((s) => s.id === activeServiceId) ||
+    filteredServices[0] ||
+    freelanceSection.services[0];
 
   const filteredProjects =
     selectedProjectDomain === 'all'
       ? projects
       : projects.filter((p) => p.domain === selectedProjectDomain);
 
-  // Featured Freelance Services shown right below the Hero Profile
-  const homepageServicesShowcase = freelanceSection.services.slice(0, 6);
-
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-[#07080C] dark:text-zinc-100 bg-architectural-grid transition-colors duration-200">
+    <div className="min-h-screen bg-[#F5F4F0] text-[#111111] dark:bg-[#050505] dark:text-[#F2F0EB] bg-architectural-grid transition-colors duration-200">
+      {/* Top Crimson Scroll Signal Line */}
+      <div
+        aria-hidden="true"
+        className="fixed top-0 left-0 right-0 h-[2px] z-50 pointer-events-none origin-left bg-[#E10600]"
+        style={{ transform: `scaleX(${scrollProgress})` }}
+      />
+
       {/* =====================================================================
-          A. STICKY NAVIGATION BAR (3-Zone Top Bar Contract — Client-First!)
+          A. STICKY 3-ZONE EDITORIAL TOP BAR (Framer Noir Signal Contract)
       ===================================================================== */}
-      <header className="sticky top-0 z-40 w-full bg-zinc-50/85 dark:bg-[#07080C]/85 backdrop-blur-xl border-b border-zinc-200/80 dark:border-zinc-800/80">
+      <header className="sticky top-0 z-40 w-full bg-[#F5F4F0]/90 dark:bg-[#050505]/90 backdrop-blur-xl border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
           {/* Zone 1: Single Text Wordmark */}
           <a
@@ -298,15 +436,15 @@ export default function App() {
               e.preventDefault();
               navigateToPortfolio();
             }}
-            className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100 whitespace-nowrap shrink-0 cursor-pointer"
+            className="font-display text-xl sm:text-2xl tracking-wide uppercase text-[#111111] dark:text-[#F2F0EB] whitespace-nowrap shrink-0 cursor-pointer"
           >
             ADITYA RAJ
           </a>
 
-          {/* Zone 2: Client-First Navigation Links */}
+          {/* Zone 2: Clean Single-Line Typographic Nav Links */}
           <nav
             aria-label="Primary Navigation"
-            className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400"
+            className="hidden md:flex items-center gap-7 text-[11px] font-mono uppercase tracking-[0.12em] text-zinc-600 dark:text-[#A8A8A8]"
           >
             <a
               href="#freelance"
@@ -314,13 +452,13 @@ export default function App() {
                 e.preventDefault();
                 navigateToPortfolio('freelance');
               }}
-              className={`transition-colors whitespace-nowrap shrink-0 ${
+              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
                 currentPage === 'home' && activeSection === 'freelance'
-                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+                  ? 'text-[#E10600] font-semibold'
+                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
               }`}
             >
-              Freelance Services
+              01 Services
             </a>
 
             <a
@@ -329,28 +467,28 @@ export default function App() {
                 e.preventDefault();
                 navigateToPortfolio('projects');
               }}
-              className={`transition-colors whitespace-nowrap shrink-0 ${
+              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
                 currentPage === 'home' && activeSection === 'projects'
-                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+                  ? 'text-[#E10600] font-semibold'
+                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
               }`}
             >
-              Projects &amp; Samples
+              02 Work
             </a>
 
             <a
-              href={`${getNormalizedBase()}services`}
+              href="#process"
               onClick={(e) => {
                 e.preventDefault();
-                navigateToServices();
+                navigateToPortfolio('process');
               }}
-              className={`transition-colors whitespace-nowrap shrink-0 ${
-                currentPage === 'services'
-                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
+                currentPage === 'home' && activeSection === 'process'
+                  ? 'text-[#E10600] font-semibold'
+                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
               }`}
             >
-              All 8 Services
+              03 Process
             </a>
 
             <a
@@ -359,14 +497,14 @@ export default function App() {
                 e.preventDefault();
                 navigateToAbout();
               }}
-              className={`transition-colors whitespace-nowrap shrink-0 ${
+              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
                 currentPage === 'about' ||
                 (currentPage === 'home' && activeSection === 'about-gateway')
-                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+                  ? 'text-[#E10600] font-semibold'
+                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
               }`}
             >
-              About, Academics &amp; CV
+              04 About
             </a>
 
             <a
@@ -375,32 +513,34 @@ export default function App() {
                 e.preventDefault();
                 navigateToPortfolio('contact');
               }}
-              className={`transition-colors whitespace-nowrap shrink-0 ${
+              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
                 currentPage === 'home' && activeSection === 'contact'
-                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+                  ? 'text-[#E10600] font-semibold'
+                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
               }`}
             >
-              Contact
+              05 Contact
             </a>
           </nav>
 
-          {/* Zone 3: Primary Client Action + Mobile Menu Trigger */}
+          {/* Zone 3: Single Primary Action + Mobile Toggle */}
           <div className="flex items-center gap-3 shrink-0">
             <button
               type="button"
               onClick={() =>
-                handleSelectInquiryTopicAndScroll('Custom Website, Landing Page or App Project')
+                handleSelectInquiryTopicAndScroll(
+                  'Website Development (Business / Portfolio / Landing Page)'
+                )
               }
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <span>Get Custom Website / App</span>
+              <span>Start Project</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 transition-colors"
+              className="md:hidden p-2 rounded-md text-zinc-700 dark:text-[#F2F0EB] hover:bg-zinc-200/70 dark:hover:bg-[#141414] transition-colors"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -409,29 +549,19 @@ export default function App() {
           </div>
         </div>
 
-        {/* Responsive Mobile Navigation Drawer */}
+        {/* Mobile Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-6 py-4 space-y-3">
-            <div className="grid grid-cols-2 gap-2 text-sm font-medium">
-              <a
-                href="#home"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio();
-                }}
-                className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Home
-              </a>
+          <div className="md:hidden border-t border-zinc-200 dark:border-[#F2F0EB]/10 bg-[#F5F4F0] dark:bg-[#050505] px-6 py-5 space-y-4">
+            <div className="grid grid-cols-2 gap-3 text-xs font-mono uppercase tracking-wider">
               <a
                 href="#freelance"
                 onClick={(e) => {
                   e.preventDefault();
                   navigateToPortfolio('freelance');
                 }}
-                className="py-2 text-blue-600 dark:text-blue-400 font-semibold"
+                className="py-2 text-[#E10600] font-semibold"
               >
-                Freelance Services
+                01 Services (12)
               </a>
               <a
                 href="#projects"
@@ -439,9 +569,19 @@ export default function App() {
                   e.preventDefault();
                   navigateToPortfolio('projects');
                 }}
-                className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
               >
-                Projects &amp; Samples
+                02 Selected Work
+              </a>
+              <a
+                href="#process"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateToPortfolio('process');
+                }}
+                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
+              >
+                03 Process
               </a>
               <a
                 href={`${getNormalizedBase()}services`}
@@ -449,9 +589,9 @@ export default function App() {
                   e.preventDefault();
                   navigateToServices();
                 }}
-                className="py-2 text-blue-600 dark:text-blue-400 font-semibold"
+                className="py-2 text-[#E10600] font-semibold"
               >
-                All 8 Services →
+                Full Catalog →
               </a>
               <a
                 href={`${getNormalizedBase()}about`}
@@ -459,9 +599,9 @@ export default function App() {
                   e.preventDefault();
                   navigateToAbout();
                 }}
-                className="py-2 text-indigo-600 dark:text-indigo-400 font-semibold"
+                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
               >
-                About, Academics &amp; CV →
+                04 About &amp; CV →
               </a>
               <a
                 href="#contact"
@@ -469,26 +609,28 @@ export default function App() {
                   e.preventDefault();
                   navigateToPortfolio('contact');
                 }}
-                className="py-2 text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
               >
-                Contact Me
+                05 Contact
               </a>
             </div>
-            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-              <span className="text-xs font-mono text-zinc-500">Appearance</span>
+            <div className="pt-3 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-[#A8A8A8]">
+                Canvas Mode
+              </span>
               <button
                 onClick={toggleTheme}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-200/70 dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/15 text-xs font-mono text-zinc-800 dark:text-[#F2F0EB]"
               >
                 {theme === 'dark' ? (
                   <>
                     <Sun className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Light Mode</span>
+                    <span>Light Paper</span>
                   </>
                 ) : (
                   <>
-                    <Moon className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Dark Mode</span>
+                    <Moon className="w-3.5 h-3.5 text-[#E10600]" />
+                    <span>Noir Dark</span>
                   </>
                 )}
               </button>
@@ -498,10 +640,7 @@ export default function App() {
       </header>
 
       {/* =====================================================================
-          MAIN VIEW:
-          - `/services`: Full 8 Freelance Services & Workflow Page
-          - `/about`: Dedicated About Me, Academic Journey, Technical Skills & Official CV Page
-          - `/`: Client-First Homepage (Hero Profile -> 01. Freelance Services -> 02. Live Samples & Projects -> 03. About/CV Gateway -> 04. Contact)
+          ROUTE SWITCH
       ===================================================================== */}
       {currentPage === 'services' ? (
         <main>
@@ -528,201 +667,162 @@ export default function App() {
       ) : (
         <main>
           {/* ===================================================================
-              B. HERO SECTION (2-Column Split + 3D Animated Profile)
+              B. HERO — NOIR SIGNAL OPENING SHOT
           =================================================================== */}
           <section
             id="home"
-            className="relative pt-10 pb-16 sm:pt-14 sm:pb-20 overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800/80"
+            className="relative pt-8 pb-14 sm:pt-12 sm:pb-16 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 overflow-hidden"
           >
-            {/* Subtle Ambient Radial Glows */}
-            <div
-              className="absolute top-0 left-1/4 -translate-x-1/2 w-[620px] h-[420px] rounded-full pointer-events-none opacity-60 dark:opacity-100"
-              style={{
-                background:
-                  'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(99,102,241,0.06) 50%, transparent 75%)',
-              }}
-            />
-
             <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-              {/* Top Utility Bar inside Hero: Theme Switcher */}
-              <div className="flex items-center justify-end pb-4 mb-4">
+              {/* Framer Top Timecode Metadata Strip */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-7 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-600 dark:text-[#A8A8A8]">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-[#E10600] font-semibold">(01) — PORTFOLIO 2026</span>
+                  <span aria-hidden="true">—</span>
+                  <span>BHOPAL, INDIA</span>
+                  <span aria-hidden="true">—</span>
+                  <span className="tabular-nums text-[#111111] dark:text-[#F2F0EB]">
+                    {liveTimeIst}
+                  </span>
+                </div>
+
                 <button
                   onClick={toggleTheme}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/15 hover:border-[#E10600] text-[11px] font-mono uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] transition-colors cursor-pointer whitespace-nowrap"
                   aria-label="Toggle color theme"
                 >
                   {theme === 'dark' ? (
                     <>
                       <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Light Theme</span>
+                      <span>Paper Light</span>
                     </>
                   ) : (
                     <>
-                      <Moon className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Dark Theme</span>
+                      <Moon className="w-3.5 h-3.5 text-[#E10600]" />
+                      <span>Noir Dark</span>
                     </>
                   )}
                 </button>
               </div>
 
-              {/* 2-Column Split Hero */}
+              {/* Crimson Signature Rule */}
+              <div className="h-[2px] w-20 bg-[#E10600] mb-7 animate-ts-bar" aria-hidden="true" />
+
+              {/* 2-Column Asymmetric Luxury Split */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
-                {/* Left Column: Client-Focused Value Proposition & Direct CTAs */}
-                <ScrollReveal
-                  direction="up"
-                  className="lg:col-span-7 flex flex-col justify-between space-y-8"
-                >
-                  <div className="space-y-5">
-                    <p className="font-mono text-sm sm:text-base font-medium text-blue-600 dark:text-blue-400 tracking-wide">
-                      {personal.heroGreeting} · CUSTOM WEBSITES, LANDING PAGES &amp; APPS
+                {/* Left Column: Monumental Display Type */}
+                <div className="lg:col-span-7 flex flex-col justify-between space-y-10">
+                  <div className="space-y-6">
+                    <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#E10600] animate-ts-fade">
+                      {studioBrand.name} · DIGITAL, TECHNOLOGY &amp; INNOVATION
                     </p>
 
                     <h1
-                      className="font-display font-bold tracking-tight text-zinc-900 dark:text-zinc-50 leading-[1.06]"
+                      className="font-display font-normal uppercase text-[#111111] dark:text-[#F2F0EB] leading-[0.90] tracking-tight"
                       style={{
-                        fontSize: 'clamp(2.4rem, 4.6vw, 4.1rem)',
+                        fontSize: 'clamp(3.1rem, 7vw, 6rem)',
                         textWrap: 'balance',
                       }}
                     >
-                      Building Custom Websites, Web Apps &amp; Android Applications
+                      <span className="animate-ts-word" style={{ animationDelay: '0.04s' }}>
+                        CREATIVE{' '}
+                      </span>
+                      <span
+                        className="animate-ts-word font-editorial italic lowercase font-normal text-[#E10600] pr-2"
+                        style={{ animationDelay: '0.12s' }}
+                      >
+                        developer{' '}
+                      </span>
+                      <span className="animate-ts-word" style={{ animationDelay: '0.20s' }}>
+                        &amp; DIGITAL{' '}
+                      </span>
+                      <span
+                        className="animate-ts-word font-editorial italic lowercase font-normal text-[#E10600]"
+                        style={{ animationDelay: '0.28s' }}
+                      >
+                        studio.
+                      </span>
                     </h1>
 
-                    <p className="text-base sm:text-xl text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-2xl">
-                      Explore the types of websites, landing pages, and mobile apps I build below. Pick any live sample you like—I will build and customize it 100% according to your brand and business needs.
+                    <p className="text-base sm:text-lg text-zinc-600 dark:text-[#A8A8A8] leading-relaxed max-w-xl">
+                      {personal.heroDescription}
                     </p>
                   </div>
 
-                  {/* Primary Action Buttons & Verified Social Strip */}
-                  <div className="pt-2 space-y-7">
-                    <div className="flex flex-wrap items-center gap-3.5">
+                  {/* Clean Action Row + Typographic Socials */}
+                  <div className="space-y-7">
+                    <div className="flex flex-wrap items-center gap-3">
                       <a
-                        href="#freelance"
-                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 shadow-lg shadow-blue-600/20"
+                        href="#projects"
+                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
                       >
-                        <Briefcase className="w-4 h-4" />
-                        <span>Explore Services I Provide</span>
+                        <span>Selected Works</span>
+                        <ArrowUpRight className="w-4 h-4" />
                       </a>
 
                       <a
-                        href="#projects"
-                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
+                        href="#freelance"
+                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#111111] text-white dark:bg-[#F2F0EB] dark:text-[#050505] hover:opacity-90 font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
                       >
-                        <span>View Live Samples &amp; Projects</span>
-                        <ArrowUpRight className="w-4 h-4" />
+                        <span>12 Services</span>
                       </a>
 
                       <button
                         type="button"
                         onClick={navigateToAbout}
-                        className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-blue-500/50 dark:hover:border-blue-500/50 text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 cursor-pointer"
+                        className="inline-flex items-center gap-2 px-5 py-3.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                       >
-                        <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        <span>About Me, Academics &amp; CV</span>
+                        <span>About &amp; CV</span>
                       </button>
                     </div>
 
-                    {/* 3D Elevated Social Buttons & Highlighted All-Services Button */}
-                    <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-3.5">
-                      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                        {/* LinkedIn 3D Button */}
-                        <a
-                          href={personal.linkedinUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Aditya Raj on LinkedIn"
-                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-blue-500/60 dark:hover:border-blue-400/60 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(59,130,246,0.28),0_8px_20px_-6px_rgba(59,130,246,0.22)] hover:shadow-[0_6px_0_0_rgba(59,130,246,0.4),0_12px_24px_-4px_rgba(59,130,246,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(59,130,246,0.3)] transition-all duration-150 whitespace-nowrap"
-                        >
-                          <span className="w-6 h-6 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
-                            <Linkedin className="w-3.5 h-3.5" />
-                          </span>
-                          <span>LinkedIn</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                        </a>
-
-                        {/* GitHub 3D Button */}
-                        <a
-                          href={personal.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Aditya Raj on GitHub"
-                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-zinc-400 dark:hover:border-zinc-500 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(113,113,122,0.32),0_8px_20px_-6px_rgba(0,0,0,0.28)] hover:shadow-[0_6px_0_0_rgba(161,161,170,0.42),0_12px_24px_-4px_rgba(161,161,170,0.25)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(113,113,122,0.3)] transition-all duration-150 whitespace-nowrap"
-                        >
-                          <span className="w-6 h-6 rounded-lg bg-zinc-500/15 border border-zinc-500/30 flex items-center justify-center text-zinc-800 dark:text-zinc-200 group-hover:scale-110 transition-transform">
-                            <Github className="w-3.5 h-3.5" />
-                          </span>
-                          <span>GitHub (@{personal.githubUsername})</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                        </a>
-
-                        {/* WhatsApp 3D Button */}
-                        <a
-                          href={personal.whatsappDirectUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Contact Aditya Raj on WhatsApp"
-                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-emerald-500/60 dark:hover:border-emerald-400/60 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(16,185,129,0.28),0_8px_20px_-6px_rgba(16,185,129,0.22)] hover:shadow-[0_6px_0_0_rgba(16,185,129,0.42),0_12px_24px_-4px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(16,185,129,0.3)] transition-all duration-150 whitespace-nowrap"
-                        >
-                          <span className="w-6 h-6 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
-                            <MessageSquare className="w-3.5 h-3.5" />
-                          </span>
-                          <span>WhatsApp</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                        </a>
-
-                        {/* Instagram 3D Button */}
-                        <a
-                          href={personal.instagramUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Aditya Raj on Instagram"
-                          className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/90 dark:border-zinc-700/80 border-t-white/40 dark:border-t-zinc-600/60 hover:border-pink-500/60 dark:hover:border-pink-400/60 text-xs font-semibold text-zinc-800 dark:text-zinc-100 shadow-[0_4px_0_0_rgba(236,72,153,0.28),0_8px_20px_-6px_rgba(236,72,153,0.22)] hover:shadow-[0_6px_0_0_rgba(236,72,153,0.42),0_12px_24px_-4px_rgba(236,72,153,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(236,72,153,0.3)] transition-all duration-150 whitespace-nowrap"
-                        >
-                          <span className="w-6 h-6 rounded-lg bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform">
-                            <Instagram className="w-3.5 h-3.5" />
-                          </span>
-                          <span>Instagram</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-pink-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                        </a>
-                      </div>
-
-                      {/* Highlighted 3D Freelance Services Button with Available Badge */}
-                      <div className="pt-1">
-                        <button
-                          type="button"
-                          onClick={navigateToServices}
-                          className="group w-full sm:w-auto inline-flex flex-wrap items-center justify-between sm:justify-start gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600/15 via-indigo-600/15 to-emerald-500/10 dark:from-blue-500/20 dark:via-indigo-500/15 dark:to-emerald-500/15 backdrop-blur-md border border-blue-500/45 dark:border-blue-400/45 border-t-blue-300/50 hover:border-blue-400 text-left shadow-[0_4px_0_0_rgba(37,99,235,0.45),0_12px_28px_-6px_rgba(59,130,246,0.32)] hover:shadow-[0_6px_0_0_rgba(37,99,235,0.58),0_16px_34px_-4px_rgba(59,130,246,0.45)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_rgba(37,99,235,0.4)] transition-all duration-150 cursor-pointer"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <span className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
-                              <Briefcase className="w-3.5 h-3.5" />
-                            </span>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
-                                  Freelance Services (View All 8)
-                                </span>
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/35 text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-300">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                  Available
-                                </span>
-                              </div>
-                              <p className="text-[11px] font-mono text-zinc-600 dark:text-zinc-300">
-                                Click to see all Website, Landing Page &amp; App Services
-                              </p>
-                            </div>
-                          </div>
-
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 group-hover:bg-blue-500 text-white text-xs font-semibold transition-colors shrink-0">
-                            <span>Open All Services</span>
-                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                          </span>
-                        </button>
-                      </div>
+                    {/* Clean Single-Line Editorial Links (No Box Clutter) */}
+                    <div className="pt-5 border-t border-zinc-300/70 dark:border-[#F2F0EB]/10 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-zinc-600 dark:text-[#A8A8A8]">
+                      <a
+                        href={personal.whatsappDirectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>WhatsApp</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                      <a
+                        href={personal.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
+                      >
+                        <Github className="w-3.5 h-3.5" />
+                        <span>GitHub (@{personal.githubUsername})</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                      <a
+                        href={personal.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
+                      >
+                        <Linkedin className="w-3.5 h-3.5" />
+                        <span>LinkedIn</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                      <a
+                        href={personal.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
+                      >
+                        <Instagram className="w-3.5 h-3.5" />
+                        <span>Instagram</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
                     </div>
                   </div>
-                </ScrollReveal>
+                </div>
 
-                {/* Right Column: Animated 3D Profile Image Showcase */}
+                {/* Right Column: Luxury Editorial Portrait Frame */}
                 <ScrollReveal direction="scale" delayMs={100} className="lg:col-span-5">
                   <HeroProfile3D
                     name={personal.name}
@@ -736,191 +836,110 @@ export default function App() {
                   />
                 </ScrollReveal>
               </div>
-            </div>
-          </section>
 
-          {/* ===================================================================
-              C. 01. FREELANCE SERVICES & CUSTOMIZATION SHOWCASE (Directly Below Profile!)
-          =================================================================== */}
-          <section
-            id="freelance"
-            className="py-20 sm:py-24 border-b border-zinc-200/80 dark:border-zinc-800/80"
-          >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-              <ScrollReveal direction="up">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-2.5 max-w-2xl">
-                    <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      01. FREELANCE SERVICES · WEBSITES, LANDING PAGES &amp; APPS
+              {/* Full-Width 4-Column Architectural Stats Row (From Poster & Studio Data) */}
+              <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 border-t border-zinc-300/70 dark:border-[#F2F0EB]/10 pt-8 gap-6">
+                {studioBrand.metrics.map((m) => (
+                  <div key={m.label} className="space-y-1">
+                    <p className="font-display text-3xl sm:text-4xl text-[#111111] dark:text-[#F2F0EB] tabular-nums leading-none">
+                      <span className="text-[#E10600]">{m.value}</span>
                     </p>
-                    <h2
-                      className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
-                      style={{ textWrap: 'balance' }}
-                    >
-                      What Type of Website or Application Do You Want Built?
-                    </h2>
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                      Browse the website and app categories I build below. Choose any style or sample you like—I will build it from scratch and customize every color, layout, and feature according to your requirements.
+                    <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8]">
+                      {m.label}
                     </p>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={navigateToServices}
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 cursor-pointer shadow-lg shadow-blue-600/20"
-                  >
-                    <Briefcase className="w-4 h-4" />
-                    <span>See All 8 Services &amp; Process</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </ScrollReveal>
-
-              {/* 6 Interactive Service Showcase Cards with Visual Previews & Customization CTA */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {homepageServicesShowcase.map((service, idx) => (
-                  <ScrollReveal key={service.id} delayMs={idx * 70} direction="up">
-                    <Tilt3DCard className="h-full rounded-2xl bg-white dark:bg-zinc-900/65 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/50 dark:hover:border-blue-500/50 overflow-hidden flex flex-col justify-between">
-                      <div>
-                        <div
-                          onClick={navigateToServices}
-                          className="cursor-pointer group relative p-3 pb-0"
-                        >
-                          <ServiceMockupVisual mockupType={service.mockupType} />
-                        </div>
-
-                        <div className="p-5 sm:p-6 space-y-3">
-                          <div className="flex items-center justify-between gap-2 text-xs font-mono">
-                            <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                              {service.index}
-                            </span>
-                            <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                              100% Customizable
-                            </span>
-                          </div>
-
-                          <h3 className="font-display text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                            {service.title}
-                          </h3>
-
-                          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                            {service.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="px-5 sm:px-6 pb-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-4">
-                        <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                          {service.deliverables.join(' · ')}
-                        </p>
-
-                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleSelectInquiryTopicAndScroll(
-                                `Build & Customize: ${service.title}`
-                              )
-                            }
-                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer"
-                          >
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>Customize for Me</span>
-                          </button>
-
-                          {service.featuredDemoUrl ? (
-                            <a
-                              href={service.featuredDemoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:border-blue-500/50 text-xs font-semibold text-zinc-800 dark:text-zinc-200 transition-colors"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                              <span>Live Sample</span>
-                            </a>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={navigateToServices}
-                              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/40 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-                            >
-                              <span>All Details</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </Tilt3DCard>
-                  </ScrollReveal>
                 ))}
               </div>
-
-              {/* Full-Width Callout Banner to Open All 8 Services Page */}
-              <ScrollReveal direction="up">
-                <div
-                  onClick={navigateToServices}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      navigateToServices();
-                    }
-                  }}
-                  className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-blue-600/15 via-indigo-600/10 to-emerald-500/10 border border-blue-500/40 hover:border-blue-400 transition-all cursor-pointer flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group"
-                >
-                  <div className="space-y-1.5">
-                    <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      <Briefcase className="w-4 h-4" />
-                      <span>COMPLETE FREELANCE SERVICES CATALOG</span>
-                    </div>
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                      Want to see all 8 Freelance Services, Deliverables &amp; Step-by-Step Workflow?
-                    </h3>
-                    <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
-                      Click here to open the dedicated Freelance Services page with all website, landing page, web app, and Android app packages.
-                    </p>
-                  </div>
-
-                  <span className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 group-hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0">
-                    <span>Open All 8 Services</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                </div>
-              </ScrollReveal>
             </div>
           </section>
 
           {/* ===================================================================
-              D. 02. LIVE SAMPLES & FEATURED PROJECTS SECTION (Below Freelance Services!)
+              SIGNATURE CONTINUOUS KINETIC MARQUEE RIBBON
+          =================================================================== */}
+          <div className="border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 bg-[#111111] dark:bg-[#080808] text-[#F2F0EB] py-3.5 overflow-hidden select-none">
+            <div className="animate-noir-marquee font-display text-lg sm:text-xl tracking-wider uppercase">
+              {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
+                <span key={idx} className="inline-flex items-center mx-4 whitespace-nowrap">
+                  <span>{item}</span>
+                  <span className="ml-8 text-[#E10600]" aria-hidden="true">
+                    ✦
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* ===================================================================
+              C. 01 — MANIFESTO (Signature Framer Editorial Statement)
+          =================================================================== */}
+          <section className="py-20 sm:py-28 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
+              <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-500 dark:text-[#A8A8A8]">
+                <span className="text-[#E10600] font-semibold">01 — MANIFESTO</span>
+                <span>(01/06)</span>
+              </div>
+
+              <ScrollReveal direction="up">
+                <blockquote
+                  className="font-display uppercase text-[#111111] dark:text-[#F2F0EB] leading-[1.02] tracking-tight"
+                  style={{
+                    fontSize: 'clamp(2rem, 4.6vw, 4rem)',
+                    textWrap: 'balance',
+                  }}
+                >
+                  WE DON’T JUST BUILD WEBSITES. WE DIRECT{' '}
+                  <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                    digital experiences.
+                  </span>{' '}
+                  EVERY PIXEL IS PURPOSEFUL, EVERY SYSTEM SCALES — BUILT WHERE DESIGN, CODE &amp; GROWTH{' '}
+                  <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                    collide.
+                  </span>
+                </blockquote>
+              </ScrollReveal>
+
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8] pt-2">
+                — {personal.name.toUpperCase()} · {studioBrand.name} · {studioBrand.parentCompany.toUpperCase()}
+              </p>
+            </div>
+          </section>
+
+          {/* ===================================================================
+              D. 02 — SELECTED WORKS & LIVE UI PREVIEWS ((02/06))
           =================================================================== */}
           <section
             id="projects"
-            className="py-20 sm:py-24 border-b border-zinc-200/80 dark:border-zinc-800/80"
+            className="py-20 sm:py-28 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
           >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-2.5 max-w-2xl">
-                    <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                      02. LIVE WEBSITE &amp; APP SAMPLES · FEATURED PROJECTS
-                    </p>
+                  <div className="space-y-3 max-w-2xl">
+                    <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600] font-semibold">
+                      <span>02 — SELECTED WORKS</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="text-zinc-500 dark:text-[#A8A8A8]">(02/06)</span>
+                    </div>
                     <h2
-                      className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                      className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
                       style={{ textWrap: 'balance' }}
                     >
-                      Explore Working Samples &amp; Request Your Custom Version
+                      SELECTED{' '}
+                      <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                        works
+                      </span>{' '}
+                      (0{projects.length})
                     </h2>
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
-                      Interact with my live websites, spatial web interfaces, and Android + Spring Boot applications below. Like any sample? Click &ldquo;Customize Similar for Me&rdquo; to get one tailored for your brand.
+                    <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
+                      Interact directly with real live websites inside each viewport frame — switch Desktop/Mobile views or request a customized edition for your own brand.
                     </p>
                   </div>
 
-                  {/* Project Domain Filter Tabs */}
+                  {/* Minimal Segmented Project Filter */}
                   <div
                     role="tablist"
                     aria-label="Filter projects by domain"
-                    className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-zinc-200/70 dark:bg-zinc-900 border border-zinc-300/60 dark:border-zinc-800"
+                    className="flex flex-wrap items-center gap-1 p-1 rounded-md bg-zinc-200/70 dark:bg-[#0E0E0E] border border-zinc-300/70 dark:border-[#F2F0EB]/12 w-fit"
                   >
                     {[
                       'all',
@@ -933,69 +952,40 @@ export default function App() {
                         role="tab"
                         aria-selected={selectedProjectDomain === domain}
                         onClick={() => setSelectedProjectDomain(domain)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-sm font-mono text-[11px] uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                           selectedProjectDomain === domain
-                            ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+                            ? 'bg-[#E10600] text-white'
+                            : 'text-zinc-600 dark:text-[#A8A8A8] hover:text-[#111111] dark:hover:text-[#F2F0EB]'
                         }`}
                       >
-                        {domain === 'all' ? `All Samples (${projects.length})` : domain}
+                        {domain === 'all' ? `All (${projects.length})` : domain}
                       </button>
                     ))}
                   </div>
                 </div>
               </ScrollReveal>
 
-              {/* Project Showcase Cards */}
-              <div className="space-y-8">
+              {/* Editorial Showcase Project Cards */}
+              <div className="space-y-10">
                 {filteredProjects.map((project, idx) => {
-                  const isVelouraCard = project.id === 'veloura-specialty-coffee';
                   const isExpanding = expandingProjectId === project.id;
 
                   return (
-                    <ScrollReveal key={project.id} delayMs={idx * 90} direction="up">
+                    <ScrollReveal key={project.id} delayMs={idx * 60} direction="up">
                       <motion.div
                         animate={
                           isExpanding
-                            ? {
-                                scale: [1, 0.985, 1.028, 1],
-                                y: [0, 2, -6, 0],
-                              }
+                            ? { scale: [1, 0.992, 1.01, 1], y: [0, 2, -4, 0] }
                             : { scale: 1, y: 0 }
                         }
-                        transition={{
-                          duration: 0.36,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className="relative"
+                        transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
                       >
-                        <AnimatePresence>
-                          {isExpanding && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.92 }}
-                              animate={{ opacity: 1, scale: 1.03 }}
-                              exit={{ opacity: 0, scale: 1.06 }}
-                              transition={{ duration: 0.38, ease: 'easeOut' }}
-                              className="absolute -inset-2 rounded-3xl pointer-events-none z-20"
-                              style={{
-                                background: isVelouraCard
-                                  ? 'radial-gradient(circle at 50% 50%, rgba(180, 123, 68, 0.32), rgba(212, 163, 115, 0.12) 55%, transparent 75%)'
-                                  : 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.25), transparent 70%)',
-                              }}
-                            />
-                          )}
-                        </AnimatePresence>
-
                         <Tilt3DCard
-                          maxTiltDeg={3}
-                          className={`rounded-2xl bg-white dark:bg-zinc-900/65 border overflow-hidden transition-shadow duration-300 ${
-                            isVelouraCard
-                              ? 'border-zinc-200/90 dark:border-zinc-800/90 hover:border-[#B47B44]/60 dark:hover:border-[#B47B44]/60 hover:shadow-[0_20px_50px_-15px_rgba(180,123,68,0.22)]'
-                              : 'border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/40 dark:hover:border-blue-500/40'
-                          }`}
+                          maxTiltDeg={1.8}
+                          className="rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 hover:border-[#E10600]/60 overflow-hidden transition-colors duration-300"
                         >
                           <article className="grid grid-cols-1 lg:grid-cols-12">
-                            {/* Large Interactive Visual Preview Column */}
+                            {/* Left: Real Live Website / App Viewport */}
                             <div
                               role="button"
                               tabIndex={0}
@@ -1007,7 +997,7 @@ export default function App() {
                                   handleOpenProjectCaseStudy(project);
                                 }
                               }}
-                              className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-zinc-800 cursor-pointer group relative overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-500"
+                              className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-[#F2F0EB]/10 cursor-pointer group relative overflow-hidden"
                             >
                               <ProjectVisual
                                 visualType={project.visualType}
@@ -1015,179 +1005,111 @@ export default function App() {
                               />
                             </div>
 
-                            {/* Content & Customization Action Column */}
+                            {/* Right: Editorial Case Details & Direct Client Actions */}
                             <div
                               onClick={() => handleOpenProjectCaseStudy(project)}
-                              className="lg:col-span-7 p-5 sm:p-8 flex flex-col justify-between space-y-6 cursor-pointer group/cardcontent"
+                              className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-6 cursor-pointer group/cardcontent"
                             >
                               <div className="space-y-4">
-                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                                  <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
-                                    <span
-                                      className={`font-semibold ${
-                                        isVelouraCard
-                                          ? 'text-[#B47B44] dark:text-[#D4A373]'
-                                          : 'text-blue-600 dark:text-blue-400'
-                                      }`}
-                                    >
+                                <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.12em]">
+                                  <span className="text-zinc-500 dark:text-[#A8A8A8]">
+                                    <span className="text-[#E10600] font-semibold">
                                       {project.index}
-                                    </span>
-                                    <span aria-hidden="true">·</span>
-                                    <span>{project.domain}</span>
-                                  </div>
-
-                                  <span
-                                    className={`font-medium ${
-                                      isVelouraCard
-                                        ? 'text-[#B47B44] dark:text-[#D4A373]'
-                                        : 'text-blue-600 dark:text-blue-400'
-                                    }`}
-                                  >
+                                    </span>{' '}
+                                    · {project.domain}
+                                  </span>
+                                  <span className="text-[#E10600] font-semibold">
                                     {project.status}
                                   </span>
                                 </div>
 
                                 <div>
-                                  <h3
-                                    className={`font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 transition-colors ${
-                                      isVelouraCard
-                                        ? 'group-hover/cardcontent:text-[#B47B44] dark:group-hover/cardcontent:text-[#D4A373]'
-                                        : 'group-hover/cardcontent:text-blue-600 dark:group-hover/cardcontent:text-blue-400'
-                                    }`}
-                                  >
+                                  <h3 className="font-display text-2xl sm:text-4xl tracking-tight uppercase text-[#111111] dark:text-[#F2F0EB] group-hover/cardcontent:text-[#E10600] transition-colors leading-[0.98]">
                                     {project.title}
                                   </h3>
-                                  <p className="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 mt-1">
+                                  <p className="text-xs sm:text-sm text-zinc-500 dark:text-[#A8A8A8] mt-1.5">
                                     {project.subtitle}
                                   </p>
                                 </div>
 
-                                <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                                <p className="text-sm sm:text-base text-zinc-700 dark:text-[#F2F0EB]/80 leading-relaxed">
                                   {project.overview}
                                 </p>
 
-                                {/* Key Features & Architecture Highlights */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                                  <div className="space-y-1.5">
-                                    <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                                      WHAT&apos;S INCLUDED IN THIS SAMPLE
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-200 dark:border-[#F2F0EB]/10">
+                                  <div className="space-y-1.5 pt-2">
+                                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8]">
+                                      KEY DELIVERABLES
                                     </p>
-                                    <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
+                                    <ul className="space-y-1 text-xs text-zinc-700 dark:text-[#A8A8A8]">
                                       {project.implementedFeatures.map((feat, i) => (
                                         <li key={i} className="flex items-start gap-2">
-                                          <span
-                                            className={`font-mono ${
-                                              isVelouraCard
-                                                ? 'text-[#B47B44] dark:text-[#D4A373]'
-                                                : 'text-blue-600 dark:text-blue-400'
-                                            }`}
-                                          >
-                                            •
-                                          </span>
+                                          <span className="font-mono text-[#E10600]">—</span>
                                           <span>{feat}</span>
                                         </li>
                                       ))}
                                     </ul>
                                   </div>
 
-                                  <div className="space-y-1.5">
-                                    <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                                      TECHNICAL ARCHITECTURE
+                                  <div className="space-y-1.5 pt-2">
+                                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8]">
+                                      CRAFT &amp; STACK
                                     </p>
-                                    <ul className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-300">
-                                      {project.architectureHighlights.map((arch, i) => (
-                                        <li key={i} className="flex items-start gap-2">
-                                          <span
-                                            className={`font-mono ${
-                                              isVelouraCard
-                                                ? 'text-[#B47B44] dark:text-[#D4A373]'
-                                                : 'text-blue-600 dark:text-blue-400'
-                                            }`}
-                                          >
-                                            •
-                                          </span>
-                                          <span>
-                                            <strong className="text-zinc-800 dark:text-zinc-200">
-                                              {arch.layer}:
-                                            </strong>{' '}
-                                            {arch.detail}
-                                          </span>
-                                        </li>
-                                      ))}
-                                    </ul>
+                                    <p className="font-mono text-xs text-[#111111] dark:text-[#F2F0EB]/85 leading-relaxed">
+                                      {project.technologies.join(' · ')}
+                                    </p>
                                   </div>
                                 </div>
                               </div>
 
-                              {/* Tech Stack & Action Buttons (Live Demo / Open App + Direct Contact for Customization) */}
-                              <div className="pt-5 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
-                                <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                                  <span className="text-zinc-800 dark:text-zinc-200 font-medium">
-                                    Built With:{' '}
-                                  </span>
-                                  {project.technologies.join(' · ')}
-                                </p>
-
-                                {/* Primary Action Row: Live Demo OR Open App + Interactive Preview */}
-                                <div className="flex flex-wrap items-center justify-between gap-3">
-                                  <div className="flex flex-wrap items-center gap-2.5">
-                                    {project.liveDemoUrl ? (
-                                      <a
-                                        href={project.liveDemoUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 shadow-xs"
-                                      >
-                                        <ExternalLink className="w-3.5 h-3.5" />
-                                        <span>Live Demo</span>
-                                        <ArrowUpRight className="w-3 h-3" />
-                                      </a>
-                                    ) : (
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleOpenProjectCaseStudy(project);
-                                        }}
-                                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer shadow-xs"
-                                      >
-                                        <ExternalLink className="w-3.5 h-3.5" />
-                                        <span>Open App</span>
-                                        <ArrowUpRight className="w-3 h-3" />
-                                      </button>
-                                    )}
-
-                                    <motion.button
+                              {/* Clean Actions & Customization Bar (No Source Code clutter) */}
+                              <div className="pt-5 border-t border-zinc-200 dark:border-[#F2F0EB]/10 space-y-4">
+                                <div className="flex flex-wrap items-center gap-3">
+                                  {project.liveDemoUrl ? (
+                                    <a
+                                      href={project.liveDemoUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors whitespace-nowrap shrink-0"
+                                    >
+                                      <ExternalLink className="w-3.5 h-3.5" />
+                                      <span>Live Demo</span>
+                                      <ArrowUpRight className="w-3 h-3" />
+                                    </a>
+                                  ) : (
+                                    <button
                                       type="button"
-                                      whileHover={{ scale: 1.03, y: -1 }}
-                                      whileTap={{ scale: 0.96 }}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleOpenProjectCaseStudy(project);
                                       }}
-                                      className={`inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                                        isVelouraCard
-                                          ? 'border border-[#B47B44]/50 bg-[#B47B44]/15 text-[#B47B44] dark:text-[#D4A373] hover:bg-[#B47B44]/25 shadow-xs'
-                                          : 'border border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20'
-                                      }`}
+                                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                                     >
-                                      <Layers className="w-3.5 h-3.5" />
-                                      <span>Interactive Preview</span>
-                                    </motion.button>
-                                  </div>
+                                      <ExternalLink className="w-3.5 h-3.5" />
+                                      <span>Open App</span>
+                                      <ArrowUpRight className="w-3 h-3" />
+                                    </button>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOpenProjectCaseStudy(project);
+                                    }}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                                  >
+                                    <Layers className="w-3.5 h-3.5 text-[#E10600]" />
+                                    <span>Case Study</span>
+                                  </button>
                                 </div>
 
-                                {/* Dedicated Contact & Customization Strip Below Every Project */}
-                                <div className="p-3.5 sm:p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/75 border border-zinc-200/80 dark:border-zinc-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                  <div className="space-y-0.5">
-                                    <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                                      Liked this {project.domain.toLowerCase()}?
-                                    </p>
-                                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                                      I can build &amp; customize a similar version tailored to your brand and features.
-                                    </p>
-                                  </div>
+                                {/* Direct Client Contact Strip Below Every Project */}
+                                <div className="pt-3 border-t border-zinc-200/70 dark:border-[#F2F0EB]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                  <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
+                                    Want this style customized for your brand?
+                                  </p>
 
                                   <div className="flex flex-wrap items-center gap-2 shrink-0">
                                     <a
@@ -1197,10 +1119,10 @@ export default function App() {
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       onClick={(e) => e.stopPropagation()}
-                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors whitespace-nowrap"
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors whitespace-nowrap"
                                     >
                                       <MessageSquare className="w-3.5 h-3.5" />
-                                      <span>WhatsApp to Customize</span>
+                                      <span>WhatsApp</span>
                                     </a>
 
                                     <button
@@ -1211,10 +1133,10 @@ export default function App() {
                                           `Customize Project Like: ${project.title}`
                                         );
                                       }}
-                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer"
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors whitespace-nowrap cursor-pointer"
                                     >
-                                      <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                                      <span>Contact for Customization</span>
+                                      <Sparkles className="w-3.5 h-3.5 text-[#E10600]" />
+                                      <span>Customize</span>
                                     </button>
                                   </div>
                                 </div>
@@ -1227,341 +1149,776 @@ export default function App() {
                   );
                 })}
               </div>
-            </div>
-          </section>
 
-          {/* ===================================================================
-              E. 03. COMPACT GATEWAY TO DEDICATED ABOUT ME, ACADEMIC JOURNEY & CV PAGE
-          =================================================================== */}
-          <section
-            id="about-gateway"
-            className="py-16 sm:py-20 border-b border-zinc-200/80 dark:border-zinc-800/80"
-          >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              {/* Clean Hairline GitHub & Edge Synced Index Table (Like Framer Recognition Rows) */}
               <ScrollReveal direction="up">
-                <Tilt3DCard className="p-7 sm:p-10 rounded-2xl bg-white dark:bg-zinc-900/75 border border-zinc-200/90 dark:border-zinc-800/90 hover:border-blue-500/50">
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div className="lg:col-span-8 space-y-3">
-                      <div className="inline-flex items-center gap-2 font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                        <GraduationCap className="w-4 h-4" />
-                        <span>03. ABOUT ME · ACADEMIC JOURNEY · TECHNICAL SKILLS · OFFICIAL CV</span>
-                      </div>
-                      <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                        Want to View My Academic Journey, Technical Skills &amp; Official CV?
-                      </h2>
-                      <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                        {education.degree} at {education.institution} ({education.duration}) ·{' '}
-                        {education.internship.role} at {education.internship.company} · Certified in Java SE 21 (Infosys) &amp; GenAI (Oracle). Open my dedicated About page to view my full academic timeline, technical stack, and download my official CV.
+                <div className="pt-10 space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-zinc-300/70 dark:border-[#F2F0EB]/12">
+                    <div className="space-y-1">
+                      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
+                        GITHUB &amp; EDGE REPOSITORY INDEX · @{personal.githubUsername}
                       </p>
+                      <h3 className="font-display text-2xl sm:text-4xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
+                        SYNCED CODE &amp; LIVE DEPLOYMENTS
+                      </h3>
                     </div>
 
-                    <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
-                      <button
-                        type="button"
-                        onClick={navigateToAbout}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 cursor-pointer shadow-lg shadow-blue-600/20"
-                      >
-                        <User className="w-4 h-4" />
-                        <span>Open About, Academics &amp; CV Page</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setIsResumeModalOpen(true)}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200 transition-colors cursor-pointer"
-                      >
-                        <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        <span>Quick Preview Official CV</span>
-                      </button>
-                    </div>
+                    <a
+                      href={personal.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] hover:text-[#E10600] transition-colors whitespace-nowrap shrink-0"
+                    >
+                      <Github className="w-4 h-4" />
+                      <span>github.com/{personal.githubUsername}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-[#E10600]" />
+                    </a>
                   </div>
-                </Tilt3DCard>
+
+                  <div className="divide-y divide-zinc-300/70 dark:divide-[#F2F0EB]/10 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
+                    {githubRepos.map((repo, i) => (
+                      <div
+                        key={repo.name}
+                        className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-zinc-200/40 dark:hover:bg-[#0E0E0E] px-2 sm:px-3 -mx-2 sm:-mx-3 rounded-md transition-colors"
+                      >
+                        <div className="flex items-start md:items-center gap-4 min-w-0">
+                          <span className="font-mono text-xs text-[#E10600] font-semibold shrink-0 tabular-nums">
+                            0{i + 1}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2.5">
+                              <h4 className="font-display text-xl tracking-wide uppercase text-[#111111] dark:text-[#F2F0EB]">
+                                {repo.name}
+                              </h4>
+                              <span className="font-mono text-[11px] uppercase text-zinc-500 dark:text-[#A8A8A8]">
+                                · {repo.language} · {repo.visibilityLabel}
+                              </span>
+                            </div>
+                            <p className="text-xs text-zinc-600 dark:text-[#A8A8A8] mt-0.5 line-clamp-1">
+                              {repo.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-wider shrink-0 pl-8 md:pl-0">
+                          <a
+                            href={repo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-zinc-700 dark:text-[#F2F0EB]/80 hover:text-[#E10600] transition-colors"
+                          >
+                            <span>GitHub</span>
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </a>
+
+                          {repo.homepage && (
+                            <a
+                              href={repo.homepage}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[#E10600] font-semibold hover:underline"
+                            >
+                              <span>Live Site</span>
+                              <ArrowUpRight className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </ScrollReveal>
             </div>
           </section>
 
           {/* ===================================================================
-              F. 04. CONTACT & CUSTOMIZATION INQUIRY SECTION
+              E. 03 — SERVICES ("WHAT WE DO" — ALL 12 SERVICES ARCHITECTURAL ACCORDION + LIVE STAGE)
+              (No Poster/Pamphlet Image — Strictly Services from the Catalog)
           =================================================================== */}
-          <section id="contact" className="py-20 sm:py-24">
+          <section
+            id="freelance"
+            className="py-20 sm:py-28 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
+          >
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+              <ScrollReveal direction="up">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                  <div className="space-y-3 max-w-2xl">
+                    <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600] font-semibold">
+                      <span>03 — SERVICES</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="text-zinc-500 dark:text-[#A8A8A8]">(03/06)</span>
+                    </div>
+                    <h2
+                      className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
+                      style={{ textWrap: 'balance' }}
+                    >
+                      WHAT WE{' '}
+                      <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                        build.
+                      </span>
+                    </h2>
+                    <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
+                      {studioBrand.description} Select any of our 12 core services below to inspect deliverables and live previews.
+                    </p>
+                  </div>
+
+                  {/* Minimal Category Tabs */}
+                  <div className="flex flex-col sm:items-end gap-3">
+                    <div
+                      role="tablist"
+                      aria-label="Filter studio services"
+                      className="flex flex-wrap items-center gap-1 p-1 rounded-md bg-zinc-200/70 dark:bg-[#0E0E0E] border border-zinc-300/70 dark:border-[#F2F0EB]/12 w-fit"
+                    >
+                      {[
+                        { id: 'all', label: 'All 12 Services' },
+                        { id: 'web', label: 'Web & Store' },
+                        { id: 'apps', label: 'Apps, CRM & SaaS' },
+                        { id: 'growth', label: 'Branding, Ads & IT' },
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          role="tab"
+                          aria-selected={selectedServiceCategory === tab.id}
+                          onClick={() => {
+                            const nextCat = tab.id as typeof selectedServiceCategory;
+                            setSelectedServiceCategory(nextCat);
+                            const nextList =
+                              nextCat === 'all'
+                                ? freelanceSection.services
+                                : freelanceSection.services.filter((s) => s.category === nextCat);
+                            if (nextList[0]) {
+                              setActiveServiceId(nextList[0].id);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-sm font-mono text-[11px] uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                            selectedServiceCategory === tab.id
+                              ? 'bg-[#E10600] text-white'
+                              : 'text-zinc-600 dark:text-[#A8A8A8] hover:text-[#111111] dark:hover:text-[#F2F0EB]'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={navigateToServices}
+                      className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-[#E10600] hover:underline cursor-pointer"
+                    >
+                      <span>Open Full 12 Services View</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Framer Luxury Asymmetric Service Rows (Left) + Sticky Interactive Inspector (Right) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+                {/* Left Column: Razor-Sharp Hairline Service Accordion Rows */}
+                <div className="lg:col-span-7 divide-y divide-zinc-300/70 dark:divide-[#F2F0EB]/12 border-t border-b border-zinc-300/70 dark:border-[#F2F0EB]/12">
+                  {filteredServices.map((service) => {
+                    const isActive = activeService.id === service.id;
+
+                    return (
+                      <div key={service.id} className="transition-colors">
+                        <button
+                          type="button"
+                          onClick={() => setActiveServiceId(service.id)}
+                          onMouseEnter={() => setActiveServiceId(service.id)}
+                          aria-expanded={isActive}
+                          className="w-full py-5 flex items-center justify-between gap-4 text-left cursor-pointer group"
+                        >
+                          <div className="flex items-baseline gap-4 sm:gap-6 min-w-0">
+                            <span
+                              className={`font-mono text-xs font-semibold shrink-0 transition-colors ${
+                                isActive
+                                  ? 'text-[#E10600]'
+                                  : 'text-zinc-500 dark:text-[#A8A8A8] group-hover:text-[#E10600]'
+                              }`}
+                            >
+                              {service.index}
+                            </span>
+                            <div className="min-w-0">
+                              <h3
+                                className={`font-display text-2xl sm:text-3xl tracking-tight uppercase transition-colors ${
+                                  isActive
+                                    ? 'text-[#E10600]'
+                                    : 'text-[#111111] dark:text-[#F2F0EB] group-hover:text-[#E10600]'
+                                }`}
+                              >
+                                {service.title}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8] mt-1">
+                                {service.tagline}
+                              </p>
+                            </div>
+                          </div>
+
+                          <span
+                            className={`w-8 h-8 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
+                              isActive
+                                ? 'border-[#E10600] text-[#E10600]'
+                                : 'border-zinc-300 dark:border-[#F2F0EB]/15 text-zinc-500 dark:text-[#A8A8A8] group-hover:border-[#E10600]'
+                            }`}
+                          >
+                            {isActive ? (
+                              <Minus className="w-3.5 h-3.5" />
+                            ) : (
+                              <Plus className="w-3.5 h-3.5" />
+                            )}
+                          </span>
+                        </button>
+
+                        {/* Expanded Inline Details on Mobile / Active Focus */}
+                        {isActive && (
+                          <div className="pb-6 pl-9 sm:pl-12 space-y-4">
+                            <p className="text-xs sm:text-sm text-zinc-700 dark:text-[#F2F0EB]/85 leading-relaxed">
+                              {service.description}
+                            </p>
+
+                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-zinc-600 dark:text-[#A8A8A8]">
+                              {service.deliverables.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-[#E10600] font-mono">·</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+
+                            {/* Mobile preview + action */}
+                            <div className="lg:hidden space-y-3 pt-2">
+                              <ServiceMockupVisual mockupType={service.mockupType} />
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleSelectInquiryTopicAndScroll(service.inquiryTopic)
+                                }
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors cursor-pointer"
+                              >
+                                <span>Start {service.title}</span>
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                              </button>
+
+                              <a
+                                href={buildWhatsappLink(service.inquiryTopic)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-emerald-500 font-mono text-[11px] uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] transition-colors"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+                                <span>WhatsApp</span>
+                              </a>
+
+                              {service.featuredDemoUrl && (
+                                <a
+                                  href={service.featuredDemoUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] font-mono text-[11px] uppercase tracking-wider text-[#E10600] font-semibold transition-colors"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                  <span>Live Sample</span>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Right Column: Sticky Luxury Service Preview Stage (Desktop) */}
+                <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-24">
+                  <div className="rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 p-5 space-y-5">
+                    <div className="flex items-center justify-between gap-2 pb-3 border-b border-zinc-200 dark:border-[#F2F0EB]/10 font-mono text-[11px] uppercase tracking-wider">
+                      <span className="text-[#E10600] font-semibold">
+                        {activeService.index} LIVE PREVIEW
+                      </span>
+                      <span className="text-zinc-500 dark:text-[#A8A8A8] truncate">
+                        {activeService.idealFor}
+                      </span>
+                    </div>
+
+                    <ServiceMockupVisual mockupType={activeService.mockupType} />
+
+                    <div className="space-y-3">
+                      <h3 className="font-display text-3xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
+                        {activeService.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
+                        {activeService.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleSelectInquiryTopicAndScroll(activeService.inquiryTopic)
+                        }
+                        className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer"
+                      >
+                        <span>Customize This Service</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </button>
+
+                      {activeService.featuredDemoUrl && (
+                        <a
+                          href={activeService.featuredDemoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] font-mono text-xs uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 text-[#E10600]" />
+                          <span>Live</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ===================================================================
+              F. 04 — PROCESS ("HOW IT HAPPENS" — 4-STEP STUDIO PROCESS)
+          =================================================================== */}
+          <section
+            id="process"
+            className="py-20 sm:py-24 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
+          >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
                 <div className="space-y-3 max-w-2xl">
-                  <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                    04. START YOUR PROJECT OR CONNECT
+                  <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600] font-semibold">
+                    <span>04 — PROCESS</span>
+                    <span aria-hidden="true">·</span>
+                    <span className="text-zinc-500 dark:text-[#A8A8A8]">(04/06)</span>
+                  </div>
+                  <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
+                    HOW IT{' '}
+                    <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                      happens.
+                    </span>
+                  </h2>
+                </div>
+              </ScrollReveal>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-zinc-300/80 dark:border-[#F2F0EB]/12 divide-y md:divide-y-0 md:divide-x divide-zinc-300/80 dark:divide-[#F2F0EB]/12 rounded-xl overflow-hidden bg-white dark:bg-[#0B0B0B]">
+                {STUDIO_PROCESS_STEPS.map((item) => (
+                  <div
+                    key={item.index}
+                    className="p-6 sm:p-7 flex flex-col justify-between space-y-8"
+                  >
+                    <div className="space-y-3">
+                      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
+                        {item.step}
+                      </p>
+                      <h3 className="font-display text-3xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                    <span className="font-display text-4xl text-zinc-300 dark:text-[#F2F0EB]/15 leading-none">
+                      {item.index}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ===================================================================
+              G. 05 — BEHIND THE FRAME · ABOUT, ACADEMICS & CV ((05/06))
+          =================================================================== */}
+          <section
+            id="about-gateway"
+            className="py-20 sm:py-24 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
+          >
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              <ScrollReveal direction="up">
+                <div className="p-7 sm:p-12 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-8 space-y-4">
+                    <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] font-semibold text-[#E10600]">
+                      <GraduationCap className="w-4 h-4" />
+                      <span>05 — BEHIND THE FRAME · ACADEMICS &amp; CV</span>
+                      <span className="text-zinc-500 dark:text-[#A8A8A8]">(05/06)</span>
+                    </div>
+
+                    <h2 className="font-display text-3xl sm:text-5xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.95]">
+                      BEHIND THE{' '}
+                      <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                        frame
+                      </span>{' '}
+                      — STACK &amp; CV
+                    </h2>
+
+                    <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] leading-relaxed max-w-2xl">
+                      {education.degree} at {education.institution} ({education.duration}) ·{' '}
+                      {education.internship.role} at {education.internship.company} · 400+ coding problems solved across LeetCode, CodeChef, HackerRank &amp; GeeksforGeeks.
+                    </p>
+                  </div>
+
+                  <div className="lg:col-span-4 flex flex-col gap-3">
+                    <button
+                      type="button"
+                      onClick={navigateToAbout}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer"
+                    >
+                      <User className="w-4 h-4" />
+                      <span>About, Skills &amp; Academics</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsResumeModalOpen(true)}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] font-mono text-xs uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] transition-colors cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4 text-[#E10600]" />
+                      <span>View Official CV</span>
+                    </button>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+          </section>
+
+          {/* ===================================================================
+              H. BEFORE YOU ASK · FAQ ACCORDION (Matching Framer Section 12)
+          =================================================================== */}
+          <section
+            id="faq"
+            className="py-20 sm:py-24 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
+          >
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
+              <ScrollReveal direction="up">
+                <div className="space-y-3 max-w-2xl">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] font-semibold text-[#E10600]">
+                    QUESTIONS · BEFORE WE START
                   </p>
+                  <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
+                    BEFORE YOU{' '}
+                    <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                      ask.
+                    </span>
+                  </h2>
+                  <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
+                    The questions clients and brands ask most before starting a custom build.
+                  </p>
+                </div>
+              </ScrollReveal>
+
+              <div className="divide-y divide-zinc-300/70 dark:divide-[#F2F0EB]/10 border-t border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
+                {faqs.map((faq) => {
+                  const isOpen = openFaqIndex === faq.index;
+                  return (
+                    <div key={faq.index} className="py-5">
+                      <button
+                        type="button"
+                        onClick={() => setOpenFaqIndex(isOpen ? null : faq.index)}
+                        aria-expanded={isOpen}
+                        className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group"
+                      >
+                        <div className="flex items-baseline gap-4 sm:gap-6 min-w-0">
+                          <span className="font-mono text-xs text-[#E10600] font-semibold shrink-0">
+                            {faq.index}
+                          </span>
+                          <span className="font-sans text-base sm:text-lg font-medium text-[#111111] dark:text-[#F2F0EB] group-hover:text-[#E10600] transition-colors">
+                            {faq.question}
+                          </span>
+                        </div>
+                        <span className="w-8 h-8 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/15 flex items-center justify-center text-zinc-600 dark:text-[#A8A8A8] group-hover:border-[#E10600] group-hover:text-[#E10600] transition-colors shrink-0">
+                          {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                        </span>
+                      </button>
+
+                      {isOpen && (
+                        <div className="pt-3 pl-8 sm:pl-11 pr-10 text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed max-w-3xl">
+                          {faq.answer}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* ===================================================================
+              I. 06 — LET'S CREATE SOMETHING UNREAL · CONTACT ((06/06))
+          =================================================================== */}
+          <section id="contact" className="py-20 sm:py-28">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-14">
+              <ScrollReveal direction="up">
+                <div className="space-y-4 max-w-4xl">
+                  <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] font-semibold text-[#E10600]">
+                    <span>06 — GET IN TOUCH</span>
+                    <span aria-hidden="true">·</span>
+                    <span className="text-zinc-500 dark:text-[#A8A8A8]">(06/06)</span>
+                  </div>
                   <h2
-                    className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                    className="font-display text-4xl sm:text-7xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.90]"
                     style={{ textWrap: 'balance' }}
                   >
-                    Tell Me What Website or App You Want to Build &amp; Customize
+                    LET&apos;S CREATE SOMETHING{' '}
+                    <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                      unreal.
+                    </span>
                   </h2>
-                  <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    Liked a website or app sample above? Select your requirement below and message me directly on WhatsApp or Email to get started.
+                  <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] max-w-2xl leading-relaxed">
+                    Open for freelance websites, custom apps, CRM systems &amp; Meta Ads campaigns. Select your requirement below and message directly on WhatsApp or Email.
                   </p>
                 </div>
               </ScrollReveal>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Column: Direct Verified Contact Cards */}
+                {/* Left Column: Direct Channels */}
                 <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Mobile & WhatsApp Direct Card */}
-                  <ScrollReveal direction="up" delayMs={40}>
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-2">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                          <MessageSquare className="w-5 h-5" />
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          WhatsApp &amp; Direct Call
-                        </h3>
-                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300">
-                          {personal.mobileNumber}
-                        </p>
-                      </div>
-
-                      <div className="mt-5 flex items-center gap-2">
-                        <a
-                          href={personal.whatsappDirectUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium transition-colors whitespace-nowrap"
-                        >
-                          <span>Chat on WhatsApp</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
-                        </a>
-                        <a
-                          href={`tel:${personal.mobileNumber.replace(/\s+/g, '')}`}
-                          className="px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                          title="Call mobile number"
-                          aria-label="Call mobile number"
-                        >
-                          <Phone className="w-4 h-4" />
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyText(personal.mobileNumber, 'phone')}
-                          className="px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                          title="Copy mobile number"
-                          aria-label="Copy mobile number"
-                        >
-                          {copiedField === 'phone' ? (
-                            <Check className="w-4 h-4 text-emerald-500" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-
-                  {/* Email Card */}
-                  <ScrollReveal direction="up" delayMs={80}>
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-2">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                          <Mail className="w-5 h-5" />
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          Email Address
-                        </h3>
-                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300 break-all">
-                          {personal.emailAddress}
-                        </p>
-                      </div>
-
-                      <div className="mt-5 flex items-center gap-2">
-                        <a
-                          href={buildMailtoLink()}
-                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap"
-                        >
-                          <span>Send Email</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyText(personal.emailAddress, 'email')}
-                          className="px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                          title="Copy email address"
-                          aria-label="Copy email address"
-                        >
-                          {copiedField === 'email' ? (
-                            <Check className="w-4 h-4 text-emerald-500" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-
-                  {/* LinkedIn Card */}
-                  <ScrollReveal direction="up" delayMs={120}>
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-2">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                          <Linkedin className="w-5 h-5" />
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          LinkedIn Profile
-                        </h3>
-                        <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 break-all">
-                          {personal.linkedinHandle}
-                        </p>
-                      </div>
-
-                      <a
-                        href={personal.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap"
-                      >
-                        <span>Connect on LinkedIn</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-
-                  {/* GitHub Profile Card */}
-                  <ScrollReveal direction="up" delayMs={160}>
-                    <Tilt3DCard className="h-full p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90">
-                      <div className="space-y-2">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-500/10 border border-zinc-500/20 flex items-center justify-center text-zinc-700 dark:text-zinc-300">
-                          <Github className="w-5 h-5" />
-                        </div>
-                        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                          GitHub Profile
-                        </h3>
-                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-300 break-all">
-                          github.com/{personal.githubUsername}
-                        </p>
-                      </div>
-
-                      <a
-                        href={personal.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-xs font-medium transition-opacity whitespace-nowrap"
-                      >
-                        <span>View GitHub (@{personal.githubUsername})</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
-                    </Tilt3DCard>
-                  </ScrollReveal>
-
-                  {/* Instagram Social Card */}
-                  <ScrollReveal direction="up" delayMs={200} className="sm:col-span-2">
-                    <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200/90 dark:border-zinc-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-600 dark:text-pink-400 shrink-0">
-                          <Instagram className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h3 className="font-display text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                            Instagram Profile
-                          </h3>
-                          <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
-                            {personal.instagramHandle}
-                          </p>
-                        </div>
-                      </div>
-
-                      <a
-                        href={personal.instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap shrink-0"
-                      >
-                        <span>Follow on Instagram</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
+                  <div className="p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <MessageSquare className="w-5 h-5 text-emerald-500" />
+                      <h3 className="font-display text-2xl uppercase text-[#111111] dark:text-[#F2F0EB]">
+                        WhatsApp Direct
+                      </h3>
+                      <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
+                        {personal.mobileNumber}
+                      </p>
                     </div>
-                  </ScrollReveal>
+
+                    <div className="mt-6 flex items-center gap-2">
+                      <a
+                        href={personal.whatsappDirectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors whitespace-nowrap"
+                      >
+                        <span>Chat Now</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                      <a
+                        href={`tel:${personal.mobileNumber.replace(/\s+/g, '')}`}
+                        className="px-3 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 text-zinc-700 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors"
+                        aria-label="Call mobile number"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyText(personal.mobileNumber, 'phone')}
+                        className="px-3 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 text-zinc-700 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors cursor-pointer"
+                        aria-label="Copy mobile number"
+                      >
+                        {copiedField === 'phone' ? (
+                          <Check className="w-4 h-4 text-emerald-500" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <Mail className="w-5 h-5 text-[#E10600]" />
+                      <h3 className="font-display text-2xl uppercase text-[#111111] dark:text-[#F2F0EB]">
+                        Studio Email
+                      </h3>
+                      <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8] break-all">
+                        {personal.emailAddress}
+                      </p>
+                      <p className="text-xs font-mono text-zinc-500 dark:text-[#A8A8A8] break-all">
+                        {personal.studioEmail}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 flex items-center gap-2">
+                      <a
+                        href={buildMailtoLink()}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 font-mono text-xs uppercase tracking-wider font-semibold text-zinc-800 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors whitespace-nowrap"
+                      >
+                        <span>Send Email</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyText(personal.emailAddress, 'email')}
+                        className="px-3 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 text-zinc-700 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors cursor-pointer"
+                        aria-label="Copy email address"
+                      >
+                        {copiedField === 'email' ? (
+                          <Check className="w-4 h-4 text-emerald-500" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <Linkedin className="w-5 h-5 text-sky-500" />
+                      <h3 className="font-display text-2xl uppercase text-[#111111] dark:text-[#F2F0EB]">
+                        LinkedIn
+                      </h3>
+                      <p className="text-xs font-mono text-zinc-500 dark:text-[#A8A8A8] break-all">
+                        {personal.linkedinHandle}
+                      </p>
+                    </div>
+
+                    <a
+                      href={personal.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-[#111111] text-white dark:bg-[#F2F0EB] dark:text-[#050505] hover:opacity-90 font-mono text-xs uppercase tracking-wider font-semibold transition-opacity"
+                    >
+                      <span>Connect</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+
+                  <div className="p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <Github className="w-5 h-5 text-zinc-700 dark:text-[#F2F0EB]" />
+                      <h3 className="font-display text-2xl uppercase text-[#111111] dark:text-[#F2F0EB]">
+                        GitHub
+                      </h3>
+                      <p className="text-xs font-mono text-zinc-500 dark:text-[#A8A8A8]">
+                        github.com/{personal.githubUsername}
+                      </p>
+                    </div>
+
+                    <a
+                      href={personal.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] font-mono text-xs uppercase tracking-wider font-semibold text-zinc-800 dark:text-[#F2F0EB] transition-colors"
+                    >
+                      <span>View Repositories</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
                 </div>
 
-                {/* Right Column: Interactive Inquiry Topic Launcher */}
-                <ScrollReveal direction="up" delayMs={100} className="lg:col-span-5">
-                  <div className="h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between space-y-6">
+                {/* Right Column: Requirement Selector & Launcher */}
+                <div className="lg:col-span-5">
+                  <div className="h-full p-6 sm:p-8 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between space-y-6">
                     <div className="space-y-4">
-                      <p className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">
-                        CUSTOM PROJECT &amp; SAMPLE INQUIRY
+                      <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-[#E10600]">
+                        QUICK PROJECT LAUNCHER
                       </p>
-                      <h3 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                        Select What You Want Built
+                      <h3 className="font-display text-3xl uppercase text-[#111111] dark:text-[#F2F0EB]">
+                        Select Requirement
                       </h3>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        Choose an option below to send a pre-structured message on WhatsApp ({personal.mobileNumber}) or Email.
-                      </p>
 
-                      {/* Topic Selector Buttons */}
                       <div className="space-y-2 pt-1">
-                        <label className="block font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                          SELECTED REQUIREMENT:
-                        </label>
-                        <div className="grid grid-cols-1 gap-2">
-                          {[
-                            'Custom Business Website or Landing Page',
-                            'Customize a Sample Website / App from Portfolio',
-                            'Full-Stack Web Application or Dashboard',
-                            'Native Android Mobile App (Java / MVVM)',
-                            'Personal Portfolio or Website Redesign',
-                            'Software Developer / Engineering Role',
-                          ].map((topic) => (
-                            <button
-                              key={topic}
-                              type="button"
-                              onClick={() => setSelectedInquiryTopic(topic)}
-                              className={`text-left px-3.5 py-2.5 rounded-xl border text-xs font-medium transition-colors cursor-pointer flex items-center justify-between gap-2 ${
-                                selectedInquiryTopic === topic
-                                  ? 'border-blue-600 bg-blue-50/60 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
-                                  : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/40 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
-                              }`}
-                            >
-                              <span className="truncate">{topic}</span>
-                              {selectedInquiryTopic === topic && (
-                                <Check className="w-3.5 h-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
-                              )}
-                            </button>
-                          ))}
-                        </div>
+                        {[
+                          'Website Development (Business / Portfolio / Landing Page)',
+                          'Mobile App Development (Android / iOS / E-commerce App)',
+                          'Web Application, SaaS Dashboard or Custom CRM',
+                          'Logo & Graphic Design / UI/UX Design',
+                          'Digital Marketing, Meta Ads & Launch Videos',
+                          'Bulk SMS, WhatsApp Messaging, E-commerce or IT Hosting',
+                        ].map((topic) => (
+                          <button
+                            key={topic}
+                            type="button"
+                            onClick={() => setSelectedInquiryTopic(topic)}
+                            className={`w-full text-left px-3.5 py-2.5 rounded-md border text-xs font-medium transition-colors cursor-pointer flex items-center justify-between gap-2 ${
+                              selectedInquiryTopic === topic
+                                ? 'border-[#E10600] bg-[#E10600]/10 text-[#E10600]'
+                                : 'border-zinc-200 dark:border-[#F2F0EB]/12 bg-zinc-50 dark:bg-[#121212] text-zinc-700 dark:text-[#A8A8A8] hover:border-[#E10600]/50'
+                            }`}
+                          >
+                            <span className="truncate">{topic}</span>
+                            {selectedInquiryTopic === topic && (
+                              <Check className="w-3.5 h-3.5 shrink-0 text-[#E10600]" />
+                            )}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
-                    {/* Dispatch Actions */}
-                    <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2.5">
+                    <div className="pt-4 border-t border-zinc-200 dark:border-[#F2F0EB]/10 space-y-2.5">
                       <a
                         href={buildWhatsappLink(selectedInquiryTopic)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
+                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors"
                       >
                         <MessageSquare className="w-4 h-4" />
-                        <span>Message on WhatsApp ({personal.mobileNumber})</span>
+                        <span>Send via WhatsApp</span>
                       </a>
 
-                      <div className="grid grid-cols-2 gap-2.5">
-                        <a
-                          href={buildMailtoLink(selectedInquiryTopic)}
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap"
-                        >
-                          <Mail className="w-3.5 h-3.5" />
-                          <span>Send Email</span>
-                        </a>
-
-                        <a
-                          href={personal.linkedinUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap"
-                        >
-                          <Linkedin className="w-3.5 h-3.5 text-blue-500" />
-                          <span>LinkedIn</span>
-                        </a>
-                      </div>
+                      <a
+                        href={buildMailtoLink(selectedInquiryTopic)}
+                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-[#111111] text-white dark:bg-[#F2F0EB] dark:text-[#050505] hover:opacity-90 font-mono text-xs uppercase tracking-wider font-semibold transition-opacity"
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span>Send via Email</span>
+                      </a>
                     </div>
                   </div>
-                </ScrollReveal>
+                </div>
+              </div>
+
+              {/* Framer 4-Column Studio Information Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-zinc-300/80 dark:border-[#F2F0EB]/12 divide-y sm:divide-y-0 sm:divide-x divide-zinc-300/80 dark:divide-[#F2F0EB]/12 rounded-xl overflow-hidden bg-white dark:bg-[#0B0B0B]">
+                <div className="p-5 space-y-1">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
+                    01 — STUDIO
+                  </p>
+                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
+                    {studioBrand.name}
+                  </p>
+                  <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
+                    {studioBrand.parentCompany}
+                  </p>
+                </div>
+
+                <div className="p-5 space-y-1">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
+                    02 — LOCATION
+                  </p>
+                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
+                    BHOPAL, INDIA
+                  </p>
+                  <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
+                    Worldwide Remote Delivery
+                  </p>
+                </div>
+
+                <div className="p-5 space-y-1">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
+                    03 — GSTIN &amp; SUPPORT
+                  </p>
+                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB] tabular-nums">
+                    {studioBrand.gstNumber}
+                  </p>
+                  <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
+                    {personal.studioEmail}
+                  </p>
+                </div>
+
+                <div className="p-5 space-y-1">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
+                    04 — RESPONSE
+                  </p>
+                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
+                    WITHIN 24 HOURS
+                  </p>
+                  <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
+                    {personal.mobileNumber}
+                  </p>
+                </div>
               </div>
             </div>
           </section>
@@ -1569,105 +1926,99 @@ export default function App() {
       )}
 
       {/* =====================================================================
-          G. FOOTER
+          J. FRAMER NOIR SIGNAL OVERSIZED MONUMENTAL FOOTER
       ===================================================================== */}
-      <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/80 py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <p className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-              {personal.name}
-            </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Custom Websites · Landing Pages · Web Apps · Android Applications
-            </p>
-            <p className="text-xs font-mono text-zinc-400 dark:text-zinc-500 pt-1">
-              © {new Date().getFullYear()} {personal.name}. Built with React, TypeScript &amp; Tailwind CSS.
+      <footer className="border-t border-zinc-300/70 dark:border-[#F2F0EB]/10 bg-[#ECEAE4] dark:bg-[#050505] py-14 sm:py-20 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-1">
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
+                {studioBrand.name} · {studioBrand.subtitle}
+              </p>
+              <p className="font-mono text-xs text-zinc-600 dark:text-[#A8A8A8]">
+                {studioBrand.tagline}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-wider text-zinc-600 dark:text-[#A8A8A8]">
+              <button
+                type="button"
+                onClick={() => navigateToPortfolio('freelance')}
+                className="hover:text-[#E10600] transition-colors cursor-pointer"
+              >
+                Services
+              </button>
+              <button
+                type="button"
+                onClick={() => navigateToPortfolio('projects')}
+                className="hover:text-[#E10600] transition-colors cursor-pointer"
+              >
+                Work
+              </button>
+              <button
+                type="button"
+                onClick={navigateToServices}
+                className="hover:text-[#E10600] transition-colors cursor-pointer"
+              >
+                Catalog
+              </button>
+              <button
+                type="button"
+                onClick={navigateToAbout}
+                className="hover:text-[#E10600] transition-colors cursor-pointer"
+              >
+                About &amp; CV
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsResumeModalOpen(true)}
+                className="hover:text-[#E10600] transition-colors cursor-pointer"
+              >
+                Official CV
+              </button>
+            </div>
+          </div>
+
+          {/* Giant Framer Display Wordmark */}
+          <div className="border-y border-zinc-300/80 dark:border-[#F2F0EB]/10 py-6 text-center select-none">
+            <p
+              className="font-display uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.85]"
+              style={{ fontSize: 'clamp(3.2rem, 13vw, 10.5rem)' }}
+            >
+              ADITYA RAJ
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
-            <button
-              type="button"
-              onClick={() => navigateToPortfolio()}
-              className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-            >
-              Home
-            </button>
-            <button
-              type="button"
-              onClick={() => navigateToPortfolio('freelance')}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-            >
-              Freelance Services
-            </button>
-            <button
-              type="button"
-              onClick={() => navigateToPortfolio('projects')}
-              className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-            >
-              Samples &amp; Projects
-            </button>
-            <button
-              type="button"
-              onClick={navigateToServices}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-            >
-              All 8 Services
-            </button>
-            <button
-              type="button"
-              onClick={navigateToAbout}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
-            >
-              About, Academics &amp; CV
-            </button>
-            <a
-              href={personal.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              LinkedIn
-            </a>
-            <a
-              href={personal.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-            >
-              GitHub
-            </a>
-            <a
-              href={personal.whatsappDirectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              WhatsApp
-            </a>
-            <a
-              href={personal.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
-            >
-              Instagram
-            </a>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.12em] text-zinc-500 dark:text-[#A8A8A8]">
+            <p>
+              © {new Date().getFullYear()} {personal.name} · {studioBrand.name}
+            </p>
+            <div className="flex items-center gap-6">
+              <span className="tabular-nums">{liveTimeIst}</span>
+              <a
+                href="#home"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-1 text-[#E10600] hover:underline font-semibold"
+              >
+                <span>Back to Top</span>
+                <ArrowUp className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
         </div>
       </footer>
 
-      {/* =====================================================================
-          INTERACTIVE MODALS (Project Case Study + Official CV Viewer)
-      ===================================================================== */}
+      {/* Interactive Case Study / Live Viewport Modal */}
       <ProjectDetailModal
         project={activeProjectModal}
         onClose={() => setActiveProjectModal(null)}
-        onDiscussSimilar={(topic) =>
-          handleSelectInquiryTopicAndScroll(`Customize Sample Like: ${topic}`)
-        }
+        onDiscussSimilar={(topic: string) => handleSelectInquiryTopicAndScroll(topic)}
       />
 
+      {/* Official One-Page CV Modal */}
       <ResumeModal
         isOpen={isResumeModalOpen}
         onClose={() => setIsResumeModalOpen(false)}

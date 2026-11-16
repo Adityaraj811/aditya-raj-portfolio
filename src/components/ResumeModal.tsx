@@ -95,18 +95,18 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
     >
       <div
         ref={dialogRef}
-        className="relative w-full max-w-5xl h-[92vh] flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl text-zinc-900 dark:text-zinc-100"
+        className="relative w-full max-w-5xl h-[92vh] flex flex-col overflow-hidden rounded-xl bg-white dark:bg-[#0E0E0E] border border-zinc-200 dark:border-[#F2F0EB]/15 shadow-2xl text-zinc-900 dark:text-[#F2F0EB]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Action Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-white/95 dark:bg-[#0E0E0E]/95 backdrop-blur-md border-b border-zinc-200 dark:border-[#F2F0EB]/12 shrink-0">
           <div className="flex items-center gap-2.5">
-            <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+            <FileText className="w-5 h-5 text-[#E10600] shrink-0" />
             <div>
-              <h3 id="resume-modal-title" className="font-display text-base font-semibold">
+              <h3 id="resume-modal-title" className="font-display text-lg uppercase tracking-wide">
                 {personal.name} — Official One-Page CV (PDF)
               </h3>
-              <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs font-mono text-zinc-500 dark:text-[#A8A8A8]">
                 {personal.resumeDownloadFilename} · Updated One-Page Resume
               </p>
             </div>
@@ -114,14 +114,14 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
 
           <div className="flex flex-wrap items-center gap-2">
             {/* View Mode Toggle */}
-            <div className="flex items-center p-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs">
+            <div className="flex items-center p-0.5 rounded-lg bg-zinc-100 dark:bg-[#141414] border border-zinc-200 dark:border-[#F2F0EB]/15 text-xs">
               <button
                 type="button"
                 onClick={() => setViewMode('page')}
                 className={`px-2 sm:px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
                   viewMode === 'page'
-                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                    : 'text-zinc-600 dark:text-zinc-400'
+                    ? 'bg-[#E10600] text-white'
+                    : 'text-zinc-600 dark:text-[#A8A8A8]'
                 }`}
               >
                 CV View
@@ -131,8 +131,8 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                 onClick={() => setViewMode('pdf')}
                 className={`px-2 sm:px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
                   viewMode === 'pdf'
-                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                    : 'text-zinc-600 dark:text-zinc-400'
+                    ? 'bg-[#E10600] text-white'
+                    : 'text-zinc-600 dark:text-[#A8A8A8]'
                 }`}
               >
                 PDF Reader
@@ -143,7 +143,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
               <button
                 type="button"
                 onClick={() => setZoomed((z) => !z)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 text-xs font-medium text-zinc-700 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors cursor-pointer"
                 title={zoomed ? 'Fit to width' : 'Zoom in'}
               >
                 {zoomed ? <ZoomOut className="w-3.5 h-3.5" /> : <ZoomIn className="w-3.5 h-3.5" />}
@@ -154,7 +154,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
             <button
               type="button"
               onClick={handlePrintCv}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 text-xs font-medium text-zinc-700 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors cursor-pointer whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E10600]"
               title="Print CV"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -167,7 +167,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
               onClick={(e) =>
                 handleDownloadResumePdf(e, personal.resumePdfPath, personal.resumeDownloadFilename)
               }
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E10600] hover:bg-[#ff1e17] text-white text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E10600]"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download Resume</span>
@@ -177,7 +177,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
               href={pdfBlobUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 text-xs font-medium text-zinc-700 dark:text-[#F2F0EB] hover:border-[#E10600] transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E10600]"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Open PDF</span>
@@ -187,7 +187,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              className="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-[#A8A8A8] dark:hover:text-[#F2F0EB] hover:bg-zinc-100 dark:hover:bg-[#141414] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E10600]"
               aria-label="Close resume preview"
             >
               <X className="w-5 h-5" />

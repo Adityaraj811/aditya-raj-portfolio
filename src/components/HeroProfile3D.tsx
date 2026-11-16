@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Code2, Smartphone, Database, Mail, Github } from 'lucide-react';
+import { Mail, Github, ArrowUpRight } from 'lucide-react';
 
 interface HeroProfile3DProps {
   name: string;
@@ -45,8 +45,8 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const rotateX = ((y - centerY) / centerY) * -9;
-      const rotateY = ((x - centerX) / centerX) * 9;
+      const rotateX = ((y - centerY) / centerY) * -8;
+      const rotateY = ((x - centerX) / centerX) * 8;
 
       card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
 
@@ -54,7 +54,7 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
         const gx = ((x / rect.width) * 100).toFixed(1);
         const gy = ((y / rect.height) * 100).toFixed(1);
         glareRef.current.style.opacity = '1';
-        glareRef.current.style.background = `radial-gradient(380px circle at ${gx}% ${gy}%, rgba(59, 130, 246, 0.14), transparent 65%)`;
+        glareRef.current.style.background = `radial-gradient(380px circle at ${gx}% ${gy}%, rgba(225, 6, 0, 0.14), transparent 65%)`;
       }
     });
   };
@@ -91,7 +91,6 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
     const dy = Math.abs(t.clientY - touchStartRef.current.y);
     const dx = Math.abs(t.clientX - touchStartRef.current.x);
 
-    // Yield immediately to native vertical page scroll
     if (dy > 10 && dy > dx) {
       resetTilt();
       return;
@@ -111,125 +110,86 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
       className="relative h-full flex flex-col justify-center select-none"
       style={{ perspective: '1200px', touchAction: 'pan-y' }}
     >
-      {/* Ambient Background Glow Behind 3D Portrait Card */}
-      <div
-        className="pointer-events-none absolute -inset-3 rounded-3xl opacity-65 dark:opacity-90 blur-2xl transition-opacity duration-500"
-        style={{
-          background:
-            'radial-gradient(circle at 50% 45%, rgba(59, 130, 246, 0.25) 0%, rgba(99, 102, 241, 0.16) 45%, transparent 75%)',
-        }}
-      />
-
-      {/* 3D Tilting Showcase Card */}
+      {/* Editorial 3D Portrait Plate */}
       <div
         ref={cardRef}
-        className="relative h-full rounded-2xl bg-white/90 dark:bg-[#0D0E14]/90 backdrop-blur-xl border border-zinc-200/90 dark:border-zinc-800/90 p-5 sm:p-6 flex flex-col justify-between shadow-xl transition-transform duration-200 ease-out"
+        className="relative h-full rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 p-5 sm:p-6 flex flex-col justify-between transition-transform duration-200 ease-out"
         style={{
           transform: 'rotateX(0deg) rotateY(0deg)',
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Dynamic Cursor / Touch Glare Overlay */}
+        {/* Dynamic Cursor / Touch Light Reflection */}
         <div
           ref={glareRef}
-          className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300"
+          className="pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300"
           style={{ opacity: 0 }}
         />
 
-        {/* Center: Continuously Animated 3D Conic Gradient Border + Rotating Light-Ring */}
+        {/* Editorial Plate Index Strip */}
         <div
-          className="relative z-10 my-auto py-1.5 flex flex-col items-center text-center"
-          style={{ transform: 'translateZ(32px)' }}
+          className="relative z-10 flex items-center justify-between font-mono text-[11px] tracking-wider text-zinc-500 dark:text-[#A8A8A8] border-b border-zinc-200 dark:border-[#F2F0EB]/10 pb-3"
+          style={{ transform: 'translateZ(16px)' }}
         >
-          {/* Portrait Wrapper — Unobstructed Face & 3D Rotating Light-Ring */}
-          <div className="relative inline-flex items-center justify-center">
-            {/* Outer Rotating Light-Ring Container */}
-            <div className="relative p-1.5 rounded-3xl profile-3d-ring-wrapper shadow-2xl">
-              {/* Continuous Conic Spinning Gradient Ring */}
-              <div className="profile-3d-spinning-ring" aria-hidden="true" />
+          <span>FIG. 01 — {name.toUpperCase()}</span>
+          <span className="text-[#E10600] font-semibold">SAHAYAK.STUDIO</span>
+        </div>
 
-              {/* Secondary Counter-Rotating Outer Orbit Halo */}
-              <div className="profile-3d-orbit-halo" aria-hidden="true" />
+        {/* High-Craft Editorial Portrait Image */}
+        <div
+          className="relative z-10 my-5 flex-1 flex flex-col justify-center"
+          style={{ transform: 'translateZ(26px)' }}
+        >
+          <div className="relative aspect-[4/4.2] w-full max-w-[320px] mx-auto rounded-lg overflow-hidden bg-zinc-100 dark:bg-[#141414] border border-zinc-200 dark:border-[#F2F0EB]/12">
+            <img
+              src={profileImgSrc}
+              alt={`${name} — ${headline}`}
+              referrerPolicy="no-referrer"
+              onError={onImageError}
+              className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-[1.03]"
+            />
+            {!usingFallbackAvatar && (
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
+            )}
 
-              {/* Portrait Image Frame — Preserves Natural Aspect Ratio Without Distortion */}
-              <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-[20px] overflow-hidden bg-zinc-100 dark:bg-zinc-900 z-10">
-                <img
-                  src={profileImgSrc}
-                  alt={`${name} — ${headline}`}
-                  referrerPolicy="no-referrer"
-                  onError={onImageError}
-                  className="w-full h-full object-cover object-center transition-transform duration-500"
-                />
-                {/* Subtle bottom scrim for depth */}
-                {!usingFallbackAvatar && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/5 pointer-events-none" />
-                )}
+            <div className="absolute bottom-3.5 left-4 right-4 flex items-end justify-between gap-2 text-left pointer-events-none">
+              <div>
+                <p className="font-display text-2xl tracking-wide uppercase text-[#F2F0EB] leading-none">
+                  {name}
+                </p>
+                <p className="font-editorial italic text-base text-[#E10600] mt-0.5">
+                  {headline}
+                </p>
               </div>
+              <span className="font-mono text-[10px] tracking-widest text-[#F2F0EB]/75 uppercase">
+                EST. 2022
+              </span>
             </div>
-
-            {/* 3D Floating Badge 1 (Top-Left Corner) — Java · Spring Boot */}
-            <div
-              className="absolute -top-3 -left-4 sm:-top-3.5 sm:-left-8 z-20 flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-xs font-mono text-zinc-700 dark:text-zinc-200 whitespace-nowrap animate-float-reverse"
-              style={{ transform: 'translateZ(72px)' }}
-            >
-              <Database className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-500 shrink-0" />
-              <span>Java · Spring Boot</span>
-            </div>
-
-            {/* 3D Floating Badge 2 (Left Side) — Android · MVVM */}
-            <div
-              className="absolute -bottom-3 -left-6 sm:-bottom-3.5 sm:-left-10 z-20 flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-xs font-mono text-zinc-700 dark:text-zinc-200 whitespace-nowrap animate-float-delayed"
-              style={{ transform: 'translateZ(58px)' }}
-            >
-              <Smartphone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-500 shrink-0" />
-              <span>Android · MVVM</span>
-            </div>
-
-            {/* 3D Floating Badge 3 (Right Side) — Web & Full-Stack */}
-            <div
-              className="absolute -bottom-3 -right-6 sm:-bottom-3.5 sm:-right-10 z-20 flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/90 dark:border-zinc-700/80 shadow-lg text-[10px] sm:text-xs font-mono text-zinc-700 dark:text-zinc-200 whitespace-nowrap animate-float-slow"
-              style={{ transform: 'translateZ(65px)' }}
-            >
-              <Code2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500 shrink-0" />
-              <span>Web &amp; Full-Stack</span>
-            </div>
-          </div>
-
-          {/* Name & Core Identity Below Portrait */}
-          <div className="mt-8 sm:mt-9 space-y-1">
-            <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              {name}
-            </h2>
-            <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-              {headline}
-            </p>
-            <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-              Websites · Web Apps · Android Apps · Java Backend
-            </p>
           </div>
         </div>
 
-        {/* Bottom Direct Contact Strip Inside Card */}
+        {/* Bottom Direct Hairline Metadata */}
         <div
-          className="relative z-10 pt-3.5 mt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2 text-xs font-mono"
-          style={{ transform: 'translateZ(20px)' }}
+          className="relative z-10 pt-3.5 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between gap-2 text-xs font-mono"
+          style={{ transform: 'translateZ(18px)' }}
         >
           <a
             href={`mailto:${emailAddress}`}
-            className="inline-flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 truncate transition-colors"
+            className="inline-flex items-center gap-1.5 text-zinc-600 dark:text-[#A8A8A8] hover:text-[#E10600] truncate transition-colors"
             title={emailAddress}
           >
-            <Mail className="w-3.5 h-3.5 shrink-0 text-blue-500" />
+            <Mail className="w-3.5 h-3.5 shrink-0 text-[#E10600]" />
             <span className="truncate">{emailAddress}</span>
           </a>
           <a
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+            className="inline-flex items-center gap-1 text-zinc-900 dark:text-[#F2F0EB] hover:text-[#E10600] shrink-0 transition-colors"
           >
             <Github className="w-3.5 h-3.5" />
             <span>@{githubUsername}</span>
+            <ArrowUpRight className="w-3 h-3" />
           </a>
         </div>
       </div>
