@@ -207,21 +207,31 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Live IST Studio Timecode
-  const [liveTimeIst, setLiveTimeIst] = useState<string>('--:--:--');
+  // Live Current Date & Time
+  const [liveDateTime, setLiveDateTime] = useState<{ date: string; time: string }>({
+    date: '-- --- ----',
+    time: '--:--:--',
+  });
   useEffect(() => {
     const updateClock = () => {
       try {
-        const formatted = new Intl.DateTimeFormat('en-IN', {
-          timeZone: 'Asia/Kolkata',
+        const now = new Date();
+        const dateFormatted = new Intl.DateTimeFormat('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })
+          .format(now)
+          .toUpperCase();
+        const timeFormatted = new Intl.DateTimeFormat('en-US', {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
-          hour12: false,
-        }).format(new Date());
-        setLiveTimeIst(`${formatted} IST`);
+          hour12: true,
+        }).format(now);
+        setLiveDateTime({ date: dateFormatted, time: timeFormatted });
       } catch {
-        setLiveTimeIst('ONLINE');
+        setLiveDateTime({ date: 'LIVE', time: 'ONLINE' });
       }
     };
     updateClock();
@@ -742,29 +752,38 @@ export default function App() {
                   <span className="text-[#F2F0EB]">(01) SAHAYAK.STUDIO</span>
                   <span aria-hidden="true" className="hidden sm:inline">—</span>
                   <span className="hidden sm:inline">REMOTE WORLDWIDE</span>
-                  <span aria-hidden="true" className="hidden md:inline">—</span>
-                  <span className="hidden md:inline tabular-nums text-[#F2F0EB]">
-                    {liveTimeIst}
-                  </span>
                 </div>
 
-                <button
-                  onClick={toggleTheme}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-[#F2F0EB]/20 hover:border-[#E10600] text-[11px] font-mono uppercase tracking-wider text-[#F2F0EB] transition-colors cursor-pointer whitespace-nowrap bg-[#0B0B0B]/70 backdrop-blur-md"
-                  aria-label="Toggle color theme"
-                >
-                  {theme === 'dark' ? (
-                    <>
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Paper Light</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-3.5 h-3.5 text-[#E10600]" />
-                      <span>Noir Dark</span>
-                    </>
-                  )}
-                </button>
+                <div className="flex flex-wrap items-center justify-end gap-3 sm:gap-4 ml-auto">
+                  <div
+                    className="inline-flex items-center gap-2 tabular-nums font-mono text-[10px] sm:text-[11px] tracking-[0.14em] whitespace-nowrap"
+                    aria-label="Current local date and time"
+                  >
+                    <span className="text-[#A8A8A8]">{liveDateTime.date}</span>
+                    <span aria-hidden="true" className="text-[#E10600]">
+                      ·
+                    </span>
+                    <span className="text-[#F2F0EB] font-semibold">{liveDateTime.time}</span>
+                  </div>
+
+                  <button
+                    onClick={toggleTheme}
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-[#F2F0EB]/20 hover:border-[#E10600] text-[11px] font-mono uppercase tracking-wider text-[#F2F0EB] transition-colors cursor-pointer whitespace-nowrap bg-[#0B0B0B]/70 backdrop-blur-md"
+                    aria-label="Toggle color theme"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Paper Light</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-3.5 h-3.5 text-[#E10600]" />
+                        <span>Noir Dark</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* 2-Column Asymmetric Luxury Split */}
@@ -1703,9 +1722,6 @@ export default function App() {
                       <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8] break-all">
                         {personal.emailAddress}
                       </p>
-                      <p className="text-xs font-mono text-zinc-500 dark:text-[#A8A8A8] break-all">
-                        {personal.studioEmail}
-                      </p>
                     </div>
 
                     <div className="mt-6 flex items-center gap-2">
@@ -1857,7 +1873,7 @@ export default function App() {
                     02 — LOCATION
                   </p>
                   <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    BHOPAL, INDIA
+                    DELHI, INDIA
                   </p>
                   <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
                     Worldwide Remote Delivery
@@ -1962,7 +1978,9 @@ export default function App() {
               © {new Date().getFullYear()} {personal.name} · {studioBrand.name}
             </p>
             <div className="flex items-center gap-6">
-              <span className="tabular-nums">{liveTimeIst}</span>
+              <span className="tabular-nums">
+                {liveDateTime.date} · {liveDateTime.time}
+              </span>
               <a
                 href="#home"
                 onClick={(e) => {

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Mail, Github, ArrowUpRight } from 'lucide-react';
 
 interface HeroProfile3DProps {
@@ -27,6 +27,49 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
   const glareRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [isScrollColor, setIsScrollColor] = useState(false);
+
+  useEffect(() => {
+    const checkScrollColor = () => {
+      const isCompactOrTouch =
+        window.innerWidth < 1024 ||
+        window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+      if (!isCompactOrTouch) {
+        setIsScrollColor(false);
+        return;
+      }
+
+      const el = containerRef.current;
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const hasScrolled = scrollY > 12;
+      const isInActiveBand = rect.top < vh * 0.85 && rect.bottom > vh * 0.12;
+
+      setIsScrollColor(hasScrolled && isInActiveBand);
+    };
+
+    let frameId: number | null = null;
+    const onScrollOrResize = () => {
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        checkScrollColor();
+      });
+    };
+
+    checkScrollColor();
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   const applyTiltFromPoint = (clientX: number, clientY: number) => {
     if (rafRef.current !== null) {
@@ -155,16 +198,20 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
                 alt={`${name} — ${headline}`}
                 referrerPolicy="no-referrer"
                 onError={onImageError}
-                className="w-full h-full object-cover object-center grayscale contrast-125 brightness-95 transition-all duration-700 ease-out group-hover/portrait:scale-[1.06] group-hover/portrait:opacity-0"
+                className={`w-full h-full object-cover object-center grayscale contrast-125 brightness-95 transition-all duration-700 ease-out group-hover/portrait:scale-[1.06] group-hover/portrait:opacity-0 ${
+                  isScrollColor ? 'scale-[1.06] opacity-0' : ''
+                }`}
               />
 
-              {/* Layer 2: Framer `Image Color` Vivid Color Crossfade on Hover */}
+              {/* Layer 2: Framer `Image Color` Vivid Color Crossfade on Hover / Mobile Scroll */}
               <img
                 src={profileImgSrc}
                 alt=""
                 aria-hidden="true"
                 referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover object-center contrast-110 opacity-0 scale-100 transition-all duration-700 ease-out group-hover/portrait:opacity-100 group-hover/portrait:scale-[1.06]"
+                className={`absolute inset-0 w-full h-full object-cover object-center contrast-110 transition-all duration-700 ease-out group-hover/portrait:opacity-100 group-hover/portrait:scale-[1.06] ${
+                  isScrollColor ? 'opacity-100 scale-[1.06]' : 'opacity-0 scale-100'
+                }`}
               />
 
               {/* Radial Cinema Vignette + Bottom Shade */}
