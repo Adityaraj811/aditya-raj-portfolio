@@ -45,8 +45,8 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const rotateX = ((y - centerY) / centerY) * -8;
-      const rotateY = ((x - centerX) / centerX) * 8;
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
 
       card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
 
@@ -54,7 +54,7 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
         const gx = ((x / rect.width) * 100).toFixed(1);
         const gy = ((y / rect.height) * 100).toFixed(1);
         glareRef.current.style.opacity = '1';
-        glareRef.current.style.background = `radial-gradient(380px circle at ${gx}% ${gy}%, rgba(225, 6, 0, 0.14), transparent 65%)`;
+        glareRef.current.style.background = `radial-gradient(400px circle at ${gx}% ${gy}%, rgba(225, 6, 0, 0.24), transparent 65%)`;
       }
     });
   };
@@ -107,19 +107,19 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={resetTilt}
       onTouchCancel={resetTilt}
-      className="relative h-full flex flex-col justify-center select-none"
+      className="relative h-full flex flex-col justify-center select-none group/portrait"
       style={{ perspective: '1200px', touchAction: 'pan-y' }}
     >
-      {/* Editorial 3D Portrait Plate */}
+      {/* Editorial 3D Cinema Portrait Plate */}
       <div
         ref={cardRef}
-        className="relative h-full rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 p-5 sm:p-6 flex flex-col justify-between transition-transform duration-200 ease-out"
+        className="relative h-full rounded-xl bg-[#0B0B0B]/90 backdrop-blur-xl border border-[#F2F0EB]/15 p-5 sm:p-6 flex flex-col justify-between transition-transform duration-200 ease-out shadow-[0_32px_90px_rgba(0,0,0,0.65)]"
         style={{
           transform: 'rotateX(0deg) rotateY(0deg)',
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Dynamic Cursor / Touch Light Reflection */}
+        {/* Dynamic Cursor / Touch Crimson Reflection */}
         <div
           ref={glareRef}
           className="pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300"
@@ -128,54 +128,89 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
 
         {/* Editorial Plate Index Strip */}
         <div
-          className="relative z-10 flex items-center justify-between font-mono text-[11px] tracking-wider text-zinc-500 dark:text-[#A8A8A8] border-b border-zinc-200 dark:border-[#F2F0EB]/10 pb-3"
-          style={{ transform: 'translateZ(16px)' }}
+          className="relative z-10 flex items-center justify-between font-mono text-[11px] tracking-wider text-[#A8A8A8] border-b border-[#F2F0EB]/10 pb-3"
+          style={{ transform: 'translateZ(20px)' }}
         >
-          <span>FIG. 01 — {name.toUpperCase()}</span>
+          <span className="inline-flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse" />
+            <span>FIG. 01 — {name.toUpperCase()}</span>
+          </span>
           <span className="text-[#E10600] font-semibold">SAHAYAK.STUDIO</span>
         </div>
 
-        {/* High-Craft Editorial Portrait Image */}
+        {/* Framer Portrait Frame: Rotating Conic Halo + Grayscale-to-Color Crossfade */}
         <div
           className="relative z-10 my-5 flex-1 flex flex-col justify-center"
-          style={{ transform: 'translateZ(26px)' }}
+          style={{ transform: 'translateZ(36px)' }}
         >
-          <div className="relative aspect-[4/4.2] w-full max-w-[320px] mx-auto rounded-lg overflow-hidden bg-zinc-100 dark:bg-[#141414] border border-zinc-200 dark:border-[#F2F0EB]/12">
-            <img
-              src={profileImgSrc}
-              alt={`${name} — ${headline}`}
-              referrerPolicy="no-referrer"
-              onError={onImageError}
-              className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-[1.03]"
-            />
-            {!usingFallbackAvatar && (
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
-            )}
+          <div className="relative aspect-[4/4.2] w-full max-w-[320px] mx-auto rounded-lg p-[2px] profile-3d-ring-wrapper">
+            {/* Rotating Crimson/Cream Conic Light Ring */}
+            <div className="profile-3d-spinning-ring" aria-hidden="true" />
+            <div className="profile-3d-orbit-halo" aria-hidden="true" />
 
-            <div className="absolute bottom-3.5 left-4 right-4 flex items-end justify-between gap-2 text-left pointer-events-none">
-              <div>
-                <p className="font-display text-2xl tracking-wide uppercase text-[#F2F0EB] leading-none">
-                  {name}
-                </p>
-                <p className="font-editorial italic text-base text-[#E10600] mt-0.5">
-                  {headline}
-                </p>
-              </div>
-              <span className="font-mono text-[10px] tracking-widest text-[#F2F0EB]/75 uppercase">
-                EST. 2022
+            <div className="relative z-10 w-full h-full rounded-[6px] overflow-hidden bg-[#141414]">
+              {/* Layer 1: High-Contrast Noir Monochrome Base */}
+              <img
+                src={profileImgSrc}
+                alt={`${name} — ${headline}`}
+                referrerPolicy="no-referrer"
+                onError={onImageError}
+                className="w-full h-full object-cover object-center grayscale contrast-125 brightness-95 transition-all duration-700 ease-out group-hover/portrait:scale-[1.06] group-hover/portrait:opacity-0"
+              />
+
+              {/* Layer 2: Framer `Image Color` Vivid Color Crossfade on Hover */}
+              <img
+                src={profileImgSrc}
+                alt=""
+                aria-hidden="true"
+                referrerPolicy="no-referrer"
+                className="absolute inset-0 w-full h-full object-cover object-center contrast-110 opacity-0 scale-100 transition-all duration-700 ease-out group-hover/portrait:opacity-100 group-hover/portrait:scale-[1.06]"
+              />
+
+              {/* Radial Cinema Vignette + Bottom Shade */}
+              {!usingFallbackAvatar && (
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      'radial-gradient(60% 60% at 50% 45%, transparent 35%, rgba(5,5,5,0.68) 100%), linear-gradient(180deg, transparent 48%, rgba(5,5,5,0.88) 100%)',
+                  }}
+                />
+              )}
+
+              {/* Corner Crosshairs */}
+              <span className="absolute top-2.5 left-2.5 font-mono text-[10px] text-[#F2F0EB]/60 pointer-events-none">
+                +
               </span>
+              <span className="absolute top-2.5 right-2.5 font-mono text-[10px] text-[#F2F0EB]/60 pointer-events-none">
+                +
+              </span>
+
+              <div className="absolute bottom-3.5 left-4 right-4 flex items-end justify-between gap-2 text-left pointer-events-none">
+                <div>
+                  <p className="font-display text-2xl tracking-wide uppercase text-[#F2F0EB] leading-none">
+                    {name}
+                  </p>
+                  <p className="font-editorial italic text-base text-[#E10600] mt-0.5">
+                    {headline}
+                  </p>
+                </div>
+                <span className="font-mono text-[10px] tracking-widest text-[#F2F0EB]/75 uppercase">
+                  EST. 2022
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Direct Hairline Metadata */}
         <div
-          className="relative z-10 pt-3.5 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between gap-2 text-xs font-mono"
-          style={{ transform: 'translateZ(18px)' }}
+          className="relative z-10 pt-3.5 border-t border-[#F2F0EB]/10 flex items-center justify-between gap-2 text-xs font-mono"
+          style={{ transform: 'translateZ(22px)' }}
         >
           <a
             href={`mailto:${emailAddress}`}
-            className="inline-flex items-center gap-1.5 text-zinc-600 dark:text-[#A8A8A8] hover:text-[#E10600] truncate transition-colors"
+            className="inline-flex items-center gap-1.5 text-[#A8A8A8] hover:text-[#E10600] truncate transition-colors"
             title={emailAddress}
           >
             <Mail className="w-3.5 h-3.5 shrink-0 text-[#E10600]" />
@@ -185,7 +220,7 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-zinc-900 dark:text-[#F2F0EB] hover:text-[#E10600] shrink-0 transition-colors"
+            className="inline-flex items-center gap-1 text-[#F2F0EB] hover:text-[#E10600] shrink-0 transition-colors"
           >
             <Github className="w-3.5 h-3.5" />
             <span>@{githubUsername}</span>

@@ -50,13 +50,13 @@
 }
 
 /* ============================================================================
-   NOIR SIGNAL FRAMER ANIMATIONS (tsWord Blur Reveal, tsBar Sweep, Marquee)
+   NOIR SIGNAL FRAMER ANIMATIONS (tsWord, tsBar, Streak, Runner, Orbit, Grain)
 ============================================================================ */
 @keyframes tsWord {
   from {
     opacity: 0;
     filter: blur(10px);
-    transform: translate3d(0, 16px, 0);
+    transform: translate3d(0, 18px, 0);
   }
   to {
     opacity: 1;
@@ -81,7 +81,7 @@
   }
   to {
     opacity: 1;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
   }
 }
 
@@ -91,6 +91,102 @@
   }
   100% {
     transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Scroll Cue Runner: 18px crimson bar sliding down 56px track */
+@keyframes noirRunner {
+  0% {
+    transform: translate3d(0, -18px, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 56px, 0);
+    opacity: 0;
+  }
+}
+
+/* Horizontal Line Track Streak */
+@keyframes noirStreakH {
+  0% {
+    transform: translate3d(-420px, 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 420px), 0, 0);
+  }
+}
+
+/* Vertical Margin Line Streak */
+@keyframes noirStreakV {
+  0% {
+    transform: translate3d(0, -260px, 0);
+  }
+  100% {
+    transform: translate3d(0, 2200px, 0);
+  }
+}
+
+/* Expanding Gallery Autoplay Top Progress Bar */
+@keyframes noirBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Cinema Lightbox Zoom Entry */
+@keyframes noirZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Orbital Dashed Ring (Framer 10s linear infinite) */
+@keyframes noirOrbitSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Section Bar Crosshair Rotation */
+@keyframes noirCrosshair {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}
+
+/* Subtle Analog Film Grain Shift */
+@keyframes noirGrainShift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-1.5%, 1.2%, 0);
+  }
+  50% {
+    transform: translate3d(1.2%, -1.5%, 0);
+  }
+  75% {
+    transform: translate3d(-0.8%, -0.8%, 0);
   }
 }
 
@@ -107,7 +203,7 @@
 }
 
 .animate-ts-fade {
-  animation: tsFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  animation: tsFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 
 .animate-noir-marquee {
@@ -121,11 +217,47 @@
   animation-play-state: paused;
 }
 
+.animate-noir-runner {
+  animation: noirRunner 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-noir-streak-h {
+  animation: noirStreakH 4.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+.animate-noir-streak-v {
+  animation: noirStreakV 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+.animate-noir-orbit {
+  animation: noirOrbitSpin 10s linear infinite;
+  will-change: transform;
+}
+
+.animate-noir-crosshair {
+  animation: noirCrosshair 2s linear infinite;
+  will-change: transform;
+}
+
+.animate-noir-grain {
+  animation: noirGrainShift 0.55s steps(2) infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-ts-word,
   .animate-ts-bar,
   .animate-ts-fade,
-  .animate-noir-marquee {
+  .animate-noir-marquee,
+  .animate-noir-runner,
+  .animate-noir-streak-h,
+  .animate-noir-streak-v,
+  .animate-noir-orbit,
+  .animate-noir-crosshair,
+  .animate-noir-grain {
     animation: none !important;
     opacity: 1 !important;
     filter: none !important;

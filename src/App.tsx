@@ -16,11 +16,9 @@ import {
   Copy,
   Check,
   GraduationCap,
-  Layers,
   ExternalLink,
   FileText,
   User,
-  Sparkles,
   Plus,
   Minus,
 } from 'lucide-react';
@@ -29,15 +27,25 @@ import {
   type ProjectItem,
   type PublicGithubRepo,
 } from './data/portfolioConfig';
-import { ProjectVisual } from './components/ProjectVisual';
 import { ServiceMockupVisual } from './components/ServiceMockupVisual';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
 import { ResumeModal } from './components/ResumeModal';
 import { ScrollReveal } from './components/ScrollReveal';
-import { Tilt3DCard } from './components/Tilt3DCard';
 import { HeroProfile3D } from './components/HeroProfile3D';
 import { FreelanceServicesPage } from './components/FreelanceServicesPage';
 import { AboutPage } from './components/AboutPage';
+import { NoirLiquidCanvas } from './components/NoirLiquidCanvas';
+import { NoirFilmGallery } from './components/NoirFilmGallery';
+import {
+  NoirCursor,
+  NoirMouseGlow,
+  NoirFilmGrain,
+  NoirPreloader,
+  NoirHairlineTrack,
+  NoirSectionBar,
+  NoirOrbitCTA,
+  NoirSkillRow,
+} from './components/NoirEffects';
 import { motion } from 'framer-motion';
 import { velouraSoundEngine } from './utils/velouraSoundEngine';
 
@@ -121,6 +129,33 @@ const STUDIO_PROCESS_STEPS = [
     title: 'LAUNCH',
     description:
       'Edge deployment on Cloudflare & Vercel, domain SSL hardening, Meta Ads or WhatsApp automation setup, and dedicated tech care.',
+  },
+];
+
+const NOIR_CAPABILITY_ROWS = [
+  {
+    title: 'React, TypeScript & Motion Web Systems',
+    metric: '96% · 03+ YRS',
+    percentage: 96,
+    detail: 'High-conversion client websites, WebGL shaders, 3D showcases & SaaS dashboards.',
+  },
+  {
+    title: 'Java, Spring Boot & REST Architectures',
+    metric: '92% · 03+ YRS',
+    percentage: 92,
+    detail: 'Spring Security, JPA/Hibernate, SQL schemas & resilient production backend APIs.',
+  },
+  {
+    title: 'Native Android (Java, XML & MVVM)',
+    metric: '90% · 02+ YRS',
+    percentage: 90,
+    detail: 'Room offline persistence, Retrofit networking, ViewModel & fluid Material UI.',
+  },
+  {
+    title: 'Edge Cloud, CRM & Meta Ads Growth',
+    metric: '94% · 100+ LAUNCHED',
+    percentage: 94,
+    detail: 'Cloudflare Workers, Vercel, WhatsApp automation, OTP/SMS APIs & Meta Ads.',
   },
 ];
 
@@ -335,22 +370,15 @@ export default function App() {
   const [selectedProjectDomain, setSelectedProjectDomain] = useState<string>('all');
   const [openFaqIndex, setOpenFaqIndex] = useState<string | null>('01');
 
-  // Modals & Pop-In Expansion
+  // Modals
   const [activeProjectModal, setActiveProjectModal] = useState<ProjectItem | null>(null);
-  const [expandingProjectId, setExpandingProjectId] = useState<string | null>(null);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
 
   const handleOpenProjectCaseStudy = useCallback((project: ProjectItem) => {
     if (project.id === 'veloura-specialty-coffee') {
       velouraSoundEngine.playChimeSound();
     }
-    setExpandingProjectId(project.id);
-    window.setTimeout(() => {
-      setActiveProjectModal(project);
-    }, 150);
-    window.setTimeout(() => {
-      setExpandingProjectId(null);
-    }, 520);
+    setActiveProjectModal(project);
   }, []);
 
   // Inquiry Topic State
@@ -416,7 +444,12 @@ export default function App() {
       : projects.filter((p) => p.domain === selectedProjectDomain);
 
   return (
-    <div className="min-h-screen bg-[#F5F4F0] text-[#111111] dark:bg-[#050505] dark:text-[#F2F0EB] bg-architectural-grid transition-colors duration-200">
+    <div className="min-h-screen bg-[#F5F4F0] text-[#111111] dark:bg-[#050505] dark:text-[#F2F0EB] bg-architectural-grid transition-colors duration-200 relative">
+      {/* Framer Cinema Overlays: Opening Slate, Film Grain & Floating VIEW Lens Cursor */}
+      <NoirPreloader />
+      <NoirFilmGrain />
+      <NoirCursor />
+
       {/* Top Crimson Scroll Signal Line */}
       <div
         aria-hidden="true"
@@ -667,28 +700,57 @@ export default function App() {
       ) : (
         <main>
           {/* ===================================================================
-              B. HERO — NOIR SIGNAL OPENING SHOT
+              B. HERO — NOIR SIGNAL OPENING SHOT (Liquid WebGL + MouseGlow + Runner)
           =================================================================== */}
           <section
             id="home"
-            className="relative pt-8 pb-14 sm:pt-12 sm:pb-16 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 overflow-hidden"
+            className="relative min-h-[calc(100svh-4rem)] flex flex-col justify-between pt-8 pb-10 sm:pt-10 sm:pb-12 bg-[#050505] text-[#F2F0EB] overflow-hidden"
           >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-              {/* Framer Top Timecode Metadata Strip */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-7 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-600 dark:text-[#A8A8A8]">
+            {/* Framer `Liquid Signal` Real-Time WebGL Crimson Turbulence Shader */}
+            <NoirLiquidCanvas />
+
+            {/* Framer `Hero Shade` + `Vignette` Cinema Depth Overlays */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(5,5,5,0.72) 0%, rgba(5,5,5,0.22) 38%, rgba(5,5,5,0.38) 68%, rgba(5,5,5,0.96) 100%)',
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(55% 55% at 50% 50%, rgba(5,5,5,0) 35%, rgba(5,5,5,0.85) 100%)',
+              }}
+            />
+
+            {/* Framer `Mouse Glow` Dynamic Crimson Pointer Spotlight */}
+            <NoirMouseGlow />
+
+            <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 relative z-10 flex-1 flex flex-col justify-between gap-8">
+              {/* Framer Top Timecode & Live REC Metadata Strip */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#F2F0EB]/12 font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-[#E10600] font-semibold">(01) — PORTFOLIO 2026</span>
+                  <span className="inline-flex items-center gap-2 text-[#E10600] font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse shadow-[0_0_12px_#E10600]" />
+                    <span>REC</span>
+                  </span>
                   <span aria-hidden="true">—</span>
-                  <span>BHOPAL, INDIA</span>
-                  <span aria-hidden="true">—</span>
-                  <span className="tabular-nums text-[#111111] dark:text-[#F2F0EB]">
+                  <span className="text-[#F2F0EB]">(01) SAHAYAK.STUDIO</span>
+                  <span aria-hidden="true" className="hidden sm:inline">—</span>
+                  <span className="hidden sm:inline">REMOTE WORLDWIDE</span>
+                  <span aria-hidden="true" className="hidden md:inline">—</span>
+                  <span className="hidden md:inline tabular-nums text-[#F2F0EB]">
                     {liveTimeIst}
                   </span>
                 </div>
 
                 <button
                   onClick={toggleTheme}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/15 hover:border-[#E10600] text-[11px] font-mono uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-[#F2F0EB]/20 hover:border-[#E10600] text-[11px] font-mono uppercase tracking-wider text-[#F2F0EB] transition-colors cursor-pointer whitespace-nowrap bg-[#0B0B0B]/70 backdrop-blur-md"
                   aria-label="Toggle color theme"
                 >
                   {theme === 'dark' ? (
@@ -705,22 +767,20 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Crimson Signature Rule */}
-              <div className="h-[2px] w-20 bg-[#E10600] mb-7 animate-ts-bar" aria-hidden="true" />
-
               {/* 2-Column Asymmetric Luxury Split */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center my-auto">
                 {/* Left Column: Monumental Display Type */}
-                <div className="lg:col-span-7 flex flex-col justify-between space-y-10">
-                  <div className="space-y-6">
-                    <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#E10600] animate-ts-fade">
+                <div className="lg:col-span-7 flex flex-col justify-between space-y-8">
+                  <div className="space-y-5">
+                    <div className="h-[2px] w-20 bg-[#E10600] animate-ts-bar" aria-hidden="true" />
+                    <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#E10600] animate-ts-fade font-semibold">
                       {studioBrand.name} · DIGITAL, TECHNOLOGY &amp; INNOVATION
                     </p>
 
                     <h1
-                      className="font-display font-normal uppercase text-[#111111] dark:text-[#F2F0EB] leading-[0.90] tracking-tight"
+                      className="font-display font-normal uppercase text-[#F2F0EB] leading-[0.90] tracking-tight"
                       style={{
-                        fontSize: 'clamp(3.1rem, 7vw, 6rem)',
+                        fontSize: 'clamp(3.1rem, 7vw, 6.2rem)',
                         textWrap: 'balance',
                       }}
                     >
@@ -744,17 +804,17 @@ export default function App() {
                       </span>
                     </h1>
 
-                    <p className="text-base sm:text-lg text-zinc-600 dark:text-[#A8A8A8] leading-relaxed max-w-xl">
+                    <p className="text-base sm:text-lg text-[#A8A8A8] leading-relaxed max-w-xl">
                       {personal.heroDescription}
                     </p>
                   </div>
 
                   {/* Clean Action Row + Typographic Socials */}
-                  <div className="space-y-7">
+                  <div className="space-y-6">
                     <div className="flex flex-wrap items-center gap-3">
                       <a
                         href="#projects"
-                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
+                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 shadow-[0_12px_36px_rgba(225,6,0,0.35)]"
                       >
                         <span>Selected Works</span>
                         <ArrowUpRight className="w-4 h-4" />
@@ -762,7 +822,7 @@ export default function App() {
 
                       <a
                         href="#freelance"
-                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#111111] text-white dark:bg-[#F2F0EB] dark:text-[#050505] hover:opacity-90 font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
+                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#F2F0EB] text-[#050505] hover:opacity-90 font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
                       >
                         <span>12 Services</span>
                       </a>
@@ -770,21 +830,21 @@ export default function App() {
                       <button
                         type="button"
                         onClick={navigateToAbout}
-                        className="inline-flex items-center gap-2 px-5 py-3.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                        className="inline-flex items-center gap-2 px-5 py-3.5 rounded-md border border-[#F2F0EB]/25 hover:border-[#E10600] text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                       >
                         <span>About &amp; CV</span>
                       </button>
                     </div>
 
-                    {/* Clean Single-Line Editorial Links (No Box Clutter) */}
-                    <div className="pt-5 border-t border-zinc-300/70 dark:border-[#F2F0EB]/10 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-zinc-600 dark:text-[#A8A8A8]">
+                    {/* Single-Line Editorial Links */}
+                    <div className="pt-4 border-t border-[#F2F0EB]/12 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#A8A8A8]">
                       <a
                         href={personal.whatsappDirectUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+                        <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
                         <span>WhatsApp</span>
                         <ArrowUpRight className="w-3 h-3" />
                       </a>
@@ -822,7 +882,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Right Column: Luxury Editorial Portrait Frame */}
+                {/* Right Column: Framer Grayscale->Color 3D Portrait Plate */}
                 <ScrollReveal direction="scale" delayMs={100} className="lg:col-span-5">
                   <HeroProfile3D
                     name={personal.name}
@@ -837,21 +897,43 @@ export default function App() {
                 </ScrollReveal>
               </div>
 
-              {/* Full-Width 4-Column Architectural Stats Row (From Poster & Studio Data) */}
-              <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 border-t border-zinc-300/70 dark:border-[#F2F0EB]/10 pt-8 gap-6">
-                {studioBrand.metrics.map((m) => (
-                  <div key={m.label} className="space-y-1">
-                    <p className="font-display text-3xl sm:text-4xl text-[#111111] dark:text-[#F2F0EB] tabular-nums leading-none">
-                      <span className="text-[#E10600]">{m.value}</span>
-                    </p>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8]">
-                      {m.label}
-                    </p>
+              {/* Bottom Hero Row: Metrics Strip + Framer `Scroll Cue` Animated Runner */}
+              <div className="pt-6 border-t border-[#F2F0EB]/12 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 flex-1">
+                  {studioBrand.metrics.map((m) => (
+                    <div key={m.label} className="space-y-1">
+                      <p className="font-display text-3xl sm:text-4xl text-[#E10600] tabular-nums leading-none">
+                        {m.value}
+                      </p>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#A8A8A8]">
+                        {m.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Framer Exact `Scroll Cue` Vertical Track & Runner */}
+                <a
+                  href="#projects"
+                  className="hidden sm:inline-flex items-end gap-4 group shrink-0"
+                  aria-label="Scroll to Selected Works"
+                >
+                  <div className="text-right font-mono text-[10px] uppercase tracking-[0.2em] text-[#A8A8A8] group-hover:text-[#F2F0EB] transition-colors space-y-0.5">
+                    <p className="text-[#E10600]">SCROLL TO EXPLORE</p>
+                    <p>EST. 2022 — ©2026</p>
                   </div>
-                ))}
+                  <div
+                    aria-hidden="true"
+                    className="relative w-px h-14 bg-[#F2F0EB]/25 overflow-hidden"
+                  >
+                    <div className="absolute top-0 left-0 w-px h-[18px] bg-[#E10600] animate-noir-runner" />
+                  </div>
+                </a>
               </div>
             </div>
           </section>
+
+          <NoirHairlineTrack />
 
           {/* ===================================================================
               SIGNATURE CONTINUOUS KINETIC MARQUEE RIBBON
@@ -872,12 +954,13 @@ export default function App() {
           {/* ===================================================================
               C. 01 — MANIFESTO (Signature Framer Editorial Statement)
           =================================================================== */}
-          <section className="py-20 sm:py-28 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
+          <section className="py-20 sm:py-28">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
-              <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-500 dark:text-[#A8A8A8]">
-                <span className="text-[#E10600] font-semibold">01 — MANIFESTO</span>
-                <span>(01/06)</span>
-              </div>
+              <NoirSectionBar
+                indexLabel="01 — MANIFESTO"
+                sectionCode="(01/06)"
+                rightLabel="CREATIVE DIRECTION"
+              />
 
               <ScrollReveal direction="up">
                 <blockquote
@@ -904,251 +987,76 @@ export default function App() {
             </div>
           </section>
 
+          <NoirHairlineTrack />
+
           {/* ===================================================================
-              D. 02 — SELECTED WORKS & LIVE UI PREVIEWS ((02/06))
+              D. 02 — SELECTED WORKS & EXPANDING FILMSTRIP ((02/06))
           =================================================================== */}
-          <section
-            id="projects"
-            className="py-20 sm:py-28 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
-          >
+          <section id="projects" className="py-20 sm:py-28">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-3 max-w-2xl">
-                    <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600] font-semibold">
-                      <span>02 — SELECTED WORKS</span>
-                      <span aria-hidden="true">·</span>
-                      <span className="text-zinc-500 dark:text-[#A8A8A8]">(02/06)</span>
-                    </div>
-                    <h2
-                      className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
-                      style={{ textWrap: 'balance' }}
-                    >
-                      SELECTED{' '}
-                      <span className="font-editorial italic lowercase font-normal text-[#E10600]">
-                        works
-                      </span>{' '}
-                      (0{projects.length})
-                    </h2>
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
-                      Interact directly with real live websites inside each viewport frame — switch Desktop/Mobile views or request a customized edition for your own brand.
-                    </p>
-                  </div>
+                <div className="space-y-6">
+                  <NoirSectionBar
+                    indexLabel="02 — SELECTED WORKS"
+                    sectionCode="(02/06)"
+                    rightLabel="LIVE INTERACTIVE PREVIEW"
+                  />
 
-                  {/* Minimal Segmented Project Filter */}
-                  <div
-                    role="tablist"
-                    aria-label="Filter projects by domain"
-                    className="flex flex-wrap items-center gap-1 p-1 rounded-md bg-zinc-200/70 dark:bg-[#0E0E0E] border border-zinc-300/70 dark:border-[#F2F0EB]/12 w-fit"
-                  >
-                    {[
-                      'all',
-                      'Website Design & Development',
-                      'Android & Backend',
-                      'Web Application',
-                    ].map((domain) => (
-                      <button
-                        key={domain}
-                        role="tab"
-                        aria-selected={selectedProjectDomain === domain}
-                        onClick={() => setSelectedProjectDomain(domain)}
-                        className={`px-3 py-1.5 rounded-sm font-mono text-[11px] uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                          selectedProjectDomain === domain
-                            ? 'bg-[#E10600] text-white'
-                            : 'text-zinc-600 dark:text-[#A8A8A8] hover:text-[#111111] dark:hover:text-[#F2F0EB]'
-                        }`}
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-3 max-w-2xl">
+                      <h2
+                        className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
+                        style={{ textWrap: 'balance' }}
                       >
-                        {domain === 'all' ? `All (${projects.length})` : domain}
-                      </button>
-                    ))}
+                        SELECTED{' '}
+                        <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                          works
+                        </span>{' '}
+                        (0{projects.length})
+                      </h2>
+                      <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
+                        Glide through the interactive filmstrip or inspect live client viewports below — open any live site or request a customized version for your business.
+                      </p>
+                    </div>
+
+                    {/* Minimal Segmented Project Filter */}
+                    <div
+                      role="tablist"
+                      aria-label="Filter projects by domain"
+                      className="flex flex-wrap items-center gap-1 p-1 rounded-md bg-zinc-200/70 dark:bg-[#0E0E0E] border border-zinc-300/70 dark:border-[#F2F0EB]/12 w-fit"
+                    >
+                      {[
+                        'all',
+                        'Website Design & Development',
+                        'Android & Backend',
+                        'Web Application',
+                      ].map((domain) => (
+                        <button
+                          key={domain}
+                          role="tab"
+                          aria-selected={selectedProjectDomain === domain}
+                          onClick={() => setSelectedProjectDomain(domain)}
+                          className={`px-3 py-1.5 rounded-sm font-mono text-[11px] uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                            selectedProjectDomain === domain
+                              ? 'bg-[#E10600] text-white'
+                              : 'text-zinc-600 dark:text-[#A8A8A8] hover:text-[#111111] dark:hover:text-[#F2F0EB]'
+                          }`}
+                        >
+                          {domain === 'all' ? `All (${projects.length})` : domain}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </ScrollReveal>
 
-              {/* Editorial Showcase Project Cards */}
-              <div className="space-y-10">
-                {filteredProjects.map((project, idx) => {
-                  const isExpanding = expandingProjectId === project.id;
-
-                  return (
-                    <ScrollReveal key={project.id} delayMs={idx * 60} direction="up">
-                      <motion.div
-                        animate={
-                          isExpanding
-                            ? { scale: [1, 0.992, 1.01, 1], y: [0, 2, -4, 0] }
-                            : { scale: 1, y: 0 }
-                        }
-                        transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
-                      >
-                        <Tilt3DCard
-                          maxTiltDeg={1.8}
-                          className="rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 hover:border-[#E10600]/60 overflow-hidden transition-colors duration-300"
-                        >
-                          <article className="grid grid-cols-1 lg:grid-cols-12">
-                            {/* Left: Real Live Website / App Viewport */}
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              aria-label={`Inspect interactive preview and case study for ${project.title}`}
-                              onClick={() => handleOpenProjectCaseStudy(project)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.preventDefault();
-                                  handleOpenProjectCaseStudy(project);
-                                }
-                              }}
-                              className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-zinc-200 dark:border-[#F2F0EB]/10 cursor-pointer group relative overflow-hidden"
-                            >
-                              <ProjectVisual
-                                visualType={project.visualType}
-                                onExpandCaseStudy={() => handleOpenProjectCaseStudy(project)}
-                              />
-                            </div>
-
-                            {/* Right: Editorial Case Details & Direct Client Actions */}
-                            <div
-                              onClick={() => handleOpenProjectCaseStudy(project)}
-                              className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-6 cursor-pointer group/cardcontent"
-                            >
-                              <div className="space-y-4">
-                                <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.12em]">
-                                  <span className="text-zinc-500 dark:text-[#A8A8A8]">
-                                    <span className="text-[#E10600] font-semibold">
-                                      {project.index}
-                                    </span>{' '}
-                                    · {project.domain}
-                                  </span>
-                                  <span className="text-[#E10600] font-semibold">
-                                    {project.status}
-                                  </span>
-                                </div>
-
-                                <div>
-                                  <h3 className="font-display text-2xl sm:text-4xl tracking-tight uppercase text-[#111111] dark:text-[#F2F0EB] group-hover/cardcontent:text-[#E10600] transition-colors leading-[0.98]">
-                                    {project.title}
-                                  </h3>
-                                  <p className="text-xs sm:text-sm text-zinc-500 dark:text-[#A8A8A8] mt-1.5">
-                                    {project.subtitle}
-                                  </p>
-                                </div>
-
-                                <p className="text-sm sm:text-base text-zinc-700 dark:text-[#F2F0EB]/80 leading-relaxed">
-                                  {project.overview}
-                                </p>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-200 dark:border-[#F2F0EB]/10">
-                                  <div className="space-y-1.5 pt-2">
-                                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8]">
-                                      KEY DELIVERABLES
-                                    </p>
-                                    <ul className="space-y-1 text-xs text-zinc-700 dark:text-[#A8A8A8]">
-                                      {project.implementedFeatures.map((feat, i) => (
-                                        <li key={i} className="flex items-start gap-2">
-                                          <span className="font-mono text-[#E10600]">—</span>
-                                          <span>{feat}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-
-                                  <div className="space-y-1.5 pt-2">
-                                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8]">
-                                      CRAFT &amp; STACK
-                                    </p>
-                                    <p className="font-mono text-xs text-[#111111] dark:text-[#F2F0EB]/85 leading-relaxed">
-                                      {project.technologies.join(' · ')}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Clean Actions & Customization Bar (No Source Code clutter) */}
-                              <div className="pt-5 border-t border-zinc-200 dark:border-[#F2F0EB]/10 space-y-4">
-                                <div className="flex flex-wrap items-center gap-3">
-                                  {project.liveDemoUrl ? (
-                                    <a
-                                      href={project.liveDemoUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors whitespace-nowrap shrink-0"
-                                    >
-                                      <ExternalLink className="w-3.5 h-3.5" />
-                                      <span>Live Demo</span>
-                                      <ArrowUpRight className="w-3 h-3" />
-                                    </a>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOpenProjectCaseStudy(project);
-                                      }}
-                                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                                    >
-                                      <ExternalLink className="w-3.5 h-3.5" />
-                                      <span>Open App</span>
-                                      <ArrowUpRight className="w-3 h-3" />
-                                    </button>
-                                  )}
-
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleOpenProjectCaseStudy(project);
-                                    }}
-                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                                  >
-                                    <Layers className="w-3.5 h-3.5 text-[#E10600]" />
-                                    <span>Case Study</span>
-                                  </button>
-                                </div>
-
-                                {/* Direct Client Contact Strip Below Every Project */}
-                                <div className="pt-3 border-t border-zinc-200/70 dark:border-[#F2F0EB]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                  <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
-                                    Want this style customized for your brand?
-                                  </p>
-
-                                  <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                    <a
-                                      href={buildWhatsappLink(
-                                        `Customize Project Like: ${project.title}`
-                                      )}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors whitespace-nowrap"
-                                    >
-                                      <MessageSquare className="w-3.5 h-3.5" />
-                                      <span>WhatsApp</span>
-                                    </a>
-
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleSelectInquiryTopicAndScroll(
-                                          `Customize Project Like: ${project.title}`
-                                        );
-                                      }}
-                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] text-zinc-800 dark:text-[#F2F0EB] font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors whitespace-nowrap cursor-pointer"
-                                    >
-                                      <Sparkles className="w-3.5 h-3.5 text-[#E10600]" />
-                                      <span>Customize</span>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </article>
-                        </Tilt3DCard>
-                      </motion.div>
-                    </ScrollReveal>
-                  );
-                })}
-              </div>
+              {/* Framer Expanding Cinema Filmstrip & Lightbox Showreel */}
+              <NoirFilmGallery
+                projects={filteredProjects}
+                onInspectCaseStudy={handleOpenProjectCaseStudy}
+                onRequestCustom={(topic) => handleSelectInquiryTopicAndScroll(topic)}
+                buildWhatsappLink={buildWhatsappLink}
+              />
 
               {/* Clean Hairline GitHub & Edge Synced Index Table (Like Framer Recognition Rows) */}
               <ScrollReveal direction="up">
@@ -1231,23 +1139,23 @@ export default function App() {
             </div>
           </section>
 
+          <NoirHairlineTrack />
+
           {/* ===================================================================
               E. 03 — SERVICES ("WHAT WE DO" — ALL 12 SERVICES ARCHITECTURAL ACCORDION + LIVE STAGE)
               (No Poster/Pamphlet Image — Strictly Services from the Catalog)
           =================================================================== */}
-          <section
-            id="freelance"
-            className="py-20 sm:py-28 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
-          >
+          <section id="freelance" className="py-20 sm:py-28">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div className="space-y-3 max-w-2xl">
-                    <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600] font-semibold">
-                      <span>03 — SERVICES</span>
-                      <span aria-hidden="true">·</span>
-                      <span className="text-zinc-500 dark:text-[#A8A8A8]">(03/06)</span>
-                    </div>
+                <div className="space-y-5">
+                  <NoirSectionBar
+                    indexLabel="03 — SERVICES"
+                    sectionCode="(03/06)"
+                    rightLabel="SAHAYAK.STUDIO CATALOG"
+                  />
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-3 max-w-2xl">
                     <h2
                       className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
                       style={{ textWrap: 'balance' }}
@@ -1312,6 +1220,7 @@ export default function App() {
                     </button>
                   </div>
                 </div>
+              </div>
               </ScrollReveal>
 
               {/* Framer Luxury Asymmetric Service Rows (Left) + Sticky Interactive Inspector (Right) */}
@@ -1322,7 +1231,12 @@ export default function App() {
                     const isActive = activeService.id === service.id;
 
                     return (
-                      <div key={service.id} className="transition-colors">
+                      <motion.div
+                        key={service.id}
+                        whileHover={{ x: 8 }}
+                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                        className="transition-colors"
+                      >
                         <button
                           type="button"
                           onClick={() => setActiveServiceId(service.id)}
@@ -1428,7 +1342,7 @@ export default function App() {
                             </div>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -1486,35 +1400,65 @@ export default function App() {
             </div>
           </section>
 
+          <NoirHairlineTrack />
+
           {/* ===================================================================
-              F. 04 — PROCESS ("HOW IT HAPPENS" — 4-STEP STUDIO PROCESS)
+              F. 04 — PROCESS, CAPABILITIES & ORBIT LAUNCH CTA ((04/06))
           =================================================================== */}
-          <section
-            id="process"
-            className="py-20 sm:py-24 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
-          >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+          <section id="process" className="relative py-20 sm:py-28 overflow-hidden">
+            {/* Framer Crimson Atmospheric Ambient Red Glow */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[780px] h-[420px] rounded-full opacity-25 dark:opacity-40 blur-3xl"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(225,6,0,0.45) 0%, rgba(225,6,0,0.08) 55%, transparent 100%)',
+              }}
+            />
+
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-14 relative z-10">
               <ScrollReveal direction="up">
-                <div className="space-y-3 max-w-2xl">
-                  <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600] font-semibold">
-                    <span>04 — PROCESS</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="text-zinc-500 dark:text-[#A8A8A8]">(04/06)</span>
+                <div className="space-y-5">
+                  <NoirSectionBar
+                    indexLabel="04 — PROCESS & CAPABILITIES"
+                    sectionCode="(04/06)"
+                    rightLabel="DISCOVER → LAUNCH"
+                  />
+
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+                    <div className="space-y-3 max-w-2xl">
+                      <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
+                        HOW IT{' '}
+                        <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                          happens.
+                        </span>
+                      </h2>
+                      <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
+                        Structured sprint execution paired with full-stack &amp; mobile engineering precision.
+                      </p>
+                    </div>
+
+                    {/* Framer Rotating Orbit Ring CTA */}
+                    <NoirOrbitCTA
+                      sublabel="READY TO LAUNCH?"
+                      label="START PROJECT"
+                      onClick={() =>
+                        handleSelectInquiryTopicAndScroll(
+                          'Website Development (Business / Portfolio / Landing Page)'
+                        )
+                      }
+                    />
                   </div>
-                  <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
-                    HOW IT{' '}
-                    <span className="font-editorial italic lowercase font-normal text-[#E10600]">
-                      happens.
-                    </span>
-                  </h2>
                 </div>
               </ScrollReveal>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-zinc-300/80 dark:border-[#F2F0EB]/12 divide-y md:divide-y-0 md:divide-x divide-zinc-300/80 dark:divide-[#F2F0EB]/12 rounded-xl overflow-hidden bg-white dark:bg-[#0B0B0B]">
                 {STUDIO_PROCESS_STEPS.map((item) => (
-                  <div
+                  <motion.div
                     key={item.index}
-                    className="p-6 sm:p-7 flex flex-col justify-between space-y-8"
+                    whileHover={{ y: -4 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="p-6 sm:p-7 flex flex-col justify-between space-y-8 hover:bg-zinc-50 dark:hover:bg-[#111111] transition-colors"
                   >
                     <div className="space-y-3">
                       <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
@@ -1530,19 +1474,31 @@ export default function App() {
                     <span className="font-display text-4xl text-zinc-300 dark:text-[#F2F0EB]/15 leading-none">
                       {item.index}
                     </span>
-                  </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Framer Animated Skill Strength Bars (`Skill Row`) */}
+              <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 border-t border-zinc-300/70 dark:border-[#F2F0EB]/12">
+                {NOIR_CAPABILITY_ROWS.map((row) => (
+                  <NoirSkillRow
+                    key={row.title}
+                    title={row.title}
+                    metric={row.metric}
+                    percentage={row.percentage}
+                    detail={row.detail}
+                  />
                 ))}
               </div>
             </div>
           </section>
 
+          <NoirHairlineTrack />
+
           {/* ===================================================================
               G. 05 — BEHIND THE FRAME · ABOUT, ACADEMICS & CV ((05/06))
           =================================================================== */}
-          <section
-            id="about-gateway"
-            className="py-20 sm:py-24 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
-          >
+          <section id="about-gateway" className="py-20 sm:py-24">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
               <ScrollReveal direction="up">
                 <div className="p-7 sm:p-12 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -1592,26 +1548,27 @@ export default function App() {
             </div>
           </section>
 
+          <NoirHairlineTrack />
+
           {/* ===================================================================
               H. BEFORE YOU ASK · FAQ ACCORDION (Matching Framer Section 12)
           =================================================================== */}
-          <section
-            id="faq"
-            className="py-20 sm:py-24 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10"
-          >
+          <section id="faq" className="py-20 sm:py-24">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
               <ScrollReveal direction="up">
-                <div className="space-y-3 max-w-2xl">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] font-semibold text-[#E10600]">
-                    QUESTIONS · BEFORE WE START
-                  </p>
+                <div className="space-y-4">
+                  <NoirSectionBar
+                    indexLabel="QUESTIONS · BEFORE WE START"
+                    sectionCode="FAQ"
+                    rightLabel="TIMELINE & DELIVERY"
+                  />
                   <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
                     BEFORE YOU{' '}
                     <span className="font-editorial italic lowercase font-normal text-[#E10600]">
                       ask.
                     </span>
                   </h2>
-                  <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
+                  <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] max-w-2xl">
                     The questions clients and brands ask most before starting a custom build.
                   </p>
                 </div>
@@ -1653,20 +1610,31 @@ export default function App() {
             </div>
           </section>
 
+          <NoirHairlineTrack />
+
           {/* ===================================================================
               I. 06 — LET'S CREATE SOMETHING UNREAL · CONTACT ((06/06))
           =================================================================== */}
-          <section id="contact" className="py-20 sm:py-28">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-14">
+          <section id="contact" className="relative py-20 sm:py-28 overflow-hidden">
+            {/* Framer Crimson Atmospheric Ambient Red Glow */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[820px] h-[380px] rounded-full opacity-20 dark:opacity-35 blur-3xl"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(225,6,0,0.4) 0%, rgba(225,6,0,0.06) 55%, transparent 100%)',
+              }}
+            />
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-14 relative z-10">
               <ScrollReveal direction="up">
-                <div className="space-y-4 max-w-4xl">
-                  <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] font-semibold text-[#E10600]">
-                    <span>06 — GET IN TOUCH</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="text-zinc-500 dark:text-[#A8A8A8]">(06/06)</span>
-                  </div>
+                <div className="space-y-4">
+                  <NoirSectionBar
+                    indexLabel="06 — GET IN TOUCH"
+                    sectionCode="(06/06)"
+                    rightLabel="WHATSAPP · EMAIL · SAHAYAK.STUDIO"
+                  />
                   <h2
-                    className="font-display text-4xl sm:text-7xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.90]"
+                    className="font-display text-4xl sm:text-7xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.90] max-w-4xl"
                     style={{ textWrap: 'balance' }}
                   >
                     LET&apos;S CREATE SOMETHING{' '}
@@ -1898,10 +1866,10 @@ export default function App() {
 
                 <div className="p-5 space-y-1">
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    03 — GSTIN &amp; SUPPORT
+                    03 — SUPPORT
                   </p>
-                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB] tabular-nums">
-                    {studioBrand.gstNumber}
+                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
+                    SAHAYAK SUPPORT
                   </p>
                   <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
                     {personal.studioEmail}

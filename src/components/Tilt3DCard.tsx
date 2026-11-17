@@ -5,6 +5,7 @@ interface Tilt3DCardProps {
   className?: string;
   maxTiltDeg?: number;
   spotlightColor?: string;
+  noirCursorLabel?: string;
   onClick?: () => void;
   role?: string;
   tabIndex?: number;
@@ -14,8 +15,9 @@ interface Tilt3DCardProps {
 export const Tilt3DCard: React.FC<Tilt3DCardProps> = ({
   children,
   className = '',
-  maxTiltDeg = 5.5,
-  spotlightColor = 'rgba(59, 130, 246, 0.14)',
+  maxTiltDeg = 4.5,
+  spotlightColor = 'rgba(225, 6, 0, 0.16)',
+  noirCursorLabel,
   onClick,
   role,
   tabIndex,
@@ -45,15 +47,15 @@ export const Tilt3DCard: React.FC<Tilt3DCardProps> = ({
       const rotateX = ((y - centerY) / centerY) * -maxTiltDeg;
       const rotateY = ((x - centerX) / centerX) * maxTiltDeg;
 
-      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(
+      card.style.transform = `perspective(1100px) rotateX(${rotateX.toFixed(
         2
-      )}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.01, 1.01, 1.01)`;
+      )}deg) rotateY(${rotateY.toFixed(2)}deg) translate3d(0, -4px, 0) scale3d(1.008, 1.008, 1.008)`;
 
       if (spotlightRef.current) {
         const px = ((x / rect.width) * 100).toFixed(1);
         const py = ((y / rect.height) * 100).toFixed(1);
         spotlightRef.current.style.opacity = '1';
-        spotlightRef.current.style.background = `radial-gradient(480px circle at ${px}% ${py}%, ${spotlightColor}, transparent 65%)`;
+        spotlightRef.current.style.background = `radial-gradient(500px circle at ${px}% ${py}%, ${spotlightColor}, transparent 65%)`;
       }
     });
   };
@@ -66,7 +68,7 @@ export const Tilt3DCard: React.FC<Tilt3DCardProps> = ({
     pointerStartRef.current = null;
     if (cardRef.current) {
       cardRef.current.style.transform =
-        'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        'perspective(1100px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale3d(1, 1, 1)';
     }
     if (spotlightRef.current) {
       spotlightRef.current.style.opacity = '0';
@@ -103,6 +105,7 @@ export const Tilt3DCard: React.FC<Tilt3DCardProps> = ({
   return (
     <div
       ref={cardRef}
+      data-noir-cursor={noirCursorLabel}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={resetTilt}
@@ -113,14 +116,15 @@ export const Tilt3DCard: React.FC<Tilt3DCardProps> = ({
       role={role}
       tabIndex={tabIndex}
       aria-label={ariaLabel}
-      className={`relative overflow-hidden transition-transform duration-200 ease-out touch-pan-y ${className}`}
+      className={`relative overflow-hidden transition-transform duration-300 ease-out touch-pan-y hover:shadow-[0_24px_60px_rgba(5,5,5,0.22)] ${className}`}
       style={{
-        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+        transform:
+          'perspective(1100px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale3d(1, 1, 1)',
         transformStyle: 'preserve-3d',
         touchAction: 'pan-y',
       }}
     >
-      {/* Subtle Cursor/Pointer Spotlight Overlay */}
+      {/* Subtle Crimson Specular Pointer Glare Overlay */}
       <div
         ref={spotlightRef}
         className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
