@@ -70,10 +70,14 @@ export const NoirScrollBlur: React.FC<{ children: React.ReactNode; className?: s
   className = '',
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const blur = useTransform(scrollYProgress, [0, 0.75], [0, 14]);
+  // Progress starts only when the hero's BOTTOM reaches the bottom of the
+  // screen. On phones/tablets the hero is taller than the viewport (photo
+  // card sits below the fold) — it must stay sharp while being read and only
+  // blur away once the visitor has scrolled past all of it.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['end end', 'end start'] });
+  const blur = useTransform(scrollYProgress, [0.15, 0.85], [0, 14]);
   const filter = useTransform(blur, (b) => `blur(${b}px)`);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.25]);
+  const opacity = useTransform(scrollYProgress, [0.15, 0.9], [1, 0.25]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -70]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.97]);
   return (

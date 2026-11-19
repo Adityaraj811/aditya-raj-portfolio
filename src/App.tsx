@@ -1062,10 +1062,22 @@ export default function App() {
                       >
                         <button
                           type="button"
-                          onClick={() => setActiveServiceId(service.id)}
-                          onMouseEnter={() => setActiveServiceId(service.id)}
+                          onClick={(e) => {
+                            setActiveServiceId(service.id);
+                            // Phones/tablets: the previously open row collapses above, so bring the
+                            // tapped title back under the header instead of landing mid-details.
+                            const row = e.currentTarget;
+                            if (window.innerWidth < 1024) {
+                              requestAnimationFrame(() =>
+                                requestAnimationFrame(() => row.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+                              );
+                            }
+                          }}
+                          onMouseEnter={() => {
+                            if (window.matchMedia?.('(hover: hover) and (pointer: fine)').matches) setActiveServiceId(service.id);
+                          }}
                           aria-expanded={isActive}
-                          className="w-full py-5 flex items-center justify-between gap-4 text-left cursor-pointer group"
+                          className="scroll-mt-20 w-full py-5 flex items-center justify-between gap-4 text-left cursor-pointer group"
                         >
                           <div className="flex items-baseline gap-4 sm:gap-6 min-w-0">
                             <span

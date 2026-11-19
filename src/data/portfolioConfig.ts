@@ -183,7 +183,7 @@ export const portfolioConfig = {
     availabilityNotice: 'Available for Freelance Projects & SDE Roles',
 
     profileImagePath: resolvePublicAsset(
-      '/assets/aistudio/Gemini_Generated_Image_35wl4q35wl4q35wl-clean_43bc697e.png'
+      'images/aditya-portrait.webp'
     ),
     profileFallbackSvg: resolvePublicAsset('images/profile-placeholder.svg'),
 
