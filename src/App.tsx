@@ -575,7 +575,7 @@ export default function App() {
                 }}
                 className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
               >
-                04 About &amp; CV →
+                04 About →
               </a>
               <a
                 href="#contact"
@@ -782,7 +782,7 @@ export default function App() {
                         onClick={navigateToAbout}
                         className="inline-flex items-center gap-2 px-5 py-3.5 rounded-md border border-[#F2F0EB]/25 hover:border-[#E10600] text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                       >
-                        <span>About &amp; CV</span>
+                        <span>About</span>
                       </button>
                     </div>
 
