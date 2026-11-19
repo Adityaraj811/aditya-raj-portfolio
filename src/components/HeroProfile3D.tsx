@@ -236,9 +236,6 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
                   <p className="font-display text-2xl tracking-wide uppercase text-[#F2F0EB] leading-none">
                     {name}
                   </p>
-                  <p className="font-editorial italic text-base text-[#E10600] mt-0.5">
-                    {headline}
-                  </p>
                 </div>
                 <span className="font-mono text-[10px] tracking-widest text-[#F2F0EB]/75 uppercase">
                   EST. 2022
