@@ -30,7 +30,7 @@ export const NoirLogo: React.FC<{ name: string; tag?: string; onClick: () => voi
   >
     <span
       aria-hidden="true"
-      className="w-2.5 h-2.5 bg-[#E10600] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-[135deg] group-hover:scale-90"
+      className="w-2.5 h-2.5 bg-[#E10600] animate-noir-logo-spin group-hover:[animation-duration:1.4s]"
     />
     <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#111111] dark:text-[#F2F0EB]">
       {name} <span className="text-zinc-500 dark:text-[#A8A8A8]">—</span> {tag}
@@ -63,30 +63,21 @@ export const NoirNavLink: React.FC<NoirNavLinkProps> = ({ index, label, href, ac
       <span
         aria-hidden="true"
         className={`w-1 h-1 rounded-full bg-[#E10600] transition-all duration-300 ${
-          active ? 'opacity-100 scale-100' : 'opacity-0 scale-0 -ml-2.5 group-hover:ml-0 group-hover:opacity-100 group-hover:scale-100'
+          active ? 'opacity-100 scale-100' : 'opacity-0 scale-0 -ml-2.5 group-hover:ml-0 group-hover:opacity-100 group-hover:scale-100 group-focus-visible:ml-0 group-focus-visible:opacity-100 group-focus-visible:scale-100'
         }`}
       />
-      {/* rolling label: bone copy rolls up, crimson copy rolls in */}
-      <span className="relative block overflow-hidden leading-[1.35]">
-        <span
-          className={`block transition-transform duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full ${
-            active ? 'text-[#E10600]' : 'text-zinc-700 dark:text-[#F2F0EB]'
-          }`}
-        >
-          {text}
-        </span>
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 block translate-y-full text-[#E10600] transition-transform duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0"
-        >
-          {text}
-        </span>
+      <span
+        className={`leading-[1.35] transition-colors duration-300 ${
+          active ? 'text-[#E10600]' : 'text-zinc-700 dark:text-[#F2F0EB] group-hover:text-[#E10600] group-focus-visible:text-[#E10600]'
+        }`}
+      >
+        <NoirHoverScramble text={text} />
       </span>
       {/* hairline underline */}
       <span
         aria-hidden="true"
         className={`absolute left-0 right-0 -bottom-0.5 h-px bg-[#E10600] origin-left transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+          active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100 group-focus-visible:scale-x-100'
         }`}
       />
     </a>
@@ -147,11 +138,11 @@ export const NoirRingCursor: React.FC = () => {
         }`}
         style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
         animate={{
-          width: hovering ? 58 : 38,
-          height: hovering ? 58 : 38,
+          width: hovering ? 50 : 38,
+          height: hovering ? 50 : 38,
           opacity: show ? 1 : 0,
-          backgroundColor: hovering ? 'rgba(225,6,0,0.14)' : 'rgba(225,6,0,0)',
-          borderColor: hovering ? 'rgba(225,6,0,0.9)' : 'rgba(242,240,235,1)',
+          backgroundColor: hovering ? 'rgba(225,6,0,0.22)' : 'rgba(225,6,0,0)',
+          borderColor: hovering ? 'rgba(225,6,0,0.35)' : 'rgba(242,240,235,1)',
         }}
         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
       />
@@ -163,5 +154,56 @@ export const NoirRingCursor: React.FC = () => {
         transition={{ duration: 0.2 }}
       />
     </>
+  );
+};
+
+/* ------------------------------------------------------------------------- */
+/* Hover scramble: text breaks into glyphs on hover/focus of its link, then  */
+/* settles left → right (template footer + nav behaviour). Touch: on tap.    */
+/* ------------------------------------------------------------------------- */
+const HOVER_GLYPHS = '!<>-_\\/[]{}=+*^?#%&';
+
+export const NoirHoverScramble: React.FC<{ text: string; className?: string }> = ({ text, className = '' }) => {
+  const ref = React.useRef<HTMLSpanElement>(null);
+  const [out, setOut] = useState(text);
+
+  useEffect(() => setOut(text), [text]);
+
+  useEffect(() => {
+    const host = ref.current?.closest('a, button') as HTMLElement | null;
+    if (!host) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    let id = 0;
+    const run = () => {
+      window.clearInterval(id);
+      const start = performance.now();
+      const dur = 420;
+      id = window.setInterval(() => {
+        const p = Math.min(1, (performance.now() - start) / dur);
+        const settled = Math.floor(p * text.length);
+        setOut(
+          text
+            .split('')
+            .map((ch, i) =>
+              i < settled || ch === ' ' ? ch : HOVER_GLYPHS[Math.floor(Math.random() * HOVER_GLYPHS.length)]
+            )
+            .join('')
+        );
+        if (p >= 1) window.clearInterval(id);
+      }, 30);
+    };
+    host.addEventListener('pointerenter', run);
+    host.addEventListener('focus', run);
+    return () => {
+      window.clearInterval(id);
+      host.removeEventListener('pointerenter', run);
+      host.removeEventListener('focus', run);
+    };
+  }, [text]);
+
+  return (
+    <span ref={ref} className={className} aria-label={text}>
+      <span aria-hidden="true">{out}</span>
+    </span>
   );
 };

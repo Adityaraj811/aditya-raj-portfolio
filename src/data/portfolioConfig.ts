@@ -3,7 +3,7 @@
  * CENTRALIZED PORTFOLIO CONFIGURATION — ADITYA RAJ
  * ============================================================================
  * Single source of truth for personal details, brand copy,
- * all 12 freelance services, GitHub repositories,
+ * all 12 freelance services,
  * live website/app samples, FAQs, and academic CV details.
  */
 
@@ -54,7 +54,7 @@ export interface ProjectItem {
   index: string;
   title: string;
   subtitle: string;
-  status: 'Live Website' | 'Completed Application' | 'Public GitHub Repo' | 'In Development' | 'Team Project';
+  status: 'Live Website' | 'Completed Application' | 'In Development' | 'Team Project';
   statusNote: string;
   domain: 'Website Design & Development' | 'Android & Backend' | 'Web Application';
   overview: string;
@@ -66,9 +66,6 @@ export interface ProjectItem {
     layer: string;
     detail: string;
   }[];
-  githubUrl: string;
-  githubButtonLabel: string;
-  githubPlaceholderNote: string;
   liveDemoUrl?: string;
   visualType:
     | 'veloura-cafe-web'
@@ -77,16 +74,6 @@ export interface ProjectItem {
     | 'khata-android'
     | 'apple-vision-web'
     | 'krishi-mitra-web';
-}
-
-export interface PublicGithubRepo {
-  name: string;
-  url: string;
-  homepage?: string;
-  language: string;
-  description: string;
-  category: string;
-  visibilityLabel: 'Public GitHub Repo' | 'Live Production Deployment';
 }
 
 export interface FreelanceServiceItem {
@@ -208,9 +195,6 @@ export const portfolioConfig = {
     linkedinUrl: 'https://www.linkedin.com/in/aditya-raj-523b15265/',
     linkedinHandle: 'linkedin.com/in/aditya-raj-523b15265',
 
-    githubUsername: 'Adityaraj811',
-    githubUrl: 'https://github.com/Adityaraj811',
-    isGithubConfigured: true,
 
     portfolioUrl: 'https://aditya-raj-portfolio-phi.vercel.app/',
 
@@ -227,13 +211,13 @@ export const portfolioConfig = {
     studioEmail: 'adityaraj81156@gmail.com',
     isEmailConfigured: true,
 
-    location: 'Bhopal, India · Worldwide Remote',
+    location: 'Delhi, India · Worldwide Remote',
   },
 
   studioBrand: {
     name: 'ADITYA RAJ',
     subtitle: 'DIGITAL · TECHNOLOGY · INNOVATION',
-    parentCompany: 'Independent Developer · Bhopal, India',
+    parentCompany: 'Independent Developer · Delhi, India',
     tagline: 'From Ideas to Innovation – We Build Your Digital Future.',
     heroLead: 'Your Complete Digital & IT Solutions Partner',
     description:
@@ -247,69 +231,6 @@ export const portfolioConfig = {
     ],
   },
 
-  // --------------------------------------------------------------------------
-  // 2. GITHUB REPOSITORIES & LIVE DEPLOYMENTS (https://github.com/Adityaraj811)
-  // --------------------------------------------------------------------------
-  verifiedGithubRepos: [
-    {
-      name: 'aditya-raj-portfolio',
-      url: 'https://github.com/Adityaraj811/aditya-raj-portfolio',
-      homepage: 'https://aditya-raj-portfolio-phi.vercel.app',
-      language: 'TypeScript',
-      description:
-        'Personal developer portfolio featuring live website previews, Android app screens, interactive animations, and client customization inquiry workflows.',
-      category: 'React · TypeScript · Tailwind CSS · Framer Motion · Vercel',
-      visibilityLabel: 'Public GitHub Repo',
-    },
-    {
-      name: 'Apple-Vision-ui-Web-application',
-      url: 'https://github.com/Adityaraj811/Apple-Vision-ui-Web-application',
-      language: 'TypeScript',
-      description:
-        'Responsive high-fidelity recreation of the Apple Vision Pro spatial interface with GSAP ScrollTrigger timelines, 3D scenes, and interactive HTML5 Canvas visuals.',
-      category: 'HTML5 · CSS3 · TypeScript · React 19 · GSAP · Canvas API',
-      visibilityLabel: 'Public GitHub Repo',
-    },
-    {
-      name: 'dental-clinic (Dr. Shantanu Dental Clinic)',
-      url: 'https://github.com/Adityaraj811',
-      homepage: 'https://dental-clinic.adityaraj81156.workers.dev/',
-      language: 'TypeScript',
-      description:
-        'International-grade dental clinic & healthcare website featuring interactive 3D visuals, dental treatment breakdowns, Schema.org Dentist SEO, and direct WhatsApp booking.',
-      category: 'React · TypeScript · Vite · Tailwind CSS · 3D · Cloudflare Workers',
-      visibilityLabel: 'Live Production Deployment',
-    },
-    {
-      name: 'fitness-jym (Fitness JYM Club)',
-      url: 'https://github.com/Adityaraj811',
-      homepage: 'https://fitness-jym.adityaraj81156.workers.dev/',
-      language: 'TypeScript',
-      description:
-        'High-energy athletic gym & fitness brand website ("Build Strength. Unleash Your Potential.") featuring training programs, membership tiers, and real-time BMI diagnostics.',
-      category: 'React · TypeScript · Vite · Tailwind CSS · Three.js · Cloudflare Workers',
-      visibilityLabel: 'Live Production Deployment',
-    },
-    {
-      name: 'caffetaria (Veloura Specialty Coffee)',
-      url: 'https://github.com/Adityaraj811',
-      homepage: 'https://valoura-one.vercel.app/',
-      language: 'TypeScript',
-      description:
-        'Specialty coffee & creative sanctuary website deployed to production on Vercel featuring interactive espresso & alchemy showcases, smooth Motion animations, and responsive design.',
-      category: 'React · TypeScript · Vite · Motion · Vercel',
-      visibilityLabel: 'Live Production Deployment',
-    },
-    {
-      name: 'khata-expence-manager (KHATA Android + Spring Boot)',
-      url: 'https://github.com/Adityaraj811',
-      language: 'Java',
-      description:
-        'Household shared expense management Android app (Java, XML, MVVM, Room, Retrofit) paired with a Spring Boot REST API, Spring Security, JPA/Hibernate, and MySQL backend.',
-      category: 'Java · Android MVVM · Room · Retrofit · Spring Boot · MySQL',
-      visibilityLabel: 'Live Production Deployment',
-    },
-  ] as PublicGithubRepo[],
 
   // --------------------------------------------------------------------------
   // 3. THREE CORE ENGINEERING PILLARS
@@ -619,9 +540,6 @@ export const portfolioConfig = {
           detail: 'Built with Schema.org Dentist JSON-LD structured data and mobile-first responsive layouts.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811',
-      githubButtonLabel: 'GitHub Profile',
-      githubPlaceholderNote: 'Live Client Website',
       liveDemoUrl: 'https://dental-clinic.adityaraj81156.workers.dev/',
       visualType: 'dental-clinic-web',
     },
@@ -666,9 +584,6 @@ export const portfolioConfig = {
           detail: 'High-contrast obsidian (#08090B) and neon-orange (#FF5E00) interface optimized for all devices.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811',
-      githubButtonLabel: 'GitHub Profile',
-      githubPlaceholderNote: 'Live Client Website',
       liveDemoUrl: 'https://fitness-jym.adityaraj81156.workers.dev/',
       visualType: 'fitness-jym-web',
     },
@@ -713,9 +628,6 @@ export const portfolioConfig = {
           detail: 'Smooth entrance transitions, hover micro-interactions, and interactive showcase modules powered by Motion.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811',
-      githubButtonLabel: 'GitHub Profile',
-      githubPlaceholderNote: 'Live Client Website',
       liveDemoUrl: 'https://valoura-one.vercel.app/',
       visualType: 'veloura-cafe-web',
     },
@@ -723,10 +635,10 @@ export const portfolioConfig = {
       id: 'apple-vision-ui-web',
       index: '04.',
       title: 'Apple Vision UI — Interactive Spatial Web Application',
-      subtitle: 'Public GitHub Repo · Responsive Spatial Web Interface · GSAP & Canvas API',
-      status: 'Public GitHub Repo',
+      subtitle: 'Completed Application · Responsive Spatial Web Interface · GSAP & Canvas API',
+      status: 'Completed Application',
       statusNote:
-        'Open-source repository on GitHub (Adityaraj811/Apple-Vision-ui-Web-application) featuring scroll-driven GSAP animations and interactive HTML5 Canvas visuals.',
+        'Interactive spatial web application featuring scroll-driven GSAP animations and interactive HTML5 Canvas visuals.',
       domain: 'Web Application',
       overview:
         'Designed and developed a responsive, high-fidelity recreation of the Apple Vision Pro spatial web interface featuring scroll-driven GSAP and ScrollTrigger animations, 3D WebGL scenes, interactive HTML5 Canvas visuals, and customizable visionOS visual themes.',
@@ -736,7 +648,7 @@ export const portfolioConfig = {
         'Support customizable visionOS themes, adaptive dark/light mode, and responsive multi-device layouts.',
       ],
       contribution: [
-        'Built and published the complete spatial web interface on GitHub (Apple-Vision-ui-Web-application).',
+        'Built and shipped the complete spatial web interface end to end.',
         'Engineered HTML5 2D Canvas modules for 360° scrubbing, 5-layer optical stack inspection, and M2 + R1 / Eye Tracking visualizers.',
         'Implemented GSAP ScrollTrigger timelines, interactive Three.js 3D hardware studio, and customizable visionOS themes.',
       ],
@@ -769,9 +681,6 @@ export const portfolioConfig = {
           detail: 'HTML5, CSS3, React & TypeScript architecture with visionOS environment themes and responsive layouts.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811/Apple-Vision-ui-Web-application',
-      githubButtonLabel: 'View GitHub Repo',
-      githubPlaceholderNote: 'github.com/Adityaraj811/Apple-Vision-ui-Web-application',
       visualType: 'apple-vision-web',
     },
     {
@@ -827,9 +736,6 @@ export const portfolioConfig = {
           detail: 'Spring Boot REST endpoints secured with Spring Security and persisted via JPA/Hibernate repositories in MySQL.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811',
-      githubButtonLabel: 'GitHub Profile',
-      githubPlaceholderNote: 'Android + Spring Boot Architecture',
       visualType: 'khata-android',
     },
     {
@@ -873,9 +779,6 @@ export const portfolioConfig = {
           detail: 'Data-driven crop economics view connecting Java/Python backend insights with interactive visual analytics.',
         },
       ],
-      githubUrl: 'https://github.com/Adityaraj811',
-      githubButtonLabel: 'GitHub Profile',
-      githubPlaceholderNote: 'Team Project · Multilingual PWA',
       visualType: 'krishi-mitra-web',
     },
   ] as ProjectItem[],
@@ -1250,7 +1153,7 @@ export const portfolioConfig = {
 
     // NOTE: confirm the freelance start year — "2025" is an assumption.
     experience: [
-      { period: '2025 – Now', role: 'Freelance Web & App Developer', org: 'Independent', location: 'Bhopal — Worldwide Remote' },
+      { period: '2025 – Now', role: 'Freelance Web & App Developer', org: 'Independent', location: 'Delhi — Worldwide Remote' },
       { period: '2025 – 2026', role: 'Web Development Trainee', org: 'Rinex × E-Cell, IIT Bhubaneswar', location: 'Certification Course' },
       { period: 'Oct – Dec 2025', role: 'Android App Development Intern', org: 'Inspireleap', location: 'Internship' },
       { period: '2022 – 2026', role: 'B.Tech, Computer Science', org: 'Technocrats Institute of Technology', location: 'Bhopal — RGPV' },

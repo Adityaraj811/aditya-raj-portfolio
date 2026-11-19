@@ -448,8 +448,8 @@ html.noir-ring-cursor * {
 
 /* Intro glitch name: CSS entrance so it never waits on JS animation frames */
 @keyframes noirIntroGlitchIn {
-  from { opacity: 0; transform: scale(1.22); }
-  to { opacity: 1; transform: scale(1.12); }
+  from { opacity: 0; transform: scale(1.1); }
+  to { opacity: 1; transform: scale(1); }
 }
 .noir-intro-glitch-in { animation: noirIntroGlitchIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 @keyframes noirIntroWord {
@@ -478,3 +478,8 @@ h2[data-noir-reveal='in'] {
   60% { opacity: 1; }
   100% { opacity: 1; filter: blur(0); clip-path: inset(-10% -5% -20% 0); transform: none; }
 }
+
+/* Header logo mark: slow continuous spin (template), faster on hover */
+@keyframes noirLogoSpin { to { transform: rotate(360deg); } }
+.animate-noir-logo-spin { animation: noirLogoSpin 6s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-noir-logo-spin { animation: none; } }

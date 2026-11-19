@@ -223,10 +223,7 @@ export const NoirPreloader: React.FC = () => {
           {/* Centre stage */}
           <div className="absolute inset-0 flex items-center justify-center px-6">
               {phase === 'glitch' && (
-                <div
-                  className="relative noir-intro-glitch-in"
-                  style={{ transform: 'scale(1.12)' }}
-                >
+                <div className="relative noir-intro-glitch-in max-w-[92vw]">
                   {(['#00E5FF', '#E10600'] as const).map((color, i) => (
                     <span
                       key={color}
@@ -235,7 +232,7 @@ export const NoirPreloader: React.FC = () => {
                         color,
                         opacity: i === 0 ? 0.7 : 0.9,
                         transform: `translateX(${i === 0 ? -split : split}px)`,
-                        fontSize: 'clamp(3rem, 9.6vw, 7.5rem)',
+                        fontSize: 'clamp(2.2rem, 10vw, 7.5rem)',
                         lineHeight: 0.9,
                         letterSpacing: '-0.01em',
                       }}
@@ -245,7 +242,7 @@ export const NoirPreloader: React.FC = () => {
                   ))}
                   <span
                     className="relative block font-display uppercase whitespace-pre text-[#F2F0EB]"
-                    style={{ fontSize: 'clamp(3rem, 9.6vw, 7.5rem)', lineHeight: 0.9, letterSpacing: '-0.01em' }}
+                    style={{ fontSize: 'clamp(2.2rem, 10vw, 7.5rem)', lineHeight: 0.9, letterSpacing: '-0.01em' }}
                   >
                     {scrambled}
                   </span>

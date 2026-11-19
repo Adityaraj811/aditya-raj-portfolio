@@ -411,10 +411,10 @@ export const NoirAboutSection: React.FC<NoirAboutSectionProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
           {/* Portrait */}
-          <div className="lg:col-span-5 space-y-4">
+          <div className="lg:col-span-5 space-y-4 w-full max-w-sm sm:max-w-md mx-auto lg:max-w-none">
             <SlicePortrait src={profileSrc} alt={`${personal.name} portrait`} onError={onProfileError} />
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#6B6B6B]">
-              Fig. 01 — {personal.name}, Bhopal, {new Date().getFullYear()}
+              Fig. 01 — {personal.name}, Delhi, {new Date().getFullYear()}
             </p>
           </div>
 

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Mail, Github, ArrowUpRight } from 'lucide-react';
+import { Mail, Linkedin, ArrowUpRight } from 'lucide-react';
 
 interface HeroProfile3DProps {
   name: string;
@@ -8,8 +8,7 @@ interface HeroProfile3DProps {
   usingFallbackAvatar: boolean;
   onImageError: () => void;
   emailAddress: string;
-  githubUrl: string;
-  githubUsername: string;
+  linkedinUrl: string;
 }
 
 export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
@@ -19,8 +18,7 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
   usingFallbackAvatar,
   onImageError,
   emailAddress,
-  githubUrl,
-  githubUsername,
+  linkedinUrl,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -264,13 +262,13 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
             <span className="truncate">{emailAddress}</span>
           </a>
           <a
-            href={githubUrl}
+            href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-[#F2F0EB] hover:text-[#E10600] shrink-0 transition-colors"
           >
-            <Github className="w-3.5 h-3.5" />
-            <span>@{githubUsername}</span>
+            <Linkedin className="w-3.5 h-3.5" />
+            <span>LinkedIn</span>
             <ArrowUpRight className="w-3 h-3" />
           </a>
         </div>

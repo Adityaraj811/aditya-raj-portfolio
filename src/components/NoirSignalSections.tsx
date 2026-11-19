@@ -5,6 +5,7 @@ import { portfolioConfig } from '../data/portfolioConfig';
 import { ScrollReveal } from './ScrollReveal';
 import { NoirScrambleText } from './NoirScrollFx';
 import { NoirTypeHeading } from './NoirFx2';
+import { NoirHoverScramble } from './NoirChrome';
 
 /**
  * Faithful ports of the Framer "Noir Signal" template sections that the
@@ -493,6 +494,21 @@ export const NoirTestimonials: React.FC = () => {
 /* ========================================================================= */
 /* STUDIO FOOTER · newsletter, three link columns, info cards, wordmark      */
 /* ========================================================================= */
+// Footer link inner: crimson lead dot + hover scramble + hairline underline
+const LinkFx: React.FC<{ label: string }> = ({ label }) => (
+  <>
+    <span
+      aria-hidden="true"
+      className="w-1 h-1 rounded-full bg-[#E10600] opacity-0 scale-0 -ml-2.5 group-hover:ml-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300"
+    />
+    <NoirHoverScramble text={label} />
+    <span
+      aria-hidden="true"
+      className="absolute left-0 right-0 -bottom-0.5 h-px bg-[#E10600] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"
+    />
+  </>
+);
+
 interface NoirStudioFooterProps {
   onNavigate: (sectionId?: string) => void;
   onServices: () => void;
@@ -517,8 +533,10 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
     window.location.href = `mailto:${personal.emailAddress}?subject=${subject}&body=${body}`;
   };
 
+  // template footer link: crimson lead dot + hairline underline + hover scramble
   const linkCls =
-    'text-[15px] text-[#F2F0EB] hover:text-[#E10600] hover:translate-x-1 transition-all inline-block cursor-pointer text-left';
+    'group relative inline-flex items-center gap-1.5 text-[15px] text-[#F2F0EB] hover:text-[#E10600] focus-visible:text-[#E10600] transition-colors cursor-pointer text-left';
+
 
   const navigate: [string, () => void][] = [
     ['About', onAbout],
@@ -538,15 +556,14 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
   const elsewhere: [string, string][] = [
     ['Instagram ↗', personal.instagramUrl],
     ['LinkedIn ↗', personal.linkedinUrl],
-    ['GitHub ↗', personal.githubUrl],
     ['WhatsApp ↗', personal.whatsappDirectUrl],
   ];
 
   const cards = [
-    { k: '01 — Based in', v: 'Bhopal, India', d: 'Working worldwide, remote' },
+    { k: '01 — Based in', v: 'Delhi, India', d: 'Working worldwide, remote' },
     { k: '02 — Availability', v: 'Booking now', d: personal.availabilityNotice, live: true },
     { k: '03 — Response', v: 'Replies within 24h', d: personal.emailAddress },
-    { k: '04 — Code', v: `@${personal.githubUsername}`, d: 'Open source on GitHub' },
+    { k: '04 — Connect', v: 'LinkedIn', d: personal.linkedinHandle },
   ];
 
   return (
@@ -596,7 +613,7 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
               {navigate.map(([label, fn]) => (
                 <li key={label}>
                   <button type="button" onClick={fn} className={linkCls}>
-                    {label}
+                    <LinkFx label={label} />
                   </button>
                 </li>
               ))}
@@ -608,7 +625,7 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
               {studio.map(([label, fn]) => (
                 <li key={label}>
                   <button type="button" onClick={fn} className={linkCls}>
-                    {label}
+                    <LinkFx label={label} />
                   </button>
                 </li>
               ))}
@@ -620,18 +637,18 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
               {elsewhere.map(([label, href]) => (
                 <li key={label}>
                   <a href={href} target="_blank" rel="noopener noreferrer" className={linkCls}>
-                    {label}
+                    <LinkFx label={label} />
                   </a>
                 </li>
               ))}
               <li className="col-span-2 pt-2">
                 <a href={`mailto:${personal.emailAddress}`} className={linkCls}>
-                  {personal.emailAddress}
+                  <LinkFx label={personal.emailAddress} />
                 </a>
               </li>
               <li className="col-span-2">
                 <a href={`tel:${personal.mobileNumber.replace(/\s/g, '')}`} className={linkCls}>
-                  {personal.mobileNumber}
+                  <LinkFx label={personal.mobileNumber} />
                 </a>
               </li>
             </ul>
@@ -669,7 +686,7 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
             ©{new Date().getFullYear()} {personal.name} · All rights reserved
           </p>
           <div className="flex items-center gap-6">
-            <span className="tabular-nums">Bhopal — {liveTime}</span>
+            <span className="tabular-nums">Delhi — {liveTime}</span>
             <button
               type="button"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

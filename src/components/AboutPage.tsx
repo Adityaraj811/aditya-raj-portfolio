@@ -10,7 +10,6 @@ import {
   Code2,
   Briefcase,
   Linkedin,
-  Github,
   MessageSquare,
   Instagram,
   Mail,
@@ -202,8 +201,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                 usingFallbackAvatar={usingFallbackAvatar}
                 onImageError={onImageError}
                 emailAddress={personal.emailAddress}
-                githubUrl={personal.githubUrl}
-                githubUsername={personal.githubUsername}
+                linkedinUrl={personal.linkedinUrl}
               />
             </ScrollReveal>
           </div>

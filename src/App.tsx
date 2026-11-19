@@ -8,7 +8,6 @@ import {
   ArrowRight,
   ArrowUp,
   Linkedin,
-  Github,
   Instagram,
   Mail,
   MessageSquare,
@@ -25,7 +24,6 @@ import {
 import {
   portfolioConfig,
   type ProjectItem,
-  type PublicGithubRepo,
 } from './data/portfolioConfig';
 import { ServiceMockupVisual } from './components/ServiceMockupVisual';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
@@ -71,14 +69,6 @@ import { motion } from 'framer-motion';
 import { velouraSoundEngine } from './utils/velouraSoundEngine';
 
 type PageRoute = 'home' | 'services' | 'about';
-
-interface GithubApiRepo {
-  name: string;
-  html_url: string;
-  homepage: string | null;
-  language: string | null;
-  description: string | null;
-}
 
 function detectInitialRoute(): PageRoute {
   if (typeof window === 'undefined') return 'home';
@@ -184,7 +174,6 @@ export default function App() {
   const {
     personal,
     studioBrand,
-    verifiedGithubRepos,
     projects,
     freelanceSection,
     faqs,
@@ -259,39 +248,6 @@ export default function App() {
     const id = window.setInterval(updateClock, 1000);
     return () => window.clearInterval(id);
   }, []);
-
-  // Live GitHub Repository Sync (@Adityaraj811 public repos + verified deployments)
-  const [githubRepos, setGithubRepos] = useState<PublicGithubRepo[]>(verifiedGithubRepos);
-  useEffect(() => {
-    let active = true;
-    fetch(`https://api.github.com/users/${personal.githubUsername}/repos?per_page=100&sort=updated`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: GithubApiRepo[] | null) => {
-        if (!active || !Array.isArray(data) || data.length === 0) return;
-        const apiMapped: PublicGithubRepo[] = data.map((repo) => ({
-          name: repo.name,
-          url: repo.html_url,
-          homepage: repo.homepage || undefined,
-          language: repo.language || 'TypeScript',
-          description:
-            repo.description || `Source repository for ${repo.name} by ${personal.name}.`,
-          category: `${repo.language || 'Web'} · Public GitHub Repository`,
-          visibilityLabel: 'Public GitHub Repo',
-        }));
-
-        const apiNames = new Set(apiMapped.map((r) => r.name.toLowerCase()));
-        const remainingVerified = verifiedGithubRepos.filter(
-          (v) => !apiNames.has(v.name.toLowerCase().split(' ')[0])
-        );
-        setGithubRepos([...apiMapped, ...remainingVerified]);
-      })
-      .catch(() => {
-        // Silent fallback to verified repositories
-      });
-    return () => {
-      active = false;
-    };
-  }, [personal.githubUsername, personal.name, verifiedGithubRepos]);
 
   // Page Routing State ('home' | 'services' | 'about')
   const [currentPage, setCurrentPage] = useState<PageRoute>(() => detectInitialRoute());
@@ -501,7 +457,7 @@ export default function App() {
           <NoirLogo name="ADITYA RAJ" onClick={() => navigateToPortfolio()} />
 
           {/* Zone 2: Clean Single-Line Typographic Nav Links */}
-          <nav aria-label="Primary Navigation" className="hidden md:flex items-center gap-6 lg:gap-7">
+          <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-5 xl:gap-7">
             <NoirNavLink
               index="01"
               label="Services"
@@ -548,7 +504,7 @@ export default function App() {
                   'Website Development (Business / Portfolio / Landing Page)'
                 )
               }
-              className="group hidden sm:inline-flex items-center gap-2 whitespace-nowrap shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-700 dark:text-[#F2F0EB] hover:text-[#E10600] transition-colors cursor-pointer"
+              className="group hidden xl:inline-flex items-center gap-2 whitespace-nowrap shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-700 dark:text-[#F2F0EB] hover:text-[#E10600] transition-colors cursor-pointer"
             >
               <span aria-hidden="true" className="w-[7px] h-[7px] rounded-full bg-[#E10600] animate-noir-blink" />
               <span>Available for work</span>
@@ -556,7 +512,7 @@ export default function App() {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-zinc-700 dark:text-[#F2F0EB] hover:bg-zinc-200/70 dark:hover:bg-[#141414] transition-colors"
+              className="lg:hidden p-2 rounded-md text-zinc-700 dark:text-[#F2F0EB] hover:bg-zinc-200/70 dark:hover:bg-[#141414] transition-colors"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -567,7 +523,7 @@ export default function App() {
 
         {/* Mobile Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-zinc-200 dark:border-[#F2F0EB]/10 bg-[#F5F4F0] dark:bg-[#050505] px-6 py-5 space-y-4">
+          <div className="lg:hidden border-t border-zinc-200 dark:border-[#F2F0EB]/10 bg-[#F5F4F0] dark:bg-[#050505] px-6 py-5 space-y-4">
             <div className="grid grid-cols-2 gap-3 text-xs font-mono uppercase tracking-wider">
               <a
                 href="#freelance"
@@ -785,8 +741,8 @@ export default function App() {
                       >
                         developer{' '}
                       </span>
-                      <span className="animate-ts-word" style={{ animationDelay: '0.20s' }}>
-                        &amp; DIGITAL{' '}
+                      <span className="animate-ts-word mr-[0.22em]" style={{ animationDelay: '0.20s' }}>
+                        &amp; DIGITAL
                       </span>
                       <span
                         className="animate-ts-word font-editorial italic lowercase font-normal text-[#E10600]"
@@ -841,16 +797,6 @@ export default function App() {
                         <ArrowUpRight className="w-3 h-3" />
                       </a>
                       <a
-                        href={personal.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
-                      >
-                        <Github className="w-3.5 h-3.5" />
-                        <span>GitHub (@{personal.githubUsername})</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
-                      <a
                         href={personal.linkedinUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -883,8 +829,7 @@ export default function App() {
                     usingFallbackAvatar={usingFallbackAvatar}
                     onImageError={handleProfileImageError}
                     emailAddress={personal.emailAddress}
-                    githubUrl={personal.githubUrl}
-                    githubUsername={personal.githubUsername}
+                    linkedinUrl={personal.linkedinUrl}
                   />
                 </ScrollReveal>
               </div>
@@ -931,7 +876,7 @@ export default function App() {
           <NoirDualMarquee />
 
           {/* 01 — Manifesto: typewriter statement on bone (Framer Noir Signal) */}
-          <NoirTypeManifesto signature={`${personal.name.toUpperCase()}, BHOPAL, ${new Date().getFullYear()}`} />
+          <NoirTypeManifesto signature={`${personal.name.toUpperCase()}, DELHI, ${new Date().getFullYear()}`} />
 
           <NoirHairlineTrack />
 
@@ -1004,84 +949,6 @@ export default function App() {
                 buildWhatsappLink={buildWhatsappLink}
               />
 
-              {/* Clean Hairline GitHub & Edge Synced Index Table (Like Framer Recognition Rows) */}
-              <ScrollReveal direction="up">
-                <div className="pt-10 space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-zinc-300/70 dark:border-[#F2F0EB]/12">
-                    <div className="space-y-1">
-                      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
-                        GITHUB &amp; EDGE REPOSITORY INDEX · @{personal.githubUsername}
-                      </p>
-                      <h3 className="font-display text-2xl sm:text-4xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
-                        SYNCED CODE &amp; LIVE DEPLOYMENTS
-                      </h3>
-                    </div>
-
-                    <a
-                      href={personal.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] hover:text-[#E10600] transition-colors whitespace-nowrap shrink-0"
-                    >
-                      <Github className="w-4 h-4" />
-                      <span>github.com/{personal.githubUsername}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-[#E10600]" />
-                    </a>
-                  </div>
-
-                  <div className="divide-y divide-zinc-300/70 dark:divide-[#F2F0EB]/10 border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
-                    {githubRepos.map((repo, i) => (
-                      <div
-                        key={repo.name}
-                        className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-zinc-200/40 dark:hover:bg-[#0E0E0E] px-2 sm:px-3 -mx-2 sm:-mx-3 rounded-md transition-colors"
-                      >
-                        <div className="flex items-start md:items-center gap-4 min-w-0">
-                          <span className="font-mono text-xs text-[#E10600] font-semibold shrink-0 tabular-nums">
-                            0{i + 1}
-                          </span>
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-2.5">
-                              <h4 className="font-display text-xl tracking-wide uppercase text-[#111111] dark:text-[#F2F0EB]">
-                                {repo.name}
-                              </h4>
-                              <span className="font-mono text-[11px] uppercase text-zinc-500 dark:text-[#A8A8A8]">
-                                · {repo.language} · {repo.visibilityLabel}
-                              </span>
-                            </div>
-                            <p className="text-xs text-zinc-600 dark:text-[#A8A8A8] mt-0.5 line-clamp-1">
-                              {repo.description}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-wider shrink-0 pl-8 md:pl-0">
-                          <a
-                            href={repo.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-zinc-700 dark:text-[#F2F0EB]/80 hover:text-[#E10600] transition-colors"
-                          >
-                            <span>GitHub</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </a>
-
-                          {repo.homepage && (
-                            <a
-                              href={repo.homepage}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[#E10600] font-semibold hover:underline"
-                            >
-                              <span>Live Site</span>
-                              <ArrowUpRight className="w-3.5 h-3.5" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollReveal>
             </div>
           </section>
 
@@ -1545,7 +1412,6 @@ export default function App() {
                 socials={[
                   { label: 'Instagram', href: personal.instagramUrl },
                   { label: 'LinkedIn', href: personal.linkedinUrl },
-                  { label: 'GitHub', href: personal.githubUrl },
                   { label: 'WhatsApp', href: personal.whatsappDirectUrl },
                 ]}
                 onGetInTouch={() => window.open(personal.whatsappDirectUrl, '_blank', 'noopener,noreferrer')}
@@ -1631,7 +1497,7 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
+                  <div className="sm:col-span-2 p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
                     <div className="space-y-1.5">
                       <Linkedin className="w-5 h-5 text-sky-500" />
                       <h3 className="font-display text-2xl uppercase text-[#111111] dark:text-[#F2F0EB]">
@@ -1653,27 +1519,6 @@ export default function App() {
                     </a>
                   </div>
 
-                  <div className="p-6 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 flex flex-col justify-between">
-                    <div className="space-y-1.5">
-                      <Github className="w-5 h-5 text-zinc-700 dark:text-[#F2F0EB]" />
-                      <h3 className="font-display text-2xl uppercase text-[#111111] dark:text-[#F2F0EB]">
-                        GitHub
-                      </h3>
-                      <p className="text-xs font-mono text-zinc-500 dark:text-[#A8A8A8]">
-                        github.com/{personal.githubUsername}
-                      </p>
-                    </div>
-
-                    <a
-                      href={personal.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-5 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] font-mono text-xs uppercase tracking-wider font-semibold text-zinc-800 dark:text-[#F2F0EB] transition-colors"
-                    >
-                      <span>View Repositories</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
                 </div>
 
                 {/* Right Column: Requirement Selector & Launcher */}

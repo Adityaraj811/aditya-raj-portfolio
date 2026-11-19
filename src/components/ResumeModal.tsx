@@ -233,16 +233,6 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   </a>
                   <span>|</span>
                   <span>{personal.mobileNumber}</span>
-                  <span>|</span>
-                  <a
-                    href={personal.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-0.5 text-blue-700 font-medium hover:underline"
-                  >
-                    <span>GitHub</span>
-                    <ArrowUpRight className="w-3 h-3" />
-                  </a>
                 </div>
               </div>
 
@@ -313,15 +303,6 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                         KHATA – Shared Expense Management App{' '}
                         <span className="font-semibold text-[#1e4b7a]">| In Development</span>
                       </p>
-                      <a
-                        href="https://github.com/Adityaraj811/khata-expence-manager"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
-                      >
-                        <span>GitHub</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
                     </div>
                     <p className="text-zinc-600 text-xs mt-0.5">
                       Java, Android XML, MVVM, Room, Retrofit, Spring Boot, REST APIs, Spring Security, JPA/Hibernate, MySQL
@@ -359,15 +340,6 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-bold text-zinc-900">Apple Vision UI – Web Application</p>
-                      <a
-                        href="https://github.com/Adityaraj811/Apple-Vision-ui-Web-application"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
-                      >
-                        <span>GitHub</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
                     </div>
                     <p className="text-zinc-600 text-xs mt-0.5">
                       HTML5, CSS3, JavaScript, GSAP, ScrollTrigger, Canvas API
@@ -385,15 +357,6 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                         KrishiMitra – AI-Based Crop Recommendation System{' '}
                         <span className="font-normal text-zinc-600">| Team Project</span>
                       </p>
-                      <a
-                        href={personal.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-0.5 text-[11px] text-blue-700 font-medium hover:underline"
-                      >
-                        <span>GitHub</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
                     </div>
                     <p className="text-zinc-600 text-xs mt-0.5">
                       Java, Python, Scikit-learn, React, TypeScript, PWA

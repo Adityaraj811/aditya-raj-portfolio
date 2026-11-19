@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { NoirScrambleText } from './NoirScrollFx';
+import { NoirHoverScramble } from './NoirChrome';
 
 /**
  * ============================================================================
@@ -232,7 +233,7 @@ export const NoirContactBanner: React.FC<{
             rel="noopener noreferrer"
             className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-600 dark:text-[#A8A8A8] hover:text-[#E10600] transition-colors inline-flex items-center gap-1"
           >
-            {s.label}
+            <NoirHoverScramble text={s.label} />
             <ArrowUpRight className="w-3 h-3" />
           </a>
         ))}
@@ -249,7 +250,7 @@ export const NoirTalkRibbon: React.FC<{ year: number }> = ({ year }) => {
     { text: "LET'S TALK", style: 'outline' },
     { text: 'great ideas', style: 'serif' },
     { text: `OPEN FOR ${year + 1}`, style: 'solid' },
-    { text: 'BHOPAL', style: 'outline' },
+    { text: 'DELHI', style: 'outline' },
     { text: 'worldwide', style: 'serif' },
   ];
   return (
