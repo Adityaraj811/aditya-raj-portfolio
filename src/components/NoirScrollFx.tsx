@@ -386,7 +386,20 @@ export const NoirAboutSection: React.FC<NoirAboutSectionProps> = ({
   onOpenAbout,
   onOpenCv,
 }) => {
-  const { personal, about, education, skillCategories, studioBrand } = portfolioConfig;
+  const { personal, about, freelanceSection, studioBrand } = portfolioConfig;
+  // Service groups (same split as the Services section tabs)
+  const serviceGroups = [
+    { id: 'web', title: 'Websites & E-commerce' },
+    { id: 'apps', title: 'Apps, CRM & Software' },
+    { id: 'growth', title: 'Branding, Marketing & IT' },
+  ].map((g) => ({
+    ...g,
+    count: freelanceSection.services.filter((s) => s.category === g.id).length,
+    names: freelanceSection.services
+      .filter((s) => s.category === g.id)
+      .map((s) => s.title)
+      .join(' · '),
+  }));
 
   return (
     <section id="about-gateway" className="relative bg-[#050505] text-[#F2F0EB] py-24 sm:py-32 overflow-hidden">
@@ -442,28 +455,31 @@ export const NoirAboutSection: React.FC<NoirAboutSectionProps> = ({
             <div className="space-y-5 max-w-xl">
               <BlurWords
                 className="text-base sm:text-lg leading-relaxed text-[#F2F0EB]"
-                text={`I'm ${personal.name} — ${about.shortIntro.charAt(0).toLowerCase() + about.shortIntro.slice(1)}`}
+                text={about.servicesIntro}
               />
               <BlurWords
                 className="text-sm sm:text-base leading-relaxed text-[#A8A8A8]"
-                text={`${education.degree}, ${education.specialization} at ${education.institution} (${education.duration}). ${education.internship.role} at ${education.internship.company}.`}
+                text={about.servicesSummary}
               />
             </div>
 
             <div className="border-t border-[#F2F0EB]/10">
-              {skillCategories.map((cat) => (
+              {serviceGroups.map((group) => (
                 <motion.div
-                  key={cat.id}
+                  key={group.id}
                   whileHover={{ x: 8 }}
                   transition={{ duration: 0.3, ease: EASE }}
-                  className="group flex items-baseline justify-between gap-4 py-3.5 border-b border-[#F2F0EB]/10"
+                  className="group py-3.5 border-b border-[#F2F0EB]/10"
                 >
-                  <span className="text-[15px] text-[#F2F0EB] group-hover:text-[#E10600] transition-colors">
-                    {cat.title}
-                  </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#E10600] shrink-0">
-                    {String(cat.skills.length).padStart(2, '0')} skills
-                  </span>
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span className="text-[15px] text-[#F2F0EB] group-hover:text-[#E10600] transition-colors">
+                      {group.title}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#E10600] shrink-0">
+                      {String(group.count).padStart(2, '0')} services
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-[#A8A8A8] leading-relaxed">{group.names}</p>
                 </motion.div>
               ))}
             </div>

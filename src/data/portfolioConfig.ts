@@ -264,6 +264,11 @@ export const portfolioConfig = {
   // --------------------------------------------------------------------------
   about: {
     sectionTitle: 'Java Backend Engineering, Android Apps & Full-Stack Digital Solutions',
+    // Homepage "Behind the frame" copy — written around the 12 services
+    servicesIntro:
+      "I'm Aditya Raj — I help startups, clinics, gyms, cafés and growing brands go digital. From custom websites and web applications to mobile apps, CRM systems and e-commerce stores, I design, build and launch everything a business needs to grow online.",
+    servicesSummary:
+      'Alongside development I handle logo & graphic design, UI/UX, Meta Ads & digital marketing, bulk SMS & WhatsApp messaging, launch videos, custom software and IT & cloud hosting — one partner for 12 complete digital services.',
     shortIntro:
       'Developer and digital solutions builder focused on custom websites, web applications, Java Spring Boot backends, and native Android apps. Solved 400+ coding problems across LeetCode, CodeChef, HackerRank, and GeeksforGeeks while delivering 100+ digital projects for clients.',
     highlights: [
