@@ -58,7 +58,6 @@ import {
 import {
   NoirStillsGallery,
   NoirClientsWall,
-  NoirExperience,
   NoirRecognition,
   NoirTestimonials,
   NoirStudioFooter,
@@ -1272,7 +1271,6 @@ export default function App() {
               G. 05 — BEHIND THE FRAME · ABOUT, ACADEMICS & CV ((05/06))
           =================================================================== */}
           {/* 08 — Experience · 09 — Recognition · 10 — Words (Framer Noir Signal) */}
-          <NoirExperience />
           <NoirRecognition />
           <NoirTestimonials />
 
