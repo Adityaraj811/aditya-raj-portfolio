@@ -277,3 +277,56 @@ export const NoirTalkRibbon: React.FC<{ year: number }> = ({ year }) => {
     </div>
   );
 };
+
+/* ========================================================================= */
+/* Word-by-word blur reveal for headings (template case-study heading)       */
+/* Splits plain text AND styled children (e.g. the crimson italic accent)    */
+/* into words that resolve one after another out of a heavy blur.            */
+/* ========================================================================= */
+export const NoirWords: React.FC<{
+  children: React.ReactNode;
+  stagger?: number;
+  className?: string;
+  /** 'char' reveals letter by letter (template "the brave few") */
+  by?: 'word' | 'char';
+}> = ({ children, stagger = 0.075, className = '', by = 'word' }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const reduce = reducedMotion();
+  let i = 0;
+
+  const word = (w: string, key: string) => {
+    const d = i++ * stagger;
+    return (
+      <motion.span
+        key={key}
+        className="inline-block will-change-[filter,transform]"
+        initial={reduce ? false : { opacity: 0, filter: 'blur(16px)', x: 18 }}
+        animate={inView ? { opacity: 1, filter: 'blur(0px)', x: 0 } : {}}
+        transition={{ duration: 0.85, delay: d, ease: EASE }}
+      >
+        {w}
+      </motion.span>
+    );
+  };
+
+  const split = (node: React.ReactNode, path: string): React.ReactNode => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      const parts = by === 'char' ? String(node).split(/(\s)|/) : String(node).split(/(\s+)/);
+      return parts.map((p, k) => (/^\s+$/.test(p) ? ' ' : p ? word(p, `${path}-${k}`) : null));
+    }
+    if (Array.isArray(node)) return node.map((n, k) => split(n, `${path}.${k}`));
+    if (React.isValidElement(node)) {
+      const el = node as React.ReactElement<{ children?: React.ReactNode }>;
+      if (el.type === 'br') return el;
+      return React.cloneElement(el, { key: path }, split(el.props.children, path));
+    }
+    return node;
+  };
+
+  return (
+    <span ref={ref} className={className}>
+      {split(children, 'w')}
+    </span>
+  );
+};

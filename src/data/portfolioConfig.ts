@@ -1146,8 +1146,6 @@ export const portfolioConfig = {
       { sector: 'Dental Care', name: 'Dr. Shantanu' },
       { sector: 'Fitness', name: 'Fitness JYM' },
       { sector: 'Hospitality', name: 'Veloura' },
-      { sector: 'Internship', name: 'Inspireleap' },
-      { sector: 'Training', name: 'Rinex × E-Cell' },
       { sector: 'AgriTech', name: 'KrishiMitra' },
     ] as SignalClientItem[],
 

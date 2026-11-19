@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight, X } from 'lucide-react';
 import { portfolioConfig } from '../data/portfolioConfig';
 import { ScrollReveal } from './ScrollReveal';
 import { NoirScrambleText } from './NoirScrollFx';
-import { NoirTypeHeading } from './NoirFx2';
+import { NoirTypeHeading, NoirWords } from './NoirFx2';
 import { NoirHoverScramble } from './NoirChrome';
 
 /**
@@ -216,6 +216,40 @@ export const NoirStillsGallery: React.FC = () => {
 /* ========================================================================= */
 /* 06 — CLIENTS · "the brave few" hairline name wall                         */
 /* ========================================================================= */
+// Client name that glitch-scrambles while its row is hovered (template behaviour)
+const ClientName: React.FC<{ name: string }> = ({ name }) => {
+  const ref = React.useRef<HTMLSpanElement>(null);
+  const [out, setOut] = useState(name);
+  useEffect(() => {
+    const host = ref.current?.closest('li') as HTMLElement | null;
+    if (!host || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    let id = 0;
+    const glyphs = '!<>-_/[]{}=+*^?#%&';
+    const run = () => {
+      window.clearInterval(id);
+      const start = performance.now();
+      id = window.setInterval(() => {
+        const p = Math.min(1, (performance.now() - start) / 450);
+        const settled = Math.floor(p * name.length);
+        setOut(name.split('').map((c, i) => (i < settled || c === ' ' ? c : glyphs[Math.floor(Math.random() * glyphs.length)])).join(''));
+        if (p >= 1) window.clearInterval(id);
+      }, 30);
+    };
+    host.addEventListener('pointerenter', run);
+    host.addEventListener('focusin', run);
+    return () => {
+      window.clearInterval(id);
+      host.removeEventListener('pointerenter', run);
+      host.removeEventListener('focusin', run);
+    };
+  }, [name]);
+  return (
+    <span ref={ref} aria-label={name}>
+      <span aria-hidden="true">{out}</span>
+    </span>
+  );
+};
+
 export const NoirClientsWall: React.FC = () => (
   <section id="clients" className="relative py-20 sm:py-28 bg-[#050505] text-[#F2F0EB] overflow-hidden">
     <div
@@ -233,8 +267,12 @@ export const NoirClientsWall: React.FC = () => (
       </div>
 
       <div className="text-center space-y-2">
-        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[#A8A8A8]">— In association with —</p>
-        <p className="font-editorial italic lowercase text-[#E10600] text-6xl sm:text-8xl leading-none">the brave few</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[#A8A8A8]">
+          <NoirScrambleText text="— In association with —" duration={900} />
+        </p>
+        <p className="font-editorial italic lowercase text-[#E10600] text-6xl sm:text-8xl leading-none pr-[0.08em]">
+          <NoirWords by="char" stagger={0.045}>the brave few</NoirWords>
+        </p>
       </div>
 
       <ul className="flex flex-col items-center gap-1.5 sm:gap-2">
@@ -243,9 +281,9 @@ export const NoirClientsWall: React.FC = () => (
             key={client.name}
             initial={{ opacity: 0, filter: 'blur(12px)', x: 24 }}
             whileInView={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-            className="group grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6 w-full"
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.35 + i * 0.12, ease: EASE }}
+            className="group grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6 w-full cursor-default"
           >
             <span className="text-right font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#6B6B6B] group-hover:text-[#A8A8A8] transition-colors">
               {client.sector}
@@ -254,8 +292,12 @@ export const NoirClientsWall: React.FC = () => (
               aria-hidden="true"
               className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-[#E10600]' : 'bg-[#F2F0EB]/30 group-hover:bg-[#E10600]'} transition-colors`}
             />
-            <span className="font-display uppercase leading-none tracking-tight text-[#F2F0EB] group-hover:text-[#E10600] group-hover:translate-x-1.5 transition-all duration-300 text-3xl sm:text-5xl">
-              {client.name}
+            <span
+              tabIndex={0}
+              role="button"
+              className="font-display uppercase leading-none tracking-tight text-[#F2F0EB] group-hover:text-[#E10600] group-hover:translate-x-1.5 focus-visible:text-[#E10600] outline-none transition-all duration-300 text-3xl sm:text-5xl"
+            >
+              <ClientName name={client.name} />
             </span>
           </motion.li>
         ))}

@@ -46,6 +46,8 @@ import {
   NoirStackCards,
   NoirContactBanner,
   NoirTalkRibbon,
+  NoirWords,
+  NoirBlurWords,
 } from './components/NoirFx2';
 import {
   NoirStillsGallery,
@@ -895,19 +897,19 @@ export default function App() {
 
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-3 max-w-2xl">
-                      <h2
+                      <h2 data-noir-no-reveal=""
                         className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
                         style={{ textWrap: 'balance' }}
                       >
+                      <NoirWords>
                         SELECTED{' '}
                         <span className="font-editorial italic lowercase font-normal text-[#E10600]">
                           works
                         </span>{' '}
                         (0{projects.length})
-                      </h2>
-                      <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
-                        Glide through the interactive filmstrip or inspect live client viewports below — open any live site or request a customized version for your business.
-                      </p>
+                      </NoirWords>
+                    </h2>
+                      <NoirBlurWords className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]" text={`Glide through the interactive filmstrip or inspect live client viewports below — open any live site or request a customized version for your business.`} />
                     </div>
 
                     {/* Minimal Segmented Project Filter */}
@@ -972,18 +974,21 @@ export default function App() {
                   />
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-3 max-w-2xl">
-                    <h2
+                    <h2 data-noir-no-reveal=""
                       className="font-display text-4xl sm:text-6xl font-normal uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]"
                       style={{ textWrap: 'balance' }}
                     >
+                      <NoirWords>
                       WHAT WE{' '}
                       <span className="font-editorial italic lowercase font-normal text-[#E10600]">
                         build.
                       </span>
+                      </NoirWords>
                     </h2>
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
-                      {studioBrand.description} Select any of our 12 core services below to inspect deliverables and live previews.
-                    </p>
+                    <NoirBlurWords
+                      className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] leading-relaxed"
+                      text={`${studioBrand.description} Select any of our 12 core services below to inspect deliverables and live previews.`}
+                    />
                   </div>
 
                   {/* Minimal Category Tabs */}
@@ -1043,14 +1048,16 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
                 {/* Left Column: Razor-Sharp Hairline Service Accordion Rows */}
                 <div className="lg:col-span-7 divide-y divide-zinc-300/70 dark:divide-[#F2F0EB]/12 border-t border-b border-zinc-300/70 dark:border-[#F2F0EB]/12">
-                  {filteredServices.map((service) => {
+                  {filteredServices.map((service, si) => {
                     const isActive = activeService.id === service.id;
-
                     return (
                       <motion.div
                         key={service.id}
+                        initial={{ opacity: 0, x: -24, filter: 'blur(10px)' }}
+                        whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                        viewport={{ once: true, amount: 0.3 }}
                         whileHover={{ x: 8 }}
-                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.7, delay: Math.min(si, 6) * 0.06, ease: [0.16, 1, 0.3, 1] }}
                         className="transition-colors"
                       >
                         <button
@@ -1103,17 +1110,31 @@ export default function App() {
 
                         {/* Expanded Inline Details on Mobile / Active Focus */}
                         {isActive && (
-                          <div className="pb-6 pl-9 sm:pl-12 space-y-4">
-                            <p className="text-xs sm:text-sm text-zinc-700 dark:text-[#F2F0EB]/85 leading-relaxed">
-                              {service.description}
-                            </p>
+                          <motion.div
+                            key={`detail-${service.id}`}
+                            initial={{ opacity: 0, y: -8, filter: 'blur(8px)' }}
+                            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                            className="pb-6 pl-9 sm:pl-12 space-y-4"
+                          >
+                            <NoirBlurWords
+                              key={`desc-${service.id}`}
+                              className="text-xs sm:text-sm text-zinc-700 dark:text-[#F2F0EB]/85 leading-relaxed"
+                              text={service.description}
+                            />
 
                             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-zinc-600 dark:text-[#A8A8A8]">
                               {service.deliverables.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2">
+                                <motion.li
+                                  key={i}
+                                  initial={{ opacity: 0, x: -10, filter: 'blur(6px)' }}
+                                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                                  transition={{ duration: 0.5, delay: 0.15 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                                  className="flex items-start gap-2"
+                                >
                                   <span className="text-[#E10600] font-mono">·</span>
                                   <span>{item}</span>
-                                </li>
+                                </motion.li>
                               ))}
                             </ul>
 
@@ -1156,7 +1177,7 @@ export default function App() {
                                 </a>
                               )}
                             </div>
-                          </div>
+                          </motion.div>
                         )}
                       </motion.div>
                     );
@@ -1175,15 +1196,23 @@ export default function App() {
                       </span>
                     </div>
 
-                    <ServiceMockupVisual mockupType={activeService.mockupType} />
+                    <motion.div
+                      key={`stage-${activeService.id}`}
+                      initial={{ opacity: 0, scale: 0.97, filter: 'blur(10px)' }}
+                      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <ServiceMockupVisual mockupType={activeService.mockupType} />
+                    </motion.div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3" key={`copy-${activeService.id}`}>
                       <h3 className="font-display text-3xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
-                        {activeService.title}
+                        <NoirWords stagger={0.05}>{activeService.title}</NoirWords>
                       </h3>
-                      <p className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
-                        {activeService.description}
-                      </p>
+                      <NoirBlurWords
+                        className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed"
+                        text={activeService.description}
+                      />
                     </div>
 
                     <div className="pt-3 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between gap-2">
@@ -1246,15 +1275,15 @@ export default function App() {
 
                   <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                     <div className="space-y-3 max-w-2xl">
-                      <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
+                      <h2 data-noir-no-reveal="" className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
+                      <NoirWords>
                         HOW IT{' '}
                         <span className="font-editorial italic lowercase font-normal text-[#E10600]">
                           happens.
                         </span>
-                      </h2>
-                      <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]">
-                        Structured sprint execution paired with full-stack &amp; mobile engineering precision.
-                      </p>
+                      </NoirWords>
+                    </h2>
+                      <NoirBlurWords className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8]" text={`Structured sprint execution paired with full-stack & mobile engineering precision.`} />
                     </div>
 
                     {/* Framer Rotating Orbit Ring CTA */}
@@ -1320,15 +1349,15 @@ export default function App() {
                     sectionCode="FAQ"
                     rightLabel="TIMELINE & DELIVERY"
                   />
-                  <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#050505] leading-[0.94]">
+                  <h2 data-noir-no-reveal="" className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#050505] leading-[0.94]">
+                      <NoirWords>
                     BEFORE YOU{' '}
                     <span className="font-editorial italic lowercase font-normal !text-white">
                       ask.
                     </span>
-                  </h2>
-                  <p className="text-sm sm:text-base text-white/80 max-w-2xl">
-                    The questions clients and brands ask most before starting a custom build.
-                  </p>
+                      </NoirWords>
+                    </h2>
+                  <NoirBlurWords className="text-sm sm:text-base text-white/80 max-w-2xl" text={`The questions clients and brands ask most before starting a custom build.`} />
                 </div>
               </ScrollReveal>
 
@@ -1391,18 +1420,18 @@ export default function App() {
                     sectionCode="(06/06)"
                     rightLabel="WHATSAPP · EMAIL · CALL"
                   />
-                  <h2
+                  <h2 data-noir-no-reveal=""
                     className="font-display text-4xl sm:text-7xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.90] max-w-4xl"
                     style={{ textWrap: 'balance' }}
                   >
+                      <NoirWords>
                     LET&apos;S CREATE SOMETHING{' '}
                     <span className="font-editorial italic lowercase font-normal text-[#E10600]">
                       unreal.
                     </span>
-                  </h2>
-                  <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] max-w-2xl leading-relaxed">
-                    Open for freelance websites, custom apps, CRM systems &amp; Meta Ads campaigns. Select your requirement below and message directly on WhatsApp or Email.
-                  </p>
+                      </NoirWords>
+                    </h2>
+                  <NoirBlurWords className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] max-w-2xl leading-relaxed" text={`Open for freelance websites, custom apps, CRM systems & Meta Ads campaigns. Select your requirement below and message directly on WhatsApp or Email.`} />
                 </div>
               </ScrollReveal>
 
