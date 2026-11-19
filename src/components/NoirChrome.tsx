@@ -208,3 +208,205 @@ export const NoirHoverScramble: React.FC<{ text: string; className?: string }> =
     </span>
   );
 };
+
+/* ------------------------------------------------------------------------- */
+/* Mobile / tablet menu (template): "MENU (+)" pill → full-screen panel that */
+/* opens with a crimson circle wipe from the button, big numbered Anton      */
+/* links with ↗ discs, italic ribbon, email, social discs and live clock.   */
+/* ------------------------------------------------------------------------- */
+export const NoirMenuButton: React.FC<{ open: boolean; onClick: () => void; className?: string }> = ({
+  open,
+  onClick,
+  className = '',
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label={open ? 'Close menu' : 'Open menu'}
+    aria-expanded={open}
+    aria-controls="noir-mobile-menu"
+    className={`relative z-[60] inline-flex items-center gap-3 h-10 pl-4 pr-1.5 rounded-full border border-[#F2F0EB]/[0.18] bg-[#0E0E0E]/65 backdrop-blur-md text-[#F2F0EB] font-mono text-[10px] uppercase tracking-[0.22em] cursor-pointer ${className}`}
+  >
+    {/* MENU ⇄ CLOSE label roll */}
+    <span className="relative block h-[13px] overflow-hidden leading-[13px]">
+      <span
+        className="block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
+        style={{ transform: open ? 'translateY(-13px)' : 'translateY(0)' }}
+      >
+        <span className="block">Menu</span>
+        <span className="block">Close</span>
+      </span>
+    </span>
+    {/* crimson disc: + rotates into × */}
+    <span className="relative w-7 h-7 rounded-full bg-[#E10600] flex items-center justify-center">
+      <span
+        aria-hidden="true"
+        className="relative w-3 h-3 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
+        style={{ transform: open ? 'rotate(135deg)' : 'rotate(0deg)' }}
+      >
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-[2px] bg-[#F2F0EB]" />
+        <span className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-3 bg-[#F2F0EB]" />
+      </span>
+    </span>
+  </button>
+);
+
+export interface NoirMenuItem {
+  label: string;
+  onSelect: () => void;
+  active?: boolean;
+}
+
+export const NoirMobileMenu: React.FC<{
+  open: boolean;
+  onClose: () => void;
+  items: NoirMenuItem[];
+  email: string;
+  socials: { short: string; label: string; href: string }[];
+  location: string;
+  liveTime: string;
+  year: number;
+}> = ({ open, onClose, items, email, socials, location, liveTime, year }) => {
+  // lock page scroll + Esc to close while open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open, onClose]);
+
+  const ORIGIN = 'calc(100% - 38px) 32px';
+  const ribbon = ["let's create", 'something unreal', `open for ${year + 1}`];
+
+  return (
+    <div
+      id="noir-mobile-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site menu"
+      aria-hidden={!open}
+      className={`lg:hidden fixed inset-0 z-[35] ${open ? 'pointer-events-auto' : 'pointer-events-none'}`}
+    >
+      {/* crimson wipe (leads) */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[#E10600]"
+        initial={false}
+        animate={{ clipPath: open ? `circle(150% at ${ORIGIN})` : `circle(0% at ${ORIGIN})` }}
+        transition={{ duration: open ? 0.7 : 0.55, ease: [0.76, 0, 0.24, 1], delay: open ? 0 : 0.12 }}
+      />
+      {/* noir panel (follows) */}
+      <motion.div
+        className="absolute inset-0 bg-[#050505] text-[#F2F0EB] overflow-y-auto overscroll-contain"
+        initial={false}
+        animate={{ clipPath: open ? `circle(150% at ${ORIGIN})` : `circle(0% at ${ORIGIN})` }}
+        transition={{ duration: open ? 0.75 : 0.5, ease: [0.76, 0, 0.24, 1], delay: open ? 0.1 : 0 }}
+      >
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(120% 70% at 100% 0%, rgba(225,6,0,0.35) 0%, rgba(5,5,5,0) 60%)' }} />
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(242,240,235,0.04) 0px, rgba(242,240,235,0.04) 1px, transparent 1px, transparent 3px)' }} />
+
+        <div className="relative min-h-full flex flex-col justify-between px-5 sm:px-8 pt-24 pb-6 gap-8">
+          <div className="space-y-8">
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-[#A8A8A8]">
+              <span className="inline-flex items-center gap-2">
+                <span className="text-[#E10600] animate-noir-blink">●</span> Rec — Scene 01
+              </span>
+              <span>Take {String(items.length).padStart(2, '0')}</span>
+            </div>
+
+            <nav aria-label="Mobile navigation">
+              <ul>
+                {items.map((item, i) => (
+                  <motion.li
+                    key={item.label}
+                    initial={false}
+                    animate={open ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 36, filter: 'blur(8px)' }}
+                    transition={{ duration: 0.6, delay: open ? 0.3 + i * 0.055 : 0, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <button
+                      type="button"
+                      tabIndex={open ? 0 : -1}
+                      onClick={() => {
+                        item.onSelect();
+                        onClose();
+                      }}
+                      className="group relative w-full flex items-center gap-4 py-1.5 border-b border-[#F2F0EB]/[0.08] text-left cursor-pointer"
+                    >
+                      <span className="w-7 shrink-0 font-mono text-[10px] text-[#E10600]">{String(i + 1).padStart(2, '0')}</span>
+                      <span
+                        className={`flex-1 font-display uppercase leading-[1.08] tracking-tight transition-colors ${
+                          item.active ? 'noir-outline-word' : 'text-[#F2F0EB] group-active:text-[#E10600] group-hover:text-[#E10600]'
+                        }`}
+                        style={{ fontSize: 'clamp(2.3rem, 11.5vw, 3.6rem)' }}
+                      >
+                        {item.label}
+                      </span>
+                      <span className="shrink-0 w-[34px] h-[34px] rounded-full border border-[#F2F0EB]/20 flex items-center justify-center text-sm group-hover:bg-[#E10600] group-hover:border-[#E10600] transition-colors">
+                        ↗
+                      </span>
+                      <span aria-hidden="true" className="absolute left-0 -bottom-px h-px w-0 bg-[#E10600] transition-[width] duration-500 group-hover:w-full group-active:w-full" />
+                    </button>
+                  </motion.li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+
+          <motion.div
+            initial={false}
+            animate={open ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: open ? 0.55 : 0, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-5"
+          >
+            <div className="overflow-hidden whitespace-nowrap border-y border-[#F2F0EB]/[0.12] py-2" aria-hidden="true">
+              <div className="animate-noir-marquee" style={{ animationDuration: '18s' }}>
+                {[...ribbon, ...ribbon, ...ribbon, ...ribbon].map((t, i) => (
+                  <span key={i} className="inline-flex items-center font-editorial italic text-[26px] leading-none">
+                    <span className="text-[#E10600] lowercase">{t}</span>
+                    <span className="mx-5 text-[#F2F0EB] not-italic text-base">✦</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <a
+              href={`mailto:${email}`}
+              tabIndex={open ? 0 : -1}
+              className="block font-display text-2xl tracking-tight text-[#F2F0EB] break-all"
+            >
+              <NoirHoverScramble text={email} />
+            </a>
+
+            <div className="flex flex-wrap gap-2">
+              {socials.map((s) => (
+                <a
+                  key={s.short}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  tabIndex={open ? 0 : -1}
+                  className="w-[38px] h-[38px] rounded-full border border-[#F2F0EB]/[0.22] flex items-center justify-center font-mono text-[10px] tracking-[0.1em] text-[#F2F0EB] hover:bg-[#E10600] hover:border-[#E10600] transition-colors"
+                >
+                  {s.short}
+                </a>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-[#A8A8A8]">
+              <span className="inline-flex items-center gap-2">
+                <span className="text-[#E10600]">●</span> {location} — {liveTime}
+              </span>
+              <span>©{year}</span>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};

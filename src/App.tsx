@@ -34,7 +34,13 @@ import { FreelanceServicesPage } from './components/FreelanceServicesPage';
 import { AboutPage } from './components/AboutPage';
 import { NoirLiquidCanvas } from './components/NoirLiquidCanvas';
 import { NoirFilmGallery } from './components/NoirFilmGallery';
-import { NoirLogo, NoirNavLink, NoirRingCursor } from './components/NoirChrome';
+import {
+  NoirLogo,
+  NoirNavLink,
+  NoirRingCursor,
+  NoirMenuButton,
+  NoirMobileMenu,
+} from './components/NoirChrome';
 import {
   NoirScrollBlur,
   NoirDualMarquee,
@@ -258,6 +264,7 @@ export default function App() {
   useNoirHeadingReveal([currentPage]);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -512,106 +519,39 @@ export default function App() {
               <span>Available for work</span>
             </button>
 
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-md text-zinc-700 dark:text-[#F2F0EB] hover:bg-zinc-200/70 dark:hover:bg-[#141414] transition-colors"
-              aria-label="Toggle navigation menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            <NoirMenuButton
+              open={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="lg:hidden"
+            />
           </div>
         </div>
 
-        {/* Mobile Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-zinc-200 dark:border-[#F2F0EB]/10 bg-[#F5F4F0] dark:bg-[#050505] px-6 py-5 space-y-4">
-            <div className="grid grid-cols-2 gap-3 text-xs font-mono uppercase tracking-wider">
-              <a
-                href="#freelance"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio('freelance');
-                }}
-                className="py-2 text-[#E10600] font-semibold"
-              >
-                01 Services (12)
-              </a>
-              <a
-                href="#projects"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio('projects');
-                }}
-                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
-              >
-                02 Selected Work
-              </a>
-              <a
-                href="#process"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio('process');
-                }}
-                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
-              >
-                03 Process
-              </a>
-              <a
-                href={`${getNormalizedBase()}services`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToServices();
-                }}
-                className="py-2 text-[#E10600] font-semibold"
-              >
-                Full Catalog →
-              </a>
-              <a
-                href={`${getNormalizedBase()}about`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToAbout();
-                }}
-                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
-              >
-                04 About →
-              </a>
-              <a
-                href="#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateToPortfolio('contact');
-                }}
-                className="py-2 text-zinc-800 dark:text-[#F2F0EB]"
-              >
-                05 Contact
-              </a>
-            </div>
-            <div className="pt-3 border-t border-zinc-200 dark:border-[#F2F0EB]/10 flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-[#A8A8A8]">
-                Canvas Mode
-              </span>
-              <button
-                onClick={toggleTheme}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/15 text-xs font-mono text-zinc-800 dark:text-[#F2F0EB]"
-              >
-                {theme === 'dark' ? (
-                  <>
-                    <Sun className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Light Paper</span>
-                  </>
-                ) : (
-                  <>
-                    <Moon className="w-3.5 h-3.5 text-[#E10600]" />
-                    <span>Noir Dark</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
       </header>
+
+      {/* Template full-screen mobile / tablet menu */}
+      <NoirMobileMenu
+        open={mobileMenuOpen}
+        onClose={closeMobileMenu}
+        email={personal.emailAddress}
+        location="Delhi"
+        liveTime={liveDateTime.time}
+        year={new Date().getFullYear()}
+        socials={[
+          { short: 'IG', label: 'Instagram', href: personal.instagramUrl },
+          { short: 'IN', label: 'LinkedIn', href: personal.linkedinUrl },
+          { short: 'WA', label: 'WhatsApp', href: personal.whatsappDirectUrl },
+        ]}
+        items={[
+          { label: 'Home', onSelect: () => navigateToPortfolio(), active: currentPage === 'home' && activeSection === 'home' },
+          { label: 'Services', onSelect: () => navigateToPortfolio('freelance'), active: currentPage === 'home' && activeSection === 'freelance' },
+          { label: 'Work', onSelect: () => navigateToPortfolio('projects'), active: currentPage === 'home' && activeSection === 'projects' },
+          { label: 'Process', onSelect: () => navigateToPortfolio('process'), active: currentPage === 'home' && activeSection === 'process' },
+          { label: 'About', onSelect: navigateToAbout, active: currentPage === 'about' },
+          { label: 'Contact', onSelect: () => navigateToPortfolio('contact'), active: currentPage === 'home' && activeSection === 'contact' },
+          { label: 'Catalog', onSelect: navigateToServices, active: currentPage === 'services' },
+        ]}
+      />
 
       {/* =====================================================================
           ROUTE SWITCH
