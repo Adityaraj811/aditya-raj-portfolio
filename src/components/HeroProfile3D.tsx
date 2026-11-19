@@ -178,7 +178,7 @@ export const HeroProfile3D: React.FC<HeroProfile3DProps> = ({
             <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse" />
             <span>FIG. 01 — {name.toUpperCase()}</span>
           </span>
-          <span className="text-[#E10600] font-semibold">SAHAYAK.STUDIO</span>
+          <span className="text-[#E10600] font-semibold">PORTFOLIO</span>
         </div>
 
         {/* Framer Portrait Frame: Rotating Conic Halo + Grayscale-to-Color Crossfade */}

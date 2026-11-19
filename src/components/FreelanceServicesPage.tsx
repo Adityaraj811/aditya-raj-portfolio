@@ -50,7 +50,7 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
             </button>
 
             <div className="flex items-center gap-2 font-mono text-xs text-zinc-500 dark:text-[#A8A8A8]">
-              <span>{studioBrand.name}</span>
+              <span>{personal.name.toUpperCase()}</span>
               <span aria-hidden="true">·</span>
               <span className="text-[#E10600] font-semibold">
                 {freelanceSection.services.length} DIGITAL &amp; IT SOLUTIONS
@@ -65,7 +65,7 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
               <div className="space-y-5 max-w-3xl">
                 <p className="font-mono text-xs font-semibold text-[#E10600] tracking-wider uppercase">
-                  {studioBrand.name} · {studioBrand.parentCompany}
+                  {studioBrand.parentCompany}
                 </p>
                 <h1
                   className="font-display font-normal uppercase tracking-tight text-zinc-900 dark:text-[#F2F0EB] leading-[0.94]"
@@ -96,7 +96,7 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
                 </button>
 
                 <a
-                  href={buildWhatsappLink('Sahayak.Studio Complete Services Inquiry')}
+                  href={buildWhatsappLink('Complete Services Inquiry')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-zinc-300 dark:border-[#F2F0EB]/20 bg-white dark:bg-[#0B0B0B] hover:border-[#E10600] text-zinc-900 dark:text-[#F2F0EB] text-sm font-medium transition-colors whitespace-nowrap"
@@ -239,7 +239,7 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
               <div className="space-y-3 max-w-2xl">
                 <div className="inline-flex items-center gap-2 font-mono text-xs text-[#E10600]">
                   <Sparkles className="w-4 h-4" />
-                  <span>{studioBrand.name} · GST: {studioBrand.gstNumber}</span>
+                  <span>{personal.name} · {personal.availabilityNotice}</span>
                 </div>
                 <h2 className="font-display text-3xl sm:text-5xl uppercase tracking-tight text-[#F2F0EB]">
                   {freelanceSection.ctaHeadline}
@@ -260,7 +260,7 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
                 </button>
 
                 <a
-                  href={buildWhatsappLink('Sahayak.Studio Project Enquiry')}
+                  href={buildWhatsappLink('Project Enquiry')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-3.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white text-sm font-medium transition-colors whitespace-nowrap"
@@ -270,7 +270,7 @@ export const FreelanceServicesPage: React.FC<FreelanceServicesPageProps> = ({
                 </a>
 
                 <a
-                  href={buildMailtoLink('Sahayak.Studio Project Enquiry')}
+                  href={buildMailtoLink('Project Enquiry')}
                   className="inline-flex items-center gap-2 px-5 py-3.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   <Mail className="w-4 h-4 text-[#E10600]" />

@@ -259,7 +259,7 @@ export const KhataPhoneScreen: React.FC<KhataPhoneScreenProps> = ({
                     <div className="min-w-0 flex-1 text-left">
                       <p className="text-[8px] text-[#64748B] leading-none">Email or Phone</p>
                       <p className="text-[10px] font-semibold text-[#0F172A] truncate mt-0.5">
-                        aditya.raj@khata.app
+                        adityaraj81156@gmail.com
                       </p>
                     </div>
                   </div>

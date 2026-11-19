@@ -165,7 +165,7 @@ export const NoirPreloader: React.FC = () => {
           <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse" />
           REC · SIGNAL LOCKED
         </span>
-        <span>ADITYA RAJ // SAHAYAK.STUDIO</span>
+        <span>ADITYA RAJ // PORTFOLIO</span>
       </div>
 
       <div className="space-y-4">

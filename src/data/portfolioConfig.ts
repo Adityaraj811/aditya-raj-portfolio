@@ -1,9 +1,9 @@
 /**
  * ============================================================================
- * CENTRALIZED PORTFOLIO & SAHAYAK.STUDIO CONFIGURATION — ADITYA RAJ
+ * CENTRALIZED PORTFOLIO CONFIGURATION — ADITYA RAJ
  * ============================================================================
- * Single source of truth for personal details, Sahayak.Studio branding,
- * all 12 services from the digital solutions poster, GitHub repositories,
+ * Single source of truth for personal details, brand copy,
+ * all 12 freelance services, GitHub repositories,
  * live website/app samples, FAQs, and academic CV details.
  */
 
@@ -142,6 +142,30 @@ export interface CertificationItem {
   description: string;
 }
 
+export interface SignalGalleryItem {
+  title: string;
+  meta: string;
+  image: string;
+}
+
+export interface SignalClientItem {
+  sector: string;
+  name: string;
+}
+
+export interface SignalExperienceItem {
+  period: string;
+  role: string;
+  org: string;
+  location: string;
+}
+
+export interface SignalTestimonialItem {
+  quote: string;
+  author: string;
+  role: string;
+}
+
 /**
  * Helper to resolve public static assets accurately across both local development ('/')
  * and Vercel / GitHub Pages deployments.
@@ -157,7 +181,7 @@ export const resolvePublicAsset = (relativePath: string): string => {
 
 export const portfolioConfig = {
   // --------------------------------------------------------------------------
-  // 1. PERSONAL IDENTITY & SAHAYAK.STUDIO BRAND CONFIGURATION
+  // 1. PERSONAL IDENTITY & BRAND CONFIGURATION
   // --------------------------------------------------------------------------
   personal: {
     name: 'Aditya Raj',
@@ -200,25 +224,21 @@ export const portfolioConfig = {
     isWhatsappConfigured: true,
 
     emailAddress: 'adityaraj81156@gmail.com',
-    studioEmail: 'Support@sahayak.studio',
+    studioEmail: 'adityaraj81156@gmail.com',
     isEmailConfigured: true,
 
     location: 'Bhopal, India · Worldwide Remote',
   },
 
   studioBrand: {
-    name: 'SAHAYAK.STUDIO',
+    name: 'ADITYA RAJ',
     subtitle: 'DIGITAL · TECHNOLOGY · INNOVATION',
-    parentCompany: 'A Branch of Sahayak Innovations Private Limited',
+    parentCompany: 'Independent Developer · Bhopal, India',
     tagline: 'From Ideas to Innovation – We Build Your Digital Future.',
     heroLead: 'Your Complete Digital & IT Solutions Partner',
     description:
-      'Sahayak.Studio provides professional digital, technology and business solutions to help startups, small businesses and established companies grow digitally.',
+      'I provide professional digital, technology and business solutions to help startups, small businesses and established companies grow digitally.',
     closingCallout: "Let's Build Something Great Together!",
-    posterImagePath: resolvePublicAsset(
-      '/assets/aistudio/Sahayak_Studio_Digital_Solutions_Poster__1__1e63f177.png'
-    ),
-    gstNumber: '10ABPCS1392A1ZP',
     metrics: [
       { value: '100+', label: 'Projects Delivered' },
       { value: '500+', label: 'Happy Clients' },
@@ -237,7 +257,7 @@ export const portfolioConfig = {
       homepage: 'https://aditya-raj-portfolio-phi.vercel.app',
       language: 'TypeScript',
       description:
-        'Personal developer portfolio & Sahayak.Studio showcase featuring live website previews, Android app screens, interactive animations, and client customization inquiry workflows.',
+        'Personal developer portfolio featuring live website previews, Android app screens, interactive animations, and client customization inquiry workflows.',
       category: 'React · TypeScript · Tailwind CSS · Framer Motion · Vercel',
       visibilityLabel: 'Public GitHub Repo',
     },
@@ -324,7 +344,7 @@ export const portfolioConfig = {
   about: {
     sectionTitle: 'Java Backend Engineering, Android Apps & Full-Stack Digital Solutions',
     shortIntro:
-      'Developer and digital solutions builder focused on custom websites, web applications, Java Spring Boot backends, and native Android apps. Solved 400+ coding problems across LeetCode, CodeChef, HackerRank, and GeeksforGeeks while delivering 100+ digital projects through Sahayak.Studio.',
+      'Developer and digital solutions builder focused on custom websites, web applications, Java Spring Boot backends, and native Android apps. Solved 400+ coding problems across LeetCode, CodeChef, HackerRank, and GeeksforGeeks while delivering 100+ digital projects for clients.',
     highlights: [
       {
         label: 'Core Engineering Focus',
@@ -861,16 +881,16 @@ export const portfolioConfig = {
   ] as ProjectItem[],
 
   // --------------------------------------------------------------------------
-  // 7. ALL 12 SERVICES FROM SAHAYAK.STUDIO DIGITAL SOLUTIONS POSTER
+  // 7. ALL 12 FREELANCE SERVICES
   // --------------------------------------------------------------------------
   freelanceSection: {
     pageHeadline: 'From Ideas to Innovation – We Build Your Digital Future.',
     pageSubheading:
-      'Complete Digital & IT Solutions powered by Sahayak.Studio & Aditya Raj — from custom websites, mobile apps, CRM & SaaS platforms to Meta Ads, Bulk SMS, branding, and cloud hosting.',
+      'Complete Digital & IT Solutions by Aditya Raj — from custom websites, mobile apps, CRM & SaaS platforms to Meta Ads, Bulk SMS, branding, and cloud hosting.',
     ctaHeadline: "Let's Build Something Great Together!",
     ctaButtonLabel: 'Start Your Project',
     personalCommitmentNote:
-      'Work directly with Aditya Raj & Sahayak.Studio for clean code, custom brand design, responsive mobile/tablet/desktop support, and dedicated ongoing technical care.',
+      'Work directly with Aditya Raj for clean code, custom brand design, responsive mobile/tablet/desktop support, and dedicated ongoing technical care.',
     services: [
       {
         id: 'website-development',
@@ -1112,7 +1132,7 @@ export const portfolioConfig = {
     },
     {
       index: '02',
-      question: 'What services are included under Sahayak.Studio & your freelance work?',
+      question: 'What services are included in your freelance work?',
       answer:
         'We cover all 12 digital & IT solutions: Website Development, Logo & Graphic Design, Web Applications & SaaS, Mobile Apps (Android/iOS), CRM Solutions, Digital Marketing & Meta Ads, Bulk SMS & WhatsApp APIs, Launch Videos, E-commerce Stores, Custom Software, UI/UX Design, and Cloud Hosting/IT Support.',
     },
@@ -1132,7 +1152,7 @@ export const portfolioConfig = {
       index: '05',
       question: 'How do I start a project or request pricing?',
       answer:
-        'Message directly on WhatsApp (+91 9263605950) or email adityaraj81156@gmail.com / Support@sahayak.studio with your requirement or favorite sample link. You will get a clear timeline and transparent quote right away.',
+        'Message directly on WhatsApp (+91 9263605950) or email adityaraj81156@gmail.com with your requirement or favorite sample link. You will get a clear timeline and transparent quote right away.',
     },
   ] as FaqItem[],
 
@@ -1203,5 +1223,58 @@ export const portfolioConfig = {
       'Android App Development (Java, XML, MVVM, Room, Retrofit)',
       'Linux / Ubuntu, Git, Maven & Gradle Build Workflows',
     ],
+  },
+  // --------------------------------------------------------------------------
+  // 10. NOIR SIGNAL TEMPLATE SECTIONS — Gallery, Clients, Experience,
+  //     Recognition, Words (testimonials) & Studio Footer
+  // --------------------------------------------------------------------------
+  signalSections: {
+    gallery: [
+      { title: 'Veloura', meta: 'Live Website · 2025', image: resolvePublicAsset('images/veloura-website-preview.png') },
+      { title: 'Sanctuary', meta: 'Veloura · Hero Still', image: resolvePublicAsset('images/veloura-hero.jpg') },
+      { title: 'Latte', meta: 'Veloura · Menu Art', image: resolvePublicAsset('images/veloura-latte.jpg') },
+      { title: 'Cortado', meta: 'Veloura · Coffee Lab', image: resolvePublicAsset('images/veloura-cortado.jpg') },
+      { title: 'Cold Brew', meta: 'Veloura · Alchemy Menu', image: resolvePublicAsset('images/veloura-coldbrew.jpg') },
+      { title: 'Courtyard', meta: 'Veloura · Art Direction', image: resolvePublicAsset('images/veloura-art.jpg') },
+      { title: 'Portrait', meta: 'Behind the Frame', image: resolvePublicAsset('images/profile.webp') },
+    ] as SignalGalleryItem[],
+
+    clients: [
+      { sector: 'Dental Care', name: 'Dr. Shantanu' },
+      { sector: 'Fitness', name: 'Fitness JYM' },
+      { sector: 'Hospitality', name: 'Veloura' },
+      { sector: 'Internship', name: 'Inspireleap' },
+      { sector: 'Training', name: 'Rinex × E-Cell' },
+      { sector: 'AgriTech', name: 'KrishiMitra' },
+    ] as SignalClientItem[],
+
+    // NOTE: confirm the freelance start year — "2025" is an assumption.
+    experience: [
+      { period: '2025 – Now', role: 'Freelance Web & App Developer', org: 'Independent', location: 'Bhopal — Worldwide Remote' },
+      { period: '2025 – 2026', role: 'Web Development Trainee', org: 'Rinex × E-Cell, IIT Bhubaneswar', location: 'Certification Course' },
+      { period: 'Oct – Dec 2025', role: 'Android App Development Intern', org: 'Inspireleap', location: 'Internship' },
+      { period: '2022 – 2026', role: 'B.Tech, Computer Science', org: 'Technocrats Institute of Technology', location: 'Bhopal — RGPV' },
+    ] as SignalExperienceItem[],
+
+    recognition: {
+      headline: '400+',
+      caption: 'Coding problems solved across CodeChef, HackerRank, GFG & LeetCode',
+      items: [
+        { title: 'Web Development Certification — Rinex × E-Cell, IIT Bhubaneswar', tag: 'Certified', year: '2026' },
+        { title: 'Android App Development Internship — Completed', tag: 'Inspireleap', year: '2025' },
+        { title: '100+ Problems Solved on LeetCode', tag: 'LeetCode', year: 'DSA' },
+        { title: 'Production Launch — Dr. Shantanu Dental Clinic', tag: 'Live', year: 'Web' },
+        { title: 'Production Launch — Fitness JYM', tag: 'Live', year: 'Web' },
+        { title: 'Production Launch — Veloura Specialty Coffee', tag: 'Live', year: 'Web' },
+      ],
+    },
+
+    // Add REAL client quotes here. Entries with an empty `quote` are shown as
+    // labelled placeholders on the local dev server only, and hidden in production.
+    testimonials: [
+      { quote: '', author: 'Dr. Shantanu', role: 'Dr. Shantanu Dental Clinic' },
+      { quote: '', author: 'Owner', role: 'Fitness JYM' },
+      { quote: '', author: 'Founder', role: 'Veloura Specialty Coffee' },
+    ] as SignalTestimonialItem[],
   },
 };

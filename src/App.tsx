@@ -37,6 +37,14 @@ import { AboutPage } from './components/AboutPage';
 import { NoirLiquidCanvas } from './components/NoirLiquidCanvas';
 import { NoirFilmGallery } from './components/NoirFilmGallery';
 import {
+  NoirStillsGallery,
+  NoirClientsWall,
+  NoirExperience,
+  NoirRecognition,
+  NoirTestimonials,
+  NoirStudioFooter,
+} from './components/NoirSignalSections';
+import {
   NoirCursor,
   NoirMouseGlow,
   NoirFilmGrain,
@@ -98,7 +106,7 @@ const MARQUEE_ITEMS = [
   'LAUNCH VIDEOS',
   'CUSTOM SOFTWARE',
   'IT & CLOUD HOSTING',
-  'SAHAYAK.STUDIO',
+  'ANDROID APPS',
 ];
 
 const STUDIO_PROCESS_STEPS = [
@@ -419,7 +427,7 @@ export default function App() {
 
   const buildMailtoLink = (topic?: string) => {
     const subject = encodeURIComponent(
-      `Project Inquiry: ${topic || selectedInquiryTopic} — Aditya Raj / Sahayak.Studio`
+      `Project Inquiry: ${topic || selectedInquiryTopic} — Aditya Raj`
     );
     const body = encodeURIComponent(
       `Hi Aditya,\n\nI visited your portfolio and would like to discuss: ${
@@ -433,7 +441,7 @@ export default function App() {
     if (!topic) return personal.whatsappDirectUrl;
     const cleanDigits = personal.whatsappNumber.replace(/[^0-9]/g, '');
     const message = encodeURIComponent(
-      `Hi Aditya, I visited your portfolio (Sahayak.Studio) and would like to discuss: ${topic}.`
+      `Hi Aditya, I visited your portfolio and would like to discuss: ${topic}.`
     );
     return `https://wa.me/${cleanDigits}?text=${message}`;
   };
@@ -749,7 +757,7 @@ export default function App() {
                     <span>REC</span>
                   </span>
                   <span aria-hidden="true">—</span>
-                  <span className="text-[#F2F0EB]">(01) SAHAYAK.STUDIO</span>
+                  <span className="text-[#F2F0EB]">(01) ADITYA RAJ</span>
                   <span aria-hidden="true" className="hidden sm:inline">—</span>
                   <span className="hidden sm:inline">REMOTE WORLDWIDE</span>
                 </div>
@@ -793,7 +801,7 @@ export default function App() {
                   <div className="space-y-5">
                     <div className="h-[2px] w-20 bg-[#E10600] animate-ts-bar" aria-hidden="true" />
                     <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#E10600] animate-ts-fade font-semibold">
-                      {studioBrand.name} · DIGITAL, TECHNOLOGY &amp; INNOVATION
+                      DIGITAL · TECHNOLOGY &amp; INNOVATION
                     </p>
 
                     <h1
@@ -1001,7 +1009,7 @@ export default function App() {
               </ScrollReveal>
 
               <p className="font-mono text-xs uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8] pt-2">
-                — {personal.name.toUpperCase()} · {studioBrand.name} · {studioBrand.parentCompany.toUpperCase()}
+                — {personal.name.toUpperCase()} · {studioBrand.parentCompany.toUpperCase()}
               </p>
             </div>
           </section>
@@ -1164,6 +1172,9 @@ export default function App() {
               E. 03 — SERVICES ("WHAT WE DO" — ALL 12 SERVICES ARCHITECTURAL ACCORDION + LIVE STAGE)
               (No Poster/Pamphlet Image — Strictly Services from the Catalog)
           =================================================================== */}
+          {/* 04.5 — Gallery stills (Framer Noir Signal) */}
+          <NoirStillsGallery />
+
           <section id="freelance" className="py-20 sm:py-28">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
               <ScrollReveal direction="up">
@@ -1171,7 +1182,7 @@ export default function App() {
                   <NoirSectionBar
                     indexLabel="03 — SERVICES"
                     sectionCode="(03/06)"
-                    rightLabel="SAHAYAK.STUDIO CATALOG"
+                    rightLabel="SERVICE CATALOG"
                   />
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-3 max-w-2xl">
@@ -1424,6 +1435,9 @@ export default function App() {
           {/* ===================================================================
               F. 04 — PROCESS, CAPABILITIES & ORBIT LAUNCH CTA ((04/06))
           =================================================================== */}
+          {/* 06 — Clients wall (Framer Noir Signal) */}
+          <NoirClientsWall />
+
           <section id="process" className="relative py-20 sm:py-28 overflow-hidden">
             {/* Framer Crimson Atmospheric Ambient Red Glow */}
             <div
@@ -1517,6 +1531,11 @@ export default function App() {
           {/* ===================================================================
               G. 05 — BEHIND THE FRAME · ABOUT, ACADEMICS & CV ((05/06))
           =================================================================== */}
+          {/* 08 — Experience · 09 — Recognition · 10 — Words (Framer Noir Signal) */}
+          <NoirExperience />
+          <NoirRecognition />
+          <NoirTestimonials />
+
           <section id="about-gateway" className="py-20 sm:py-24">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
               <ScrollReveal direction="up">
@@ -1650,7 +1669,7 @@ export default function App() {
                   <NoirSectionBar
                     indexLabel="06 — GET IN TOUCH"
                     sectionCode="(06/06)"
-                    rightLabel="WHATSAPP · EMAIL · SAHAYAK.STUDIO"
+                    rightLabel="WHATSAPP · EMAIL · CALL"
                   />
                   <h2
                     className="font-display text-4xl sm:text-7xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.90] max-w-4xl"
@@ -1858,13 +1877,13 @@ export default function App() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-zinc-300/80 dark:border-[#F2F0EB]/12 divide-y sm:divide-y-0 sm:divide-x divide-zinc-300/80 dark:divide-[#F2F0EB]/12 rounded-xl overflow-hidden bg-white dark:bg-[#0B0B0B]">
                 <div className="p-5 space-y-1">
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    01 — STUDIO
+                    01 — DEVELOPER
                   </p>
                   <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    {studioBrand.name}
+                    {personal.name}
                   </p>
                   <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
-                    {studioBrand.parentCompany}
+                    Independent · Web, App &amp; Java Developer
                   </p>
                 </div>
 
@@ -1882,13 +1901,13 @@ export default function App() {
 
                 <div className="p-5 space-y-1">
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    03 — SUPPORT
+                    03 — EMAIL
                   </p>
                   <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    SAHAYAK SUPPORT
+                    WRITE DIRECTLY
                   </p>
-                  <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
-                    {personal.studioEmail}
+                  <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8] break-all">
+                    {personal.emailAddress}
                   </p>
                 </div>
 
@@ -1910,92 +1929,15 @@ export default function App() {
       )}
 
       {/* =====================================================================
-          J. FRAMER NOIR SIGNAL OVERSIZED MONUMENTAL FOOTER
+          J. FRAMER NOIR SIGNAL STUDIO FOOTER
       ===================================================================== */}
-      <footer className="border-t border-zinc-300/70 dark:border-[#F2F0EB]/10 bg-[#ECEAE4] dark:bg-[#050505] py-14 sm:py-20 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-1">
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
-                {studioBrand.name} · {studioBrand.subtitle}
-              </p>
-              <p className="font-mono text-xs text-zinc-600 dark:text-[#A8A8A8]">
-                {studioBrand.tagline}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-wider text-zinc-600 dark:text-[#A8A8A8]">
-              <button
-                type="button"
-                onClick={() => navigateToPortfolio('freelance')}
-                className="hover:text-[#E10600] transition-colors cursor-pointer"
-              >
-                Services
-              </button>
-              <button
-                type="button"
-                onClick={() => navigateToPortfolio('projects')}
-                className="hover:text-[#E10600] transition-colors cursor-pointer"
-              >
-                Work
-              </button>
-              <button
-                type="button"
-                onClick={navigateToServices}
-                className="hover:text-[#E10600] transition-colors cursor-pointer"
-              >
-                Catalog
-              </button>
-              <button
-                type="button"
-                onClick={navigateToAbout}
-                className="hover:text-[#E10600] transition-colors cursor-pointer"
-              >
-                About &amp; CV
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsResumeModalOpen(true)}
-                className="hover:text-[#E10600] transition-colors cursor-pointer"
-              >
-                Official CV
-              </button>
-            </div>
-          </div>
-
-          {/* Giant Framer Display Wordmark */}
-          <div className="border-y border-zinc-300/80 dark:border-[#F2F0EB]/10 py-6 text-center select-none">
-            <p
-              className="font-display uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.85]"
-              style={{ fontSize: 'clamp(3.2rem, 13vw, 10.5rem)' }}
-            >
-              ADITYA RAJ
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.12em] text-zinc-500 dark:text-[#A8A8A8]">
-            <p>
-              © {new Date().getFullYear()} {personal.name} · {studioBrand.name}
-            </p>
-            <div className="flex items-center gap-6">
-              <span className="tabular-nums">
-                {liveDateTime.date} · {liveDateTime.time}
-              </span>
-              <a
-                href="#home"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="inline-flex items-center gap-1 text-[#E10600] hover:underline font-semibold"
-              >
-                <span>Back to Top</span>
-                <ArrowUp className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <NoirStudioFooter
+        onNavigate={navigateToPortfolio}
+        onServices={navigateToServices}
+        onAbout={navigateToAbout}
+        onOpenCv={() => setIsResumeModalOpen(true)}
+        liveTime={liveDateTime.time}
+      />
 
       {/* Interactive Case Study / Live Viewport Modal */}
       <ProjectDetailModal
