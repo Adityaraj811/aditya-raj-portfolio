@@ -249,16 +249,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-ts-word,
-  .animate-ts-bar,
-  .animate-ts-fade,
-  .animate-noir-marquee,
-  .animate-noir-runner,
-  .animate-noir-streak-h,
-  .animate-noir-streak-v,
-  .animate-noir-orbit,
-  .animate-noir-crosshair,
-  .animate-noir-grain {
+  html.honor-reduced-motion .animate-ts-word,
+  html.honor-reduced-motion .animate-ts-bar,
+  html.honor-reduced-motion .animate-ts-fade,
+  html.honor-reduced-motion .animate-noir-marquee,
+  html.honor-reduced-motion .animate-noir-runner,
+  html.honor-reduced-motion .animate-noir-streak-h,
+  html.honor-reduced-motion .animate-noir-streak-v,
+  html.honor-reduced-motion .animate-noir-orbit,
+  html.honor-reduced-motion .animate-noir-crosshair,
+  html.honor-reduced-motion .animate-noir-grain {
     animation: none !important;
     opacity: 1 !important;
     filter: none !important;
@@ -437,7 +437,7 @@ html.noir-ring-cursor * {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .noir-grad-text, .animate-noir-blink { animation: none !important; }
+  html.honor-reduced-motion .noir-grad-text, html.honor-reduced-motion .animate-noir-blink { animation: none !important; }
 }
 
 /* Ribbon outlined words (template: 1px bone stroke, transparent fill) */
@@ -482,4 +482,4 @@ h2[data-noir-reveal='in'] {
 /* Header logo mark: slow continuous spin (template), faster on hover */
 @keyframes noirLogoSpin { to { transform: rotate(360deg); } }
 .animate-noir-logo-spin { animation: noirLogoSpin 6s linear infinite; }
-@media (prefers-reduced-motion: reduce) { .animate-noir-logo-spin { animation: none; } }
+@media (prefers-reduced-motion: reduce) { html.honor-reduced-motion .animate-noir-logo-spin { animation: none; } }

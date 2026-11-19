@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * ============================================================================
@@ -98,7 +99,7 @@ export const NoirRingCursor: React.FC = () => {
 
   useEffect(() => {
     const fine = window.matchMedia?.('(pointer: fine)').matches;
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const reduced = prefersReducedMotion();
     if (!fine || reduced) return;
     setEnabled(true);
     document.documentElement.classList.add('noir-ring-cursor');
@@ -172,7 +173,7 @@ export const NoirHoverScramble: React.FC<{ text: string; className?: string }> =
   useEffect(() => {
     const host = ref.current?.closest('a, button') as HTMLElement | null;
     if (!host) return;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
     let id = 0;
     const run = () => {
       window.clearInterval(id);

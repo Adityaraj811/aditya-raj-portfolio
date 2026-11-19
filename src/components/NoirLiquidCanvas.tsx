@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { prefersReducedMotion } from '../utils/motion';
 
 interface NoirLiquidCanvasProps {
   className?: string;
@@ -16,9 +17,7 @@ export const NoirLiquidCanvas: React.FC<NoirLiquidCanvasProps> = ({ className = 
     const canvas = canvasRef.current;
     if (!canvas || typeof window === 'undefined') return;
 
-    const prefersReducedMotion =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     const gl = canvas.getContext('webgl', {
       alpha: true,

@@ -3,6 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { NoirScrambleText } from './NoirScrollFx';
 import { NoirHoverScramble } from './NoirChrome';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * ============================================================================
@@ -20,7 +21,7 @@ import { NoirHoverScramble } from './NoirChrome';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const reducedMotion = () =>
-  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  prefersReducedMotion();
 
 /* ========================================================================= */
 /* Global heading blur-wipe                                                  */

@@ -6,6 +6,7 @@ import { ScrollReveal } from './ScrollReveal';
 import { NoirScrambleText } from './NoirScrollFx';
 import { NoirTypeHeading, NoirWords } from './NoirFx2';
 import { NoirHoverScramble } from './NoirChrome';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * Faithful ports of the Framer "Noir Signal" template sections that the
@@ -222,7 +223,7 @@ const ClientName: React.FC<{ name: string }> = ({ name }) => {
   const [out, setOut] = useState(name);
   useEffect(() => {
     const host = ref.current?.closest('li') as HTMLElement | null;
-    if (!host || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (!host || prefersReducedMotion()) return;
     let id = 0;
     const glyphs = '!<>-_/[]{}=+*^?#%&';
     const run = () => {

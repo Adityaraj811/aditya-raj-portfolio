@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { NoirScrambleText } from './NoirScrollFx';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * ============================================================================
@@ -29,7 +30,7 @@ export const NoirCursor: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const isFinePointer = window.matchMedia?.('(pointer: fine)').matches;
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const reduced = prefersReducedMotion();
     if (!isFinePointer || reduced) return;
 
     setIsEnabled(true);
@@ -91,7 +92,7 @@ export const NoirMouseGlow: React.FC<{ className?: string }> = ({ className = ''
   useEffect(() => {
     const node = ref.current;
     if (!node || typeof window === 'undefined') return;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
 
     const onMove = (e: PointerEvent) => {
       const rect = node.getBoundingClientRect();

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, FileText } from 'lucide-react';
 import { portfolioConfig } from '../data/portfolioConfig';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * ============================================================================
@@ -21,7 +22,7 @@ const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&*!?/<>=_^[]{}';
 const EASE = [0.16, 1, 0.3, 1] as const;
 const randGlyph = () => GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
 const reducedMotion = () =>
-  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  prefersReducedMotion();
 
 /* ========================================================================= */
 /* Scramble-decode text                                                      */

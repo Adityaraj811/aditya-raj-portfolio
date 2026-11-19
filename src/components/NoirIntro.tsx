@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * ============================================================================
@@ -48,7 +49,7 @@ const releaseHero = () => document.documentElement.classList.remove('noir-intro'
 
 const shouldPlay = () => {
   if (typeof window === 'undefined') return false;
-  return !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  return !prefersReducedMotion();
 };
 
 interface SliceBar {
