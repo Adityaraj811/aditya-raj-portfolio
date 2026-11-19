@@ -693,10 +693,6 @@ export default function App() {
                         studio.
                       </span>
                     </h1>
-
-                    <p className="text-base sm:text-lg text-[#A8A8A8] leading-relaxed max-w-xl">
-                      {personal.heroDescription}
-                    </p>
                   </div>
 
                   {/* Clean Action Row + Typographic Socials */}
