@@ -36,6 +36,19 @@ import { FreelanceServicesPage } from './components/FreelanceServicesPage';
 import { AboutPage } from './components/AboutPage';
 import { NoirLiquidCanvas } from './components/NoirLiquidCanvas';
 import { NoirFilmGallery } from './components/NoirFilmGallery';
+import { NoirLogo, NoirNavLink, NoirRingCursor } from './components/NoirChrome';
+import {
+  NoirScrollBlur,
+  NoirDualMarquee,
+  NoirTypeManifesto,
+  NoirAboutSection,
+} from './components/NoirScrollFx';
+import {
+  useNoirHeadingReveal,
+  NoirStackCards,
+  NoirContactBanner,
+  NoirTalkRibbon,
+} from './components/NoirFx2';
 import {
   NoirStillsGallery,
   NoirClientsWall,
@@ -282,6 +295,9 @@ export default function App() {
 
   // Page Routing State ('home' | 'services' | 'about')
   const [currentPage, setCurrentPage] = useState<PageRoute>(() => detectInitialRoute());
+
+  // Framer Noir Signal: section headings blur-wipe in on scroll (re-armed per page)
+  useNoirHeadingReveal([currentPage]);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -467,6 +483,7 @@ export default function App() {
       <NoirPreloader />
       <NoirFilmGrain />
       <NoirCursor />
+      <NoirRingCursor />
 
       {/* Top Crimson Scroll Signal Line */}
       <div
@@ -478,100 +495,48 @@ export default function App() {
       {/* =====================================================================
           A. STICKY 3-ZONE EDITORIAL TOP BAR (Framer Noir Signal Contract)
       ===================================================================== */}
-      <header className="sticky top-0 z-40 w-full bg-[#F5F4F0]/90 dark:bg-[#050505]/90 backdrop-blur-xl border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
+      <header className="sticky top-0 z-40 w-full bg-[#F5F4F0]/[0.86] dark:bg-[#050505]/[0.86] backdrop-blur-[20px] border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
-          {/* Zone 1: Single Text Wordmark */}
-          <a
-            href="#home"
-            onClick={(e) => {
-              e.preventDefault();
-              navigateToPortfolio();
-            }}
-            className="font-display text-xl sm:text-2xl tracking-wide uppercase text-[#111111] dark:text-[#F2F0EB] whitespace-nowrap shrink-0 cursor-pointer"
-          >
-            ADITYA RAJ
-          </a>
+          {/* Zone 1: Crimson mark + tracked mono wordmark */}
+          <NoirLogo name="ADITYA RAJ" onClick={() => navigateToPortfolio()} />
 
           {/* Zone 2: Clean Single-Line Typographic Nav Links */}
-          <nav
-            aria-label="Primary Navigation"
-            className="hidden md:flex items-center gap-7 text-[11px] font-mono uppercase tracking-[0.12em] text-zinc-600 dark:text-[#A8A8A8]"
-          >
-            <a
+          <nav aria-label="Primary Navigation" className="hidden md:flex items-center gap-6 lg:gap-7">
+            <NoirNavLink
+              index="01"
+              label="Services"
               href="#freelance"
-              onClick={(e) => {
-                e.preventDefault();
-                navigateToPortfolio('freelance');
-              }}
-              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
-                currentPage === 'home' && activeSection === 'freelance'
-                  ? 'text-[#E10600] font-semibold'
-                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
-              }`}
-            >
-              01 Services
-            </a>
-
-            <a
+              active={currentPage === 'home' && activeSection === 'freelance'}
+              onClick={() => navigateToPortfolio('freelance')}
+            />
+            <NoirNavLink
+              index="02"
+              label="Work"
               href="#projects"
-              onClick={(e) => {
-                e.preventDefault();
-                navigateToPortfolio('projects');
-              }}
-              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
-                currentPage === 'home' && activeSection === 'projects'
-                  ? 'text-[#E10600] font-semibold'
-                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
-              }`}
-            >
-              02 Work
-            </a>
-
-            <a
+              active={currentPage === 'home' && activeSection === 'projects'}
+              onClick={() => navigateToPortfolio('projects')}
+            />
+            <NoirNavLink
+              index="03"
+              label="Process"
               href="#process"
-              onClick={(e) => {
-                e.preventDefault();
-                navigateToPortfolio('process');
-              }}
-              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
-                currentPage === 'home' && activeSection === 'process'
-                  ? 'text-[#E10600] font-semibold'
-                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
-              }`}
-            >
-              03 Process
-            </a>
-
-            <a
+              active={currentPage === 'home' && activeSection === 'process'}
+              onClick={() => navigateToPortfolio('process')}
+            />
+            <NoirNavLink
+              index="04"
+              label="About"
               href={`${getNormalizedBase()}about`}
-              onClick={(e) => {
-                e.preventDefault();
-                navigateToAbout();
-              }}
-              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
-                currentPage === 'about' ||
-                (currentPage === 'home' && activeSection === 'about-gateway')
-                  ? 'text-[#E10600] font-semibold'
-                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
-              }`}
-            >
-              04 About
-            </a>
-
-            <a
+              active={currentPage === 'about' || (currentPage === 'home' && activeSection === 'about-gateway')}
+              onClick={navigateToAbout}
+            />
+            <NoirNavLink
+              index="05"
+              label="Contact"
               href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                navigateToPortfolio('contact');
-              }}
-              className={`transition-colors whitespace-nowrap shrink-0 hover:underline underline-offset-4 ${
-                currentPage === 'home' && activeSection === 'contact'
-                  ? 'text-[#E10600] font-semibold'
-                  : 'hover:text-[#111111] dark:hover:text-[#F2F0EB]'
-              }`}
-            >
-              05 Contact
-            </a>
+              active={currentPage === 'home' && activeSection === 'contact'}
+              onClick={() => navigateToPortfolio('contact')}
+            />
           </nav>
 
           {/* Zone 3: Single Primary Action + Mobile Toggle */}
@@ -583,10 +548,10 @@ export default function App() {
                   'Website Development (Business / Portfolio / Landing Page)'
                 )
               }
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-[11px] uppercase tracking-wider font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="group hidden sm:inline-flex items-center gap-2 whitespace-nowrap shrink-0 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-700 dark:text-[#F2F0EB] hover:text-[#E10600] transition-colors cursor-pointer"
             >
-              <span>Start Project</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <span aria-hidden="true" className="w-[7px] h-[7px] rounded-full bg-[#E10600] animate-noir-blink" />
+              <span>Available for work</span>
             </button>
 
             <button
@@ -748,7 +713,7 @@ export default function App() {
             {/* Framer `Mouse Glow` Dynamic Crimson Pointer Spotlight */}
             <NoirMouseGlow />
 
-            <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 relative z-10 flex-1 flex flex-col justify-between gap-8">
+            <NoirScrollBlur className="max-w-6xl w-full mx-auto px-4 sm:px-6 relative z-10 flex-1 flex flex-col justify-between gap-8">
               {/* Framer Top Timecode & Live REC Metadata Strip */}
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#F2F0EB]/12 font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
                 <div className="flex flex-wrap items-center gap-3">
@@ -812,7 +777,7 @@ export default function App() {
                       }}
                     >
                       <span className="animate-ts-word" style={{ animationDelay: '0.04s' }}>
-                        CREATIVE{' '}
+                        <span className="noir-grad-text pr-[0.22em]">CREATIVE</span>
                       </span>
                       <span
                         className="animate-ts-word font-editorial italic lowercase font-normal text-[#E10600] pr-2"
@@ -957,62 +922,16 @@ export default function App() {
                   </div>
                 </a>
               </div>
-            </div>
+            </NoirScrollBlur>
           </section>
 
           <NoirHairlineTrack />
 
-          {/* ===================================================================
-              SIGNATURE CONTINUOUS KINETIC MARQUEE RIBBON
-          =================================================================== */}
-          <div className="border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 bg-[#111111] dark:bg-[#080808] text-[#F2F0EB] py-3.5 overflow-hidden select-none">
-            <div className="animate-noir-marquee font-display text-lg sm:text-xl tracking-wider uppercase">
-              {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
-                <span key={idx} className="inline-flex items-center mx-4 whitespace-nowrap">
-                  <span>{item}</span>
-                  <span className="ml-8 text-[#E10600]" aria-hidden="true">
-                    ✦
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
+          {/* Signature dual kinetic ribbon (Framer Noir Signal) */}
+          <NoirDualMarquee />
 
-          {/* ===================================================================
-              C. 01 — MANIFESTO (Signature Framer Editorial Statement)
-          =================================================================== */}
-          <section className="py-20 sm:py-28">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
-              <NoirSectionBar
-                indexLabel="01 — MANIFESTO"
-                sectionCode="(01/06)"
-                rightLabel="CREATIVE DIRECTION"
-              />
-
-              <ScrollReveal direction="up">
-                <blockquote
-                  className="font-display uppercase text-[#111111] dark:text-[#F2F0EB] leading-[1.02] tracking-tight"
-                  style={{
-                    fontSize: 'clamp(2rem, 4.6vw, 4rem)',
-                    textWrap: 'balance',
-                  }}
-                >
-                  WE DON’T JUST BUILD WEBSITES. WE DIRECT{' '}
-                  <span className="font-editorial italic lowercase font-normal text-[#E10600]">
-                    digital experiences.
-                  </span>{' '}
-                  EVERY PIXEL IS PURPOSEFUL, EVERY SYSTEM SCALES — BUILT WHERE DESIGN, CODE &amp; GROWTH{' '}
-                  <span className="font-editorial italic lowercase font-normal text-[#E10600]">
-                    collide.
-                  </span>
-                </blockquote>
-              </ScrollReveal>
-
-              <p className="font-mono text-xs uppercase tracking-[0.14em] text-zinc-500 dark:text-[#A8A8A8] pt-2">
-                — {personal.name.toUpperCase()} · {studioBrand.parentCompany.toUpperCase()}
-              </p>
-            </div>
-          </section>
+          {/* 01 — Manifesto: typewriter statement on bone (Framer Noir Signal) */}
+          <NoirTypeManifesto signature={`${personal.name.toUpperCase()}, BHOPAL, ${new Date().getFullYear()}`} />
 
           <NoirHairlineTrack />
 
@@ -1438,7 +1357,7 @@ export default function App() {
           {/* 06 — Clients wall (Framer Noir Signal) */}
           <NoirClientsWall />
 
-          <section id="process" className="relative py-20 sm:py-28 overflow-hidden">
+          <section id="process" className="relative py-20 sm:py-28 overflow-clip">
             {/* Framer Crimson Atmospheric Ambient Red Glow */}
             <div
               aria-hidden="true"
@@ -1485,31 +1404,8 @@ export default function App() {
                 </div>
               </ScrollReveal>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-zinc-300/80 dark:border-[#F2F0EB]/12 divide-y md:divide-y-0 md:divide-x divide-zinc-300/80 dark:divide-[#F2F0EB]/12 rounded-xl overflow-hidden bg-white dark:bg-[#0B0B0B]">
-                {STUDIO_PROCESS_STEPS.map((item) => (
-                  <motion.div
-                    key={item.index}
-                    whileHover={{ y: -4 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                    className="p-6 sm:p-7 flex flex-col justify-between space-y-8 hover:bg-zinc-50 dark:hover:bg-[#111111] transition-colors"
-                  >
-                    <div className="space-y-3">
-                      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#E10600] font-semibold">
-                        {item.step}
-                      </p>
-                      <h3 className="font-display text-3xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB]">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                    <span className="font-display text-4xl text-zinc-300 dark:text-[#F2F0EB]/15 leading-none">
-                      {item.index}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
+              {/* Sticky stacking step cards (Framer Noir Signal "How it happens") */}
+              <NoirStackCards steps={STUDIO_PROCESS_STEPS} />
 
               {/* Framer Animated Skill Strength Bars (`Skill Row`) */}
               <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 border-t border-zinc-300/70 dark:border-[#F2F0EB]/12">
@@ -1536,62 +1432,19 @@ export default function App() {
           <NoirRecognition />
           <NoirTestimonials />
 
-          <section id="about-gateway" className="py-20 sm:py-24">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-              <ScrollReveal direction="up">
-                <div className="p-7 sm:p-12 rounded-xl bg-white dark:bg-[#0B0B0B] border border-zinc-300/80 dark:border-[#F2F0EB]/12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                  <div className="lg:col-span-8 space-y-4">
-                    <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] font-semibold text-[#E10600]">
-                      <GraduationCap className="w-4 h-4" />
-                      <span>05 — BEHIND THE FRAME · ACADEMICS &amp; CV</span>
-                      <span className="text-zinc-500 dark:text-[#A8A8A8]">(05/06)</span>
-                    </div>
-
-                    <h2 className="font-display text-3xl sm:text-5xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.95]">
-                      BEHIND THE{' '}
-                      <span className="font-editorial italic lowercase font-normal text-[#E10600]">
-                        frame
-                      </span>{' '}
-                      — STACK &amp; CV
-                    </h2>
-
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] leading-relaxed max-w-2xl">
-                      {education.degree} at {education.institution} ({education.duration}) ·{' '}
-                      {education.internship.role} at {education.internship.company} · 400+ coding problems solved across LeetCode, CodeChef, HackerRank &amp; GeeksforGeeks.
-                    </p>
-                  </div>
-
-                  <div className="lg:col-span-4 flex flex-col gap-3">
-                    <button
-                      type="button"
-                      onClick={navigateToAbout}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer"
-                    >
-                      <User className="w-4 h-4" />
-                      <span>About, Skills &amp; Academics</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsResumeModalOpen(true)}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/20 hover:border-[#E10600] font-mono text-xs uppercase tracking-wider text-zinc-800 dark:text-[#F2F0EB] transition-colors cursor-pointer"
-                    >
-                      <FileText className="w-4 h-4 text-[#E10600]" />
-                      <span>View Official CV</span>
-                    </button>
-                  </div>
-                </div>
-              </ScrollReveal>
-            </div>
-          </section>
+          <NoirAboutSection
+            profileSrc={profileImgSrc}
+            onProfileError={() => setProfileImgSrc(personal.profileFallbackSvg)}
+            onOpenAbout={navigateToAbout}
+            onOpenCv={() => setIsResumeModalOpen(true)}
+          />
 
           <NoirHairlineTrack />
 
           {/* ===================================================================
               H. BEFORE YOU ASK · FAQ ACCORDION (Matching Framer Section 12)
           =================================================================== */}
-          <section id="faq" className="py-20 sm:py-24">
+          <section id="faq" className="py-20 sm:py-28 bg-[#E10600] text-white">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
               <ScrollReveal direction="up">
                 <div className="space-y-4">
@@ -1600,19 +1453,19 @@ export default function App() {
                     sectionCode="FAQ"
                     rightLabel="TIMELINE & DELIVERY"
                   />
-                  <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#111111] dark:text-[#F2F0EB] leading-[0.94]">
+                  <h2 className="font-display text-4xl sm:text-6xl uppercase tracking-tight text-[#050505] leading-[0.94]">
                     BEFORE YOU{' '}
-                    <span className="font-editorial italic lowercase font-normal text-[#E10600]">
+                    <span className="font-editorial italic lowercase font-normal !text-white">
                       ask.
                     </span>
                   </h2>
-                  <p className="text-sm sm:text-base text-zinc-600 dark:text-[#A8A8A8] max-w-2xl">
+                  <p className="text-sm sm:text-base text-white/80 max-w-2xl">
                     The questions clients and brands ask most before starting a custom build.
                   </p>
                 </div>
               </ScrollReveal>
 
-              <div className="divide-y divide-zinc-300/70 dark:divide-[#F2F0EB]/10 border-t border-b border-zinc-300/70 dark:border-[#F2F0EB]/10">
+              <div className="divide-y divide-white/25 border-t border-b border-white/25">
                 {faqs.map((faq) => {
                   const isOpen = openFaqIndex === faq.index;
                   return (
@@ -1624,20 +1477,20 @@ export default function App() {
                         className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group"
                       >
                         <div className="flex items-baseline gap-4 sm:gap-6 min-w-0">
-                          <span className="font-mono text-xs text-[#E10600] font-semibold shrink-0">
+                          <span className="font-mono text-xs text-white font-semibold shrink-0">
                             {faq.index}
                           </span>
-                          <span className="font-sans text-base sm:text-lg font-medium text-[#111111] dark:text-[#F2F0EB] group-hover:text-[#E10600] transition-colors">
+                          <span className="font-sans text-base sm:text-lg font-medium text-white group-hover:text-[#050505] transition-colors">
                             {faq.question}
                           </span>
                         </div>
-                        <span className="w-8 h-8 rounded-md border border-zinc-300 dark:border-[#F2F0EB]/15 flex items-center justify-center text-zinc-600 dark:text-[#A8A8A8] group-hover:border-[#E10600] group-hover:text-[#E10600] transition-colors shrink-0">
+                        <span className="w-8 h-8 rounded-md border border-white/40 flex items-center justify-center text-white/80 group-hover:border-[#050505] group-hover:text-white transition-colors shrink-0">
                           {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                         </span>
                       </button>
 
                       {isOpen && (
-                        <div className="pt-3 pl-8 sm:pl-11 pr-10 text-sm text-zinc-600 dark:text-[#A8A8A8] leading-relaxed max-w-3xl">
+                        <div className="pt-3 pl-8 sm:pl-11 pr-10 text-sm text-white/80 leading-relaxed max-w-3xl">
                           {faq.answer}
                         </div>
                       )}
@@ -1685,6 +1538,18 @@ export default function App() {
                   </p>
                 </div>
               </ScrollReveal>
+
+              <NoirContactBanner
+                email={personal.emailAddress}
+                phone={personal.mobileNumber}
+                socials={[
+                  { label: 'Instagram', href: personal.instagramUrl },
+                  { label: 'LinkedIn', href: personal.linkedinUrl },
+                  { label: 'GitHub', href: personal.githubUrl },
+                  { label: 'WhatsApp', href: personal.whatsappDirectUrl },
+                ]}
+                onGetInTouch={() => window.open(personal.whatsappDirectUrl, '_blank', 'noopener,noreferrer')}
+              />
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column: Direct Channels */}
@@ -1931,6 +1796,7 @@ export default function App() {
       {/* =====================================================================
           J. FRAMER NOIR SIGNAL STUDIO FOOTER
       ===================================================================== */}
+      <NoirTalkRibbon year={new Date().getFullYear()} />
       <NoirStudioFooter
         onNavigate={navigateToPortfolio}
         onServices={navigateToServices}

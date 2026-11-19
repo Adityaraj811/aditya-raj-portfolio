@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight, X } from 'lucide-react';
 import { portfolioConfig } from '../data/portfolioConfig';
 import { ScrollReveal } from './ScrollReveal';
+import { NoirScrambleText } from './NoirScrollFx';
+import { NoirTypeHeading } from './NoirFx2';
 
 /**
  * Faithful ports of the Framer "Noir Signal" template sections that the
@@ -32,9 +34,9 @@ const ChapterHead: React.FC<{ index: string; label: string; code: string; invert
   >
     <span className="inline-flex items-center gap-3">
       <span className="w-1.5 h-1.5 bg-[#E10600]" aria-hidden="true" />
-      {index} — {label}
+      <NoirScrambleText text={`${index} — ${label}`} />
     </span>
-    <span>({code})</span>
+    <NoirScrambleText text={`(${code})`} />
   </div>
 );
 
@@ -108,6 +110,7 @@ export const NoirStillsGallery: React.FC = () => {
                 onClick={() => (isActive ? setLightbox(i) : setActive(i))}
                 tabIndex={0}
                 role="button"
+                data-noir-cursor="VIEW"
                 aria-label={`${still.title} — ${still.meta}`}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -213,46 +216,51 @@ export const NoirStillsGallery: React.FC = () => {
 /* 06 — CLIENTS · "the brave few" hairline name wall                         */
 /* ========================================================================= */
 export const NoirClientsWall: React.FC = () => (
-  <section id="clients" className="py-20 sm:py-28">
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-      <ScrollReveal direction="up">
-        <div className="space-y-8">
-          <ChapterHead index="06" label="Clients" code="In association" />
-          <div className="text-center space-y-2">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 dark:text-[#A8A8A8]">
-              — In association with —
-            </p>
-            <p className="font-editorial italic lowercase text-[#E10600] text-6xl sm:text-8xl leading-none">
-              the brave few
-            </p>
-          </div>
-        </div>
-      </ScrollReveal>
-
-      <div className="grid grid-cols-2 lg:grid-cols-3 border-t border-l border-zinc-300/70 dark:border-[#F2F0EB]/10">
-        {signalSections.clients.map((client, i) => (
-          <ScrollReveal key={client.name} direction="up" delayMs={i * 60}>
-            <div className="group relative h-full min-h-[150px] sm:min-h-[180px] p-5 sm:p-7 border-r border-b border-zinc-300/70 dark:border-[#F2F0EB]/10 flex flex-col justify-between hover:bg-zinc-100 dark:hover:bg-[#0E0E0E] transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-500 dark:text-[#A8A8A8]">
-                  {client.sector}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    i === 0 ? 'bg-[#E10600]' : 'bg-zinc-400 dark:bg-[#F2F0EB]/30 group-hover:bg-[#E10600]'
-                  }`}
-                />
-              </div>
-              <p className="font-display uppercase text-2xl sm:text-4xl leading-none tracking-tight text-[#111111] dark:text-[#F2F0EB] group-hover:translate-x-1.5 transition-transform duration-300">
-                {client.name}
-              </p>
-            </div>
-          </ScrollReveal>
-        ))}
+  <section id="clients" className="relative py-20 sm:py-28 bg-[#050505] text-[#F2F0EB] overflow-hidden">
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 pointer-events-none"
+      style={{ background: 'radial-gradient(40% 55% at 50% 60%, rgba(225,6,0,0.14), transparent 70%)' }}
+    />
+    <div className="relative max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+      <div className="flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
+        <span className="inline-flex items-center gap-3">
+          <span className="w-1.5 h-1.5 bg-[#E10600]" aria-hidden="true" />
+          <NoirScrambleText text="06 — Clients" />
+        </span>
+        <NoirScrambleText text="(In association)" />
       </div>
 
-      <p className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 dark:text-[#A8A8A8]">
+      <div className="text-center space-y-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-[#A8A8A8]">— In association with —</p>
+        <p className="font-editorial italic lowercase text-[#E10600] text-6xl sm:text-8xl leading-none">the brave few</p>
+      </div>
+
+      <ul className="flex flex-col items-center gap-1.5 sm:gap-2">
+        {signalSections.clients.map((client, i) => (
+          <motion.li
+            key={client.name}
+            initial={{ opacity: 0, filter: 'blur(12px)', x: 24 }}
+            whileInView={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
+            className="group grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6 w-full"
+          >
+            <span className="text-right font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#6B6B6B] group-hover:text-[#A8A8A8] transition-colors">
+              {client.sector}
+            </span>
+            <span
+              aria-hidden="true"
+              className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-[#E10600]' : 'bg-[#F2F0EB]/30 group-hover:bg-[#E10600]'} transition-colors`}
+            />
+            <span className="font-display uppercase leading-none tracking-tight text-[#F2F0EB] group-hover:text-[#E10600] group-hover:translate-x-1.5 transition-all duration-300 text-3xl sm:text-5xl">
+              {client.name}
+            </span>
+          </motion.li>
+        ))}
+      </ul>
+
+      <p className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-[#6B6B6B]">
         And every brand ready to grow digitally
       </p>
     </div>
@@ -268,7 +276,12 @@ export const NoirExperience: React.FC = () => (
       <ScrollReveal direction="up">
         <div className="space-y-8">
           <ChapterHead index="08" label="Experience" code="Timeline" inverted />
-          <Title lead="Where I've" accent="been." inverted />
+          <NoirTypeHeading
+            lead="Built in"
+            accent="motion"
+            className="tracking-tight leading-[0.92] text-[#050505]"
+            style={{ fontSize: 'clamp(2.6rem, 6.4vw, 5rem)' }}
+          />
         </div>
       </ScrollReveal>
 
@@ -278,7 +291,7 @@ export const NoirExperience: React.FC = () => (
             <motion.div
               whileHover={{ x: 10 }}
               transition={{ duration: 0.32, ease: EASE }}
-              className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-8 items-baseline py-6 sm:py-7 border-b border-[#050505]/15"
+              className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-8 items-baseline py-6 sm:py-7 px-3 -mx-3 border-b border-[#050505]/15 hover:bg-[#E10600]/[0.07] transition-colors"
             >
               <p
                 className={`md:col-span-3 font-display uppercase text-xl sm:text-[21px] tracking-wide ${
@@ -308,50 +321,64 @@ export const NoirExperience: React.FC = () => (
 export const NoirRecognition: React.FC = () => {
   const { headline, caption, items } = signalSections.recognition;
   return (
-    <section id="recognition" className="py-20 sm:py-28 bg-[#050505] text-[#F2F0EB] overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-        <ScrollReveal direction="up">
-          <div className="flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
-            <span className="inline-flex items-center gap-3">
-              <span className="w-1.5 h-1.5 bg-[#E10600]" aria-hidden="true" />
-              09 — Recognition
-            </span>
-            <span>(Milestones)</span>
-          </div>
-        </ScrollReveal>
+    <section id="recognition" className="relative py-20 sm:py-28 bg-[#050505] text-[#F2F0EB] overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(45% 60% at 80% 40%, rgba(225,6,0,0.12), transparent 70%)' }}
+      />
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+        <div className="flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
+          <span className="inline-flex items-center gap-3">
+            <span className="w-1.5 h-1.5 bg-[#E10600]" aria-hidden="true" />
+            <NoirScrambleText text="09 — Recognition" />
+          </span>
+          <NoirScrambleText text="(Milestones)" />
+        </div>
 
-        <ScrollReveal direction="up">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+          <div className="lg:col-span-4 relative min-h-[300px] lg:min-h-[380px]">
+            {/* faint outlined numeral sitting low behind the heading */}
             <p
-              className="font-display uppercase leading-[0.8] text-transparent select-none noir-outline-numeral"
-              style={{ fontSize: 'clamp(7rem, 22vw, 13.5rem)' }}
+              aria-hidden="true"
+              className="absolute left-0 bottom-0 font-display uppercase leading-[0.8] text-transparent select-none noir-outline-numeral opacity-25"
+              style={{ fontSize: 'clamp(7rem, 16vw, 12rem)' }}
             >
               {headline}
             </p>
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8] max-w-xl">{caption}</p>
+            <NoirTypeHeading
+              lead="Quiet"
+              accent="recognition"
+              breakBeforeAccent
+              className="relative tracking-tight leading-[0.92] text-[#F2F0EB]"
+              style={{ fontSize: 'clamp(2.8rem, 5.6vw, 4.6rem)' }}
+            />
+            <p className="relative mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8] max-w-xs">
+              {headline} — {caption}
+            </p>
           </div>
-        </ScrollReveal>
 
-        <div className="border-t border-[#F2F0EB]/10">
-          {items.map((item, i) => (
-            <ScrollReveal key={item.title} direction="up" delayMs={i * 50}>
-              <motion.div
-                whileHover={{ x: 10 }}
-                transition={{ duration: 0.32, ease: EASE }}
-                className="group grid grid-cols-12 gap-4 items-baseline py-4 sm:py-5 border-b border-[#F2F0EB]/10"
-              >
-                <p className="col-span-12 sm:col-span-8 text-lg sm:text-[22px] leading-snug text-[#F2F0EB] group-hover:text-[#E10600] transition-colors">
-                  {item.title}
-                </p>
-                <p className="col-span-6 sm:col-span-2 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600]">
-                  {item.tag}
-                </p>
-                <p className="col-span-6 sm:col-span-2 text-right font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
-                  {item.year}
-                </p>
-              </motion.div>
-            </ScrollReveal>
-          ))}
+          <div className="lg:col-span-8 border-t border-[#F2F0EB]/10">
+            {items.map((item, i) => (
+              <ScrollReveal key={item.title} direction="up" delayMs={i * 50}>
+                <motion.div
+                  whileHover={{ x: 10 }}
+                  transition={{ duration: 0.32, ease: EASE }}
+                  className="group grid grid-cols-12 gap-4 items-baseline py-4 sm:py-5 border-b border-[#F2F0EB]/10"
+                >
+                  <p className="col-span-12 sm:col-span-8 text-base sm:text-lg leading-snug text-[#F2F0EB] group-hover:text-[#E10600] transition-colors">
+                    {item.title}
+                  </p>
+                  <p className="col-span-6 sm:col-span-2 font-mono text-[11px] uppercase tracking-[0.16em] text-[#E10600]">
+                    {item.tag}
+                  </p>
+                  <p className="col-span-6 sm:col-span-2 text-right font-mono text-[11px] uppercase tracking-[0.16em] text-[#A8A8A8]">
+                    {item.year}
+                  </p>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -393,11 +420,11 @@ export const NoirTestimonials: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
         <ChapterHead index="10" label="Words" code="Clients" inverted />
 
-        <div className="grid grid-cols-12 gap-4 sm:gap-8">
-          <span aria-hidden="true" className="col-span-2 sm:col-span-1 font-display text-7xl sm:text-8xl leading-none text-[#E10600]">
+        <div className="flex flex-col items-center text-center gap-6">
+          <span aria-hidden="true" className="font-display text-7xl sm:text-8xl leading-[0.6] text-[#E10600] pt-6">
             “
           </span>
-          <div className="col-span-10 sm:col-span-11 space-y-8 min-h-[220px]">
+          <div className="space-y-8 min-h-[220px] max-w-4xl w-full flex flex-col items-center">
             <AnimatePresence mode="wait">
               <motion.blockquote
                 key={index}
@@ -420,7 +447,7 @@ export const NoirTestimonials: React.FC = () => {
               </motion.blockquote>
             </AnimatePresence>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center gap-4 w-full">
               <button
                 type="button"
                 onClick={() => go(-1)}
@@ -452,7 +479,7 @@ export const NoirTestimonials: React.FC = () => {
               >
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
-              <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B] tabular-nums">
+              <span className="ml-4 font-mono text-[10px] uppercase tracking-[0.16em] text-[#6B6B6B] tabular-nums">
                 {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
               </span>
             </div>
@@ -631,7 +658,8 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
             className="font-display uppercase tracking-tight leading-[0.85] text-[#F2F0EB]"
             style={{ fontSize: 'clamp(3.2rem, 14.5vw, 12rem)' }}
           >
-            {personal.name}
+            <span className="noir-outline-word">{personal.name.split(' ')[0]}</span>{' '}
+            <span className="text-[#E10600]">{personal.name.split(' ').slice(1).join(' ')}</span>
           </p>
         </div>
 

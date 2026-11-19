@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { NoirScrambleText } from './NoirScrollFx';
 
 /**
  * ============================================================================
@@ -133,64 +134,8 @@ export const NoirFilmGrain: React.FC = () => (
   />
 );
 
-export const NoirPreloader: React.FC = () => {
-  const [visible, setVisible] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
-    if (window.sessionStorage?.getItem('noir-preloader-done') === '1') return false;
-    return true;
-  });
-
-  useEffect(() => {
-    if (!visible) return;
-    const t = window.setTimeout(() => {
-      setVisible(false);
-      window.sessionStorage?.setItem('noir-preloader-done', '1');
-    }, 950);
-    return () => window.clearTimeout(t);
-  }, [visible]);
-
-  if (!visible) return null;
-
-  return (
-    <motion.div
-      aria-hidden="true"
-      initial={{ y: 0, opacity: 1 }}
-      animate={{ y: '-100%', opacity: 0.98 }}
-      transition={{ duration: 0.7, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-[95] bg-[#050505] text-[#F2F0EB] flex flex-col justify-between p-6 sm:p-10 pointer-events-none"
-    >
-      <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-[#A8A8A8]">
-        <span className="inline-flex items-center gap-2 text-[#E10600]">
-          <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse" />
-          REC · SIGNAL LOCKED
-        </span>
-        <span>ADITYA RAJ // PORTFOLIO</span>
-      </div>
-
-      <div className="space-y-4">
-        <p className="font-display text-4xl sm:text-7xl uppercase tracking-tight leading-none">
-          CRAFTING{' '}
-          <span className="font-editorial italic lowercase font-normal text-[#E10600]">
-            digital
-          </span>{' '}
-          FUTURES
-        </p>
-        <div className="h-[2px] w-full bg-[#F2F0EB]/10 overflow-hidden">
-          <div
-            className="h-full bg-[#E10600]"
-            style={{ animation: 'noirBar 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-[#A8A8A8]">
-        <span>EST. 2022 — ©2026</span>
-        <span>LOADING VIEWPORT...</span>
-      </div>
-    </motion.div>
-  );
-};
+// Cinematic entry sequence lives in its own module (template-faithful port).
+export { NoirPreloader } from './NoirIntro';
 
 export const NoirHairlineTrack: React.FC<{ className?: string }> = ({ className = '' }) => (
   <div
@@ -226,11 +171,11 @@ export const NoirSectionBar: React.FC<NoirSectionBarProps> = ({
       >
         +
       </span>
-      <span>{indexLabel}</span>
+      <NoirScrambleText text={indexLabel} />
     </div>
     <div className="flex items-center gap-3 text-zinc-500 dark:text-[#A8A8A8]">
       {rightLabel && <span className="hidden sm:inline">{rightLabel}</span>}
-      <span>{sectionCode}</span>
+      <NoirScrambleText text={sectionCode} />
     </div>
   </div>
 );

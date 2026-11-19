@@ -13,11 +13,12 @@
   html {
     font-family: var(--font-sans);
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    /* clip (not hidden) so position: sticky keeps working for stacked cards */
+    overflow-x: clip;
   }
 
   body {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .font-display {
@@ -397,4 +398,83 @@
 }
 .noir-outline-numeral:hover {
   -webkit-text-stroke-color: #e10600;
+}
+
+/* While the cinematic intro plays, hero entry animations wait at frame 0,
+   then run the moment the curtain lifts (class removed by NoirIntro). */
+html.noir-intro .animate-ts-word,
+html.noir-intro .animate-ts-bar,
+html.noir-intro .animate-ts-fade {
+  animation-play-state: paused;
+}
+
+/* Hero "CREATIVE" — travelling bone → crimson → ember gradient fill (template noirGrad) */
+@keyframes noirGrad {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.noir-grad-text {
+  background-image: linear-gradient(90deg, #f2f0eb 0%, #e10600 30%, #ff6a3d 50%, #e10600 70%, #f2f0eb 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: noirGrad 5s linear infinite;
+}
+
+/* "Available for work" status blink */
+@keyframes noirBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-noir-blink { animation: noirBlink 1.2s steps(1) infinite; }
+
+/* Ring cursor replaces the system pointer on fine-pointer devices */
+html.noir-ring-cursor,
+html.noir-ring-cursor * {
+  cursor: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noir-grad-text, .animate-noir-blink { animation: none !important; }
+}
+
+/* Ribbon outlined words (template: 1px bone stroke, transparent fill) */
+.noir-outline-word {
+  color: transparent;
+  -webkit-text-stroke: 1px #f2f0eb;
+}
+
+/* Intro glitch name: CSS entrance so it never waits on JS animation frames */
+@keyframes noirIntroGlitchIn {
+  from { opacity: 0; transform: scale(1.22); }
+  to { opacity: 1; transform: scale(1.12); }
+}
+.noir-intro-glitch-in { animation: noirIntroGlitchIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes noirIntroWord {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); filter: blur(14px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+.noir-intro-word { display: inline-block; animation: noirIntroWord 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Crimson FAQ section: crimson accents inside it flip to white / ink */
+#faq .text-\[\#E10600\] { color: #fff !important; }
+#faq .border-\[\#E10600\]\/40 { border-color: rgba(255, 255, 255, 0.55) !important; }
+#faq .text-zinc-500, #faq .dark\:text-\[\#A8A8A8\] { color: rgba(255, 255, 255, 0.75) !important; }
+
+/* Section headings blur-wipe in (useNoirHeadingReveal) */
+/* no clip-path while pending: IntersectionObserver treats a fully clipped
+   target as invisible and would never fire */
+h2[data-noir-reveal='pending'] {
+  opacity: 0;
+  filter: blur(14px);
+}
+h2[data-noir-reveal='in'] {
+  animation: noirHeadingIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes noirHeadingIn {
+  0% { opacity: 0; filter: blur(14px); clip-path: inset(0 100% 0 0); transform: translateX(-12px); }
+  60% { opacity: 1; }
+  100% { opacity: 1; filter: blur(0); clip-path: inset(-10% -5% -20% 0); transform: none; }
 }
