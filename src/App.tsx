@@ -693,43 +693,6 @@ export default function App() {
                     </h1>
                   </div>
 
-                  {/* Clean Action Row + Typographic Socials */}
-                  <div className="space-y-6">
-
-                    {/* Single-Line Editorial Links */}
-                    <div className="hidden lg:flex pt-4 border-t border-[#F2F0EB]/12 flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#A8A8A8]">
-                      <a
-                        href={personal.whatsappDirectUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>WhatsApp</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
-                      <a
-                        href={personal.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
-                      >
-                        <Linkedin className="w-3.5 h-3.5" />
-                        <span>LinkedIn</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
-                      <a
-                        href={personal.instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 hover:text-[#E10600] transition-colors"
-                      >
-                        <Instagram className="w-3.5 h-3.5" />
-                        <span>Instagram</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Right Column: Framer Grayscale->Color 3D Portrait Plate */}
