@@ -591,7 +591,6 @@ export const NoirStudioFooter: React.FC<NoirStudioFooterProps> = ({
   const studio: [string, () => void][] = [
     ['Service Catalog', onServices],
     ['Process', () => onNavigate('process')],
-    ['Recognition', () => onNavigate('recognition')],
     ['FAQ', () => onNavigate('faq')],
     ['Official CV', onOpenCv],
   ];
