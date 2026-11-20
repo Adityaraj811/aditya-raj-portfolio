@@ -695,30 +695,6 @@ export default function App() {
 
                   {/* Clean Action Row + Typographic Socials */}
                   <div className="space-y-6">
-                    <div className="hidden lg:flex flex-wrap items-center gap-3">
-                      <a
-                        href="#projects"
-                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 shadow-[0_12px_36px_rgba(225,6,0,0.35)]"
-                      >
-                        <span>Selected Works</span>
-                        <ArrowUpRight className="w-4 h-4" />
-                      </a>
-
-                      <a
-                        href="#freelance"
-                        className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#F2F0EB] text-[#050505] hover:opacity-90 font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0"
-                      >
-                        <span>12 Services</span>
-                      </a>
-
-                      <button
-                        type="button"
-                        onClick={navigateToAbout}
-                        className="inline-flex items-center gap-2 px-5 py-3.5 rounded-md border border-[#F2F0EB]/25 hover:border-[#E10600] text-[#F2F0EB] font-mono text-xs uppercase tracking-wider transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                      >
-                        <span>About</span>
-                      </button>
-                    </div>
 
                     {/* Single-Line Editorial Links */}
                     <div className="hidden lg:flex pt-4 border-t border-[#F2F0EB]/12 flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#A8A8A8]">
@@ -1483,56 +1459,6 @@ export default function App() {
 
               </div>
 
-              {/* Framer 4-Column Studio Information Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-zinc-300/80 dark:border-[#F2F0EB]/12 divide-y sm:divide-y-0 sm:divide-x divide-zinc-300/80 dark:divide-[#F2F0EB]/12 rounded-xl overflow-hidden bg-white dark:bg-[#0B0B0B]">
-                <div className="p-5 space-y-1">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    01 — DEVELOPER
-                  </p>
-                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    {personal.name}
-                  </p>
-                  <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
-                    Independent · Web, App &amp; Java Developer
-                  </p>
-                </div>
-
-                <div className="p-5 space-y-1">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    02 — LOCATION
-                  </p>
-                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    DELHI, INDIA
-                  </p>
-                  <p className="text-xs text-zinc-600 dark:text-[#A8A8A8]">
-                    Worldwide Remote Delivery
-                  </p>
-                </div>
-
-                <div className="p-5 space-y-1">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    03 — EMAIL
-                  </p>
-                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    WRITE DIRECTLY
-                  </p>
-                  <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8] break-all">
-                    {personal.emailAddress}
-                  </p>
-                </div>
-
-                <div className="p-5 space-y-1">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#E10600]">
-                    04 — RESPONSE
-                  </p>
-                  <p className="font-display text-lg uppercase text-[#111111] dark:text-[#F2F0EB]">
-                    WITHIN 24 HOURS
-                  </p>
-                  <p className="text-xs font-mono text-zinc-600 dark:text-[#A8A8A8]">
-                    {personal.mobileNumber}
-                  </p>
-                </div>
-              </div>
             </div>
           </section>
         </main>
