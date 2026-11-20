@@ -696,7 +696,7 @@ export default function App() {
 
                   {/* Clean Action Row + Typographic Socials */}
                   <div className="space-y-6">
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="hidden lg:flex flex-wrap items-center gap-3">
                       <a
                         href="#projects"
                         className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md bg-[#E10600] hover:bg-[#ff1e17] text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-200 hover:-translate-y-0.5 whitespace-nowrap shrink-0 shadow-[0_12px_36px_rgba(225,6,0,0.35)]"
@@ -722,7 +722,7 @@ export default function App() {
                     </div>
 
                     {/* Single-Line Editorial Links */}
-                    <div className="pt-4 border-t border-[#F2F0EB]/12 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#A8A8A8]">
+                    <div className="hidden lg:flex pt-4 border-t border-[#F2F0EB]/12 flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[#A8A8A8]">
                       <a
                         href={personal.whatsappDirectUrl}
                         target="_blank"
