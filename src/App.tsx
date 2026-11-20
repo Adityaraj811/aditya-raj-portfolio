@@ -1249,19 +1249,6 @@ export default function App() {
 
               {/* Sticky stacking step cards (Framer Noir Signal "How it happens") */}
               <NoirStackCards steps={STUDIO_PROCESS_STEPS} />
-
-              {/* Framer Animated Skill Strength Bars (`Skill Row`) */}
-              <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 border-t border-zinc-300/70 dark:border-[#F2F0EB]/12">
-                {NOIR_CAPABILITY_ROWS.map((row) => (
-                  <NoirSkillRow
-                    key={row.title}
-                    title={row.title}
-                    metric={row.metric}
-                    percentage={row.percentage}
-                    detail={row.detail}
-                  />
-                ))}
-              </div>
             </div>
           </section>
 
